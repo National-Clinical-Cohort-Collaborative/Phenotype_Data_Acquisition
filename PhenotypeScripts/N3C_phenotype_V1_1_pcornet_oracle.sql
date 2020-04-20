@@ -138,7 +138,7 @@ covid_diagnosis as
             covid_icd10.dx_category as orig_dx_category
         from
             diagnosis
-            join covid_icd10 on diagnosis.dx = covid_icd10.icd10_code
+            join covid_icd10 on diagnosis.dx like covid_icd10.icd10_code
         where
             diagnosis.admit_date >= to_date(:start_date,'YYYY-MM-DD')
     ) dxq
