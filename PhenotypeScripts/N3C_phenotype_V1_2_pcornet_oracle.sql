@@ -198,6 +198,7 @@ dx_weak as
             count(*) >= 2
     ) dx_same_date
 ),
+-- patients with a covid related procedure since start_date
 covid_procedures as
 (
     select
