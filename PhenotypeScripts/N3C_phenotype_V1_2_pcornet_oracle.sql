@@ -1,30 +1,18 @@
 --N3C covid-19 phenotype, PCORnet CDM, Oracle
+--N3C phenotype V1.2
 
-ALTER SESSION SET CURRENT_SCHEMA = pcornet_cdm;
-set serveroutput on size 30000;
-
---declare @start_date date = '2020-01-01';
+-- start date
 var start_date varchar2(32);
 exec :start_date := '2020-01-01';
---to_date(start_date,'YYYY-MM-DD')
 
------- lab values
---declare @lab_positive_value varchar(32) = 'Detected';
-var lab_positive_value varchar2(32);
-exec :lab_positive_value := 'Detected';
---declare @lab_negative_value varchar(32) = 'Not Detected';
-var lab_negative_value varchar2(32);
-exec :lab_negative_value := 'Not Detected';
-
------- DX values
---declare @dx_strong_positive varchar(32) = '1_strong_positive';
+------ DX category values
 var dx_strong_positive varchar2(32);
 exec :dx_strong_positive := '1_strong_positive';
---declare @dx_weak_positive varchar(32) = '2_weak_positive';
+
 var dx_weak_positive varchar2(32);
 exec :dx_weak_positive := '2_weak_positive';
  
------------------------------   LABS   ------------------------------------
+-- Lab LOINC codes from phenotype doc
 with covid_loinc as
 (
 	select '94307-6' as loinc from dual UNION
@@ -68,6 +56,7 @@ with covid_loinc as
 	select '94660-8' as loinc from dual UNION
 	select '94661-6' as loinc from dual 
 ),
+-- Diagnosis ICD-10 codes from phenotype doc
 covid_icd10 as
 (
 	select 'B97.21' as icd10_code,	:dx_strong_positive as dx_category from dual UNION
@@ -91,6 +80,7 @@ covid_icd10 as
 	select 'R43.0' as icd10_code,	:dx_weak_positive as dx_category from dual UNION
 	select 'R43.2' as icd10_code,	:dx_weak_positive as dx_category from dual
 ),
+-- procedure codes from phenotype doc
 covid_proc_codes as
 (
     select 'U0001' as procedure_code from dual UNION
@@ -100,13 +90,13 @@ covid_proc_codes as
     select '86328' as procedure_code from dual UNION
     select '86769' as procedure_code from dual
 ),
+-- patients with covid related lab since start_date
 covid_lab_result_cm as
 (
     select
         lab_result_cm.*
     from
         lab_result_cm
---        join covid_loinc on lab_result_cm.lab_loinc = covid_loinc.loinc
     where
         lab_result_cm.result_date >= to_date(:start_date,'YYYY-MM-DD')
         and 
@@ -118,10 +108,13 @@ covid_lab_result_cm as
 			lab_result_cm.raw_lab_name like '%SARS-COV-2%'            
         )
 ),
+-- patients with covid related diagnosis since start_date
 covid_diagnosis as
 (
     select
         dxq.*,
+        coalesce(dx_date,admit_date) as best_dx_date,  -- use for later queries
+        -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
 			when dx = 'B97.29' and coalesce(dx_date,admit_date) < to_date('2020-04-01','YYYY-MM-DD')  then :dx_strong_positive
 			when dx = 'B97.29' and coalesce(dx_date,admit_date) >= to_date('2020-04-01','YYYY-MM-DD') then :dx_weak_positive
@@ -140,9 +133,10 @@ covid_diagnosis as
             diagnosis
             join covid_icd10 on diagnosis.dx like covid_icd10.icd10_code
         where
-            diagnosis.admit_date >= to_date(:start_date,'YYYY-MM-DD')
+            coalesce(dx_date,admit_date) >= to_date(:start_date,'YYYY-MM-DD')
     ) dxq
 ),
+-- patients with strong positive DX included
 dx_strong as
 (
     select distinct
@@ -153,9 +147,10 @@ dx_strong as
         dx_category=:dx_strong_positive    
         
 ),
--- two weak dx at same encounter
+-- patients with two different weak DX in same encounter and/or on same date included
 dx_weak as
 (
+    -- two different DX at same encounter
     select distinct patid from
     (
         select
@@ -176,7 +171,32 @@ dx_weak as
             encounterid
         having
             count(*) >= 2
-    ) subq2
+    ) dx_same_encounter
+    
+    UNION
+    
+    -- or two different DX on same date
+    select distinct patid from
+    (
+        select
+            patid,
+            best_dx_date,
+            count(*) as dx_count
+        from
+        (
+            select distinct
+                patid, best_dx_date, dx
+            from
+                covid_diagnosis
+            where
+                dx_category=:dx_weak_positive
+        ) subq
+        group by
+            patid,
+            best_dx_date
+        having
+            count(*) >= 2
+    ) dx_same_date
 ),
 covid_procedures as
 (
@@ -198,18 +218,5 @@ covid_cohort as
     select distinct patid from covid_procedures
     UNION
     select distinct patid from covid_lab_result_cm
-),
-summary as
-(
-    select 'Total' as label, count(distinct patid) as pat_count from covid_cohort
-    UNION
-    select 'DX Strong' as label, count(distinct patid) as pat_count from dx_strong
-    UNION
-    select 'DX Weak' as label, count(distinct patid) as pat_count from dx_weak
-    UNION
-    select 'Lab' as label, count(distinct patid) as pat_count from covid_lab_result_cm
-    UNION
-    select 'Procedure' as label, count(distinct patid) as pat_count from covid_procedures
 )
--- select patid from covid_cohort
-select * from summary order by label;
+select patid from covid_cohort
