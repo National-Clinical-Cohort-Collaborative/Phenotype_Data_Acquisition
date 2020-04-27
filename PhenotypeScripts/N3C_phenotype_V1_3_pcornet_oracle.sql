@@ -2,16 +2,10 @@
 --N3C phenotype V1.3
 
 -- start date
-var start_date varchar2(32);
-exec :start_date := '2020-01-01';
+-- '2020-01-01'
 
------- DX category values
-var dx_strong_positive varchar2(32);
-exec :dx_strong_positive := '1_strong_positive';
+create table n3c_cohort as
 
-var dx_weak_positive varchar2(32);
-exec :dx_weak_positive := '2_weak_positive';
- 
 -- Lab LOINC codes from phenotype doc
 with covid_loinc as
 (
@@ -60,38 +54,38 @@ with covid_loinc as
 covid_dx_codes as
 (
     -- ICD-10
-	select 'B97.21' as dx_code,	:dx_strong_positive as dx_category from dual UNION
-	select 'B97.29' as dx_code,	:dx_strong_positive as dx_category from dual UNION
-	select 'U07.1' as dx_code,	:dx_strong_positive as dx_category from dual UNION
-	select 'Z20.828' as dx_code,:dx_weak_positive as dx_category from dual UNION
-	select 'B34.2' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'R50%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'R05%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'R06.0%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J12%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J18%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J20%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J40%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J21%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J96%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J22%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J06.9' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J98.8' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'J80%' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'R43.0' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select 'R43.2' as dx_code,	:dx_weak_positive as dx_category from dual UNION
+	select 'B97.21' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
+	select 'B97.29' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
+	select 'U07.1' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
+	select 'Z20.828' as dx_code,'dx_weak_positive' as dx_category from dual UNION
+	select 'B34.2' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'R50%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'R05%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'R06.0%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J12%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J18%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J20%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J40%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J21%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J96%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J22%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J06.9' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J98.8' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'J80%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'R43.0' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'R43.2' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
     -- SNOMED
-	select '840539006' as dx_code,	:dx_strong_positive as dx_category from dual UNION
-	select '840544004' as dx_code,	:dx_strong_positive as dx_category from dual UNION
-	select '840546002' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '103001002' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '11833005' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '267036007' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '28743005' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '36955009' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '426000000' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '44169009' as dx_code,	:dx_weak_positive as dx_category from dual UNION
-	select '49727002' as dx_code,	:dx_weak_positive as dx_category from dual
+	select '840539006' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
+	select '840544004' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
+	select '840546002' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '103001002' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '11833005' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '267036007' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '28743005' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '36955009' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '426000000' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '44169009' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '49727002' as dx_code,	'dx_weak_positive' as dx_category from dual
 ),
 -- procedure codes from phenotype doc
 covid_proc_codes as
@@ -104,14 +98,14 @@ covid_proc_codes as
     select '86769' as procedure_code from dual
 ),
 -- patients with covid related lab since start_date
-covid_lab_result_cm as
+covid_lab as
 (
-    select
-        lab_result_cm.*
+    select distinct
+        lab_result_cm.patid
     from
         lab_result_cm
     where
-        lab_result_cm.result_date >= to_date(:start_date,'YYYY-MM-DD')
+        lab_result_cm.result_date >= to_date('2020-01-01','YYYY-MM-DD')
         and 
         (
             lab_result_cm.lab_loinc in (select loinc from covid_loinc)
@@ -129,8 +123,8 @@ covid_diagnosis as
         coalesce(dx_date,admit_date) as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < to_date('2020-04-01','YYYY-MM-DD')  then :dx_strong_positive
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= to_date('2020-04-01','YYYY-MM-DD') then :dx_weak_positive
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < to_date('2020-04-01','YYYY-MM-DD')  then 'dx_strong_positive'
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= to_date('2020-04-01','YYYY-MM-DD') then 'dx_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     from
@@ -146,7 +140,7 @@ covid_diagnosis as
             diagnosis
             join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
         where
-            coalesce(dx_date,admit_date) >= to_date(:start_date,'YYYY-MM-DD')
+            coalesce(dx_date,admit_date) >= to_date('2020-01-01','YYYY-MM-DD')
     ) dxq
 ),
 -- patients with strong positive DX included
@@ -157,7 +151,7 @@ dx_strong as
     from
         covid_diagnosis
     where
-        dx_category=:dx_strong_positive    
+        dx_category='dx_strong_positive'    
         
 ),
 -- patients with two different weak DX in same encounter and/or on same date included
@@ -177,7 +171,7 @@ dx_weak as
             from
                 covid_diagnosis
             where
-                dx_category=:dx_weak_positive
+                dx_category='dx_weak_positive'
         ) subq
         group by
             patid,
@@ -202,7 +196,7 @@ dx_weak as
             from
                 covid_diagnosis
             where
-                dx_category=:dx_weak_positive
+                dx_category='dx_weak_positive'
         ) subq
         group by
             patid,
@@ -212,15 +206,15 @@ dx_weak as
     ) dx_same_date
 ),
 -- patients with a covid related procedure since start_date
-covid_procedures as
+covid_procedure as
 (
-    select
-        procedures.*
+    select distinct
+        procedures.patid
     from
         procedures
         join covid_proc_codes on procedures.px = covid_proc_codes.procedure_code
     where
-        procedures.px_date >=  to_date(:start_date,'YYYY-MM-DD')
+        procedures.px_date >=  to_date('2020-01-01','YYYY-MM-DD')
 
 ),
 covid_cohort as
@@ -229,8 +223,24 @@ covid_cohort as
     UNION
     select distinct patid from dx_weak
     UNION
-    select distinct patid from covid_procedures
+    select distinct patid from covid_procedure
     UNION
-    select distinct patid from covid_lab_result_cm
+    select distinct patid from covid_lab
+),
+n3c_cohort as
+(
+	select
+		covid_cohort.patid,
+        case when dx_strong.patid is not null then 1 else 0 end as dx_strong,
+        case when dx_weak.patid is not null then 1 else 0 end as dx_weak,
+        case when covid_procedure.patid is not null then 1 else 0 end as procedure,
+        case when covid_lab.patid is not null then 1 else 0 end as lab
+	from
+		covid_cohort
+		left outer join dx_strong on covid_cohort.patid = dx_strong.patid
+		left outer join dx_weak on covid_cohort.patid = dx_weak.patid
+		left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
+		left outer join covid_lab on covid_cohort.patid = covid_lab.patid
+
 )
-select patid from covid_cohort
+select * from n3c_cohort
