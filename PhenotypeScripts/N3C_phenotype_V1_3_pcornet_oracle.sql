@@ -1,8 +1,9 @@
 --N3C covid-19 phenotype, PCORnet CDM, Oracle
 --N3C phenotype V1.3
 
--- start date
--- '2020-01-01'
+-- start date is set to '2020-01-01'
+
+-- modify covid_lab table expression to include your lab raw name
 
 create table n3c_cohort as
 
@@ -110,9 +111,9 @@ covid_lab as
         (
             lab_result_cm.lab_loinc in (select loinc from covid_loinc)
             or
-			lab_result_cm.raw_lab_name like '%COVID-19%'
+			upper(lab_result_cm.raw_lab_name) like '%COVID-19%'
 			or
-			lab_result_cm.raw_lab_name like '%SARS-COV-2%'            
+			upper(lab_result_cm.raw_lab_name) like '%SARS-COV-2%'            
         )
 ),
 -- patients with covid related diagnosis since start_date
@@ -231,10 +232,10 @@ n3c_cohort as
 (
 	select
 		covid_cohort.patid,
-        case when dx_strong.patid is not null then 1 else 0 end as dx_strong,
-        case when dx_weak.patid is not null then 1 else 0 end as dx_weak,
-        case when covid_procedure.patid is not null then 1 else 0 end as procedure,
-        case when covid_lab.patid is not null then 1 else 0 end as lab
+        case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
+        case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
+        case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
+        case when covid_lab.patid is not null then 1 else 0 end as inc_lab
 	from
 		covid_cohort
 		left outer join dx_strong on covid_cohort.patid = dx_strong.patid
