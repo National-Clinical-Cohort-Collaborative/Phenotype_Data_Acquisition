@@ -118,8 +118,8 @@ covid_diagnosis as
         start_date as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx = 'ICD10CM:B97.29' and start_date < to_date('2020-04-01','YYYY-MM-DD')  then :dx_strong_positive
-			when dx = 'ICD10CM:B97.29' and start_date >= to_date('2020-04-01','YYYY-MM-DD') then :dx_weak_positive
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < to_date('2020-04-01','YYYY-MM-DD')  then :dx_strong_positive
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= to_date('2020-04-01','YYYY-MM-DD') then :dx_weak_positive
 			else dxq.orig_dx_category
 		end as dx_category        
     from
