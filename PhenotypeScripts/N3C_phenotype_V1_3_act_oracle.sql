@@ -2,8 +2,12 @@
 --N3C phenotype V1.2
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
+--05.01.2020 Michele Morris add create table
 
 -- start date '2020-01-01';
+--drop table n3c_cohort;
+--commit;
+create table n3c_cohort as
 
 -- Lab LOINC codes from phenotype doc
 with covid_loinc as
@@ -48,11 +52,11 @@ with covid_loinc as
 	select 'LOINC:94647-5' as loinc from dual UNION
 	select 'LOINC:94660-8' as loinc from dual UNION
 	select 'LOINC:94661-6' as loinc from dual UNION
-    select 'UMLS:C1611271' as loinc from dual UNION --ACT_COVID ontology terms
-    select 'UMLS:C1335447' as loinc from dual UNION
-    select 'UMLS:C1334932' as loinc from dual UNION
-    select 'UMLS:C1334932' as loinc from dual UNION
-    select 'UMLS:C1335447' as loinc from dual
+    	select 'UMLS:C1611271' as loinc from dual UNION --ACT_COVID ontology terms
+    	select 'UMLS:C1335447' as loinc from dual UNION
+    	select 'UMLS:C1334932' as loinc from dual UNION
+    	select 'UMLS:C1334932' as loinc from dual UNION
+    	select 'UMLS:C1335447' as loinc from dual
 ),
 -- Diagnosis ICD-10 codes from phenotype doc
 covid_icd10 as
@@ -90,7 +94,7 @@ covid_proc_codes as
 ),
 -- patients with covid related lab since start_date
 -- if using i2b2 multi-fact table please substitute 'obseravation_fact' with appropriate fact view
-covid_lab_result_cm as
+covid_lab as
 (
     select
         observation_fact.*
@@ -195,7 +199,7 @@ dx_weak as
 ),
 -- patients with a covid related procedure since start_date
 -- if using i2b2 multi-fact table please substitute obseravation_fact with appropriate fact view
-covid_procedures as
+covid_procedure as
 (
     select
         observation_fact.*
@@ -212,8 +216,24 @@ covid_cohort as
     UNION
     select distinct patient_num from dx_weak
     UNION
-    select distinct patient_num from covid_procedures
+    select distinct patient_num from covid_procedure
     UNION
-    select distinct patient_num from covid_lab_result_cm
+    select distinct patient_num from covid_lab
+),
+n3c_cohort as
+(
+	select
+		covid_cohort.patient_num,
+        case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
+        case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
+        case when covid_procedure.patient_num is not null then 1 else 0 end as inc_procedure,
+        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab
+	from
+		covid_cohort
+		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
+		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
+		left outer join covid_procedure on covid_cohort.patient_num = covid_procedure.patient_num
+		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
+
 )
-select distinct patient_num from covid_cohort; 
+select * from n3c_cohort;
