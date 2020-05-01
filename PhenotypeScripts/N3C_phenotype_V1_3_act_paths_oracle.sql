@@ -11,6 +11,8 @@
 --easily modified
 
 -- start date '2020-01-01';
+--drop table n3c_cohort;
+create table n3c_cohort as
 
 -- Lab LOINC codes from phenotype doc
 with covid_loinc_concepts as
@@ -84,7 +86,7 @@ covid_proc_codes as
 ),
 -- patients with covid related lab since start_date
 -- if using multifact i2b2 change the name of observation_fact table appropriately
-covid_lab_result_cm as
+covid_labs as
 (
     select
         observation_fact.*
@@ -208,6 +210,24 @@ covid_cohort as
     UNION
     select distinct patient_num from covid_procedures -- need to modify the ACT Ontology to add missing CPTs
     UNION
-    select distinct patient_num from covid_lab_result_cm 
+    select distinct patient_num from covid_labs 
+),
+n3c_cohort as
+(
+	select
+		covid_cohort.patient_num,
+        case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
+        case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
+        case when covid_procedures.patient_num is not null then 1 else 0 end as inc_procedure,
+        case when covid_labs.patient_num is not null then 1 else 0 end as inc_lab
+	from
+		covid_cohort
+		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
+		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
+		left outer join covid_procedures on covid_cohort.patient_num = covid_procedures.patient_num
+		left outer join covid_labs on covid_cohort.patient_num = covid_labs.patient_num
+
 )
-select distinct patient_num from covid_cohort; 
+select * from n3c_cohort;
+commit;
+
