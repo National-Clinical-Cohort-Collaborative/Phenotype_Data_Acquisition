@@ -4,13 +4,13 @@
 --This extract purposefully excludes the following PCORnet tables: ENROLLMENT, HARVEST, HASH_TOKEN, PCORNET_TRIAL
 --Assumptions: 
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
---	2. You are extracting data with a lookback period of 2 years
+--	2. You are extracting data with a lookback period to 1-1-2018
 
 --DEMOGRAPHIC
 SELECT
    DEMOGRAPHIC.PATID,
-   BIRTH_DATE,
-   BIRTH_TIME,
+   TO_CHAR(BIRTH_DATE, 'MM/YYYY') as BIRTH_DATE, --purposely removing day from birth date
+   '00:00' as BIRTH_TIME, --purposely removing time from birth date
    SEX,
    SEXUAL_ORIENTATION,
    GENDER_IDENTITY,
