@@ -5,7 +5,7 @@
 --05.01.2020 Michele Morris add create table
 
 -- start date '2020-01-01';
---drop table n3c_cohort;
+drop table n3c_cohort;
 --commit;
 create table n3c_cohort as
 
@@ -107,13 +107,16 @@ covid_lab as
             observation_fact.concept_cd in (select loinc from covid_loinc)
         )
 ),
+covid_lab_patients as (
+  select distinct patient_num from covid_lab
+),
 -- patients with covid related diagnosis since start_date
 -- if using i2b2 multi-fact table please substitute 'obseravation_fact' with appropriate fact view
 covid_diagnosis as
 (
     select
         dxq.*,
-        start_date as best_dx_date,  -- use for later queries
+      start_date as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
 			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < to_date('2020-04-01','YYYY-MM-DD')  then '1_strong_positive'
@@ -210,6 +213,9 @@ covid_procedure as
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
 
 ),
+covid_proc_patients as (
+  select distinct patient_num from covid_procedure
+),
 covid_cohort as
 (
     select distinct patient_num from dx_strong
@@ -226,14 +232,14 @@ n3c_cohort as
 		covid_cohort.patient_num,
         case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
         case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
-        case when covid_procedure.patient_num is not null then 1 else 0 end as inc_procedure,
-        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab
+        case when covid_proc_patients.patient_num is not null then 1 else 0 end as inc_procedure,
+        case when covid_lab_patients.patient_num is not null then 1 else 0 end as inc_lab
 	from
 		covid_cohort
 		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
 		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
-		left outer join covid_procedure on covid_cohort.patient_num = covid_procedure.patient_num
-		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
+		left outer join covid_proc_patients on covid_cohort.patient_num = covid_proc_patients.patient_num
+		left outer join covid_lab_patients on covid_cohort.patient_num = covid_lab_patients.patient_num
 
 )
 select * from n3c_cohort;
