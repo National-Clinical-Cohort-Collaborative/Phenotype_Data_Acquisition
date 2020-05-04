@@ -99,6 +99,10 @@ covid_labs as
             observation_fact.concept_cd in (select loinc from covid_loinc)
         )
 ),
+covid_labs_patients as 
+(
+	select distinct patient_num from covid_labs
+),
 -- patients with covid related diagnosis since start_date
 -- if using multifact i2b2 change the name of observation_fact table appropriately
 covid_diagnosis as
@@ -202,6 +206,10 @@ covid_procedures as
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
 
 ),
+covid_proc_patients as 
+(
+	select distinct patient_num from covid_procedures
+),
 covid_cohort as
 (
     select distinct patient_num from dx_strong 
@@ -218,14 +226,14 @@ n3c_cohort as
 		covid_cohort.patient_num,
         case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
         case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
-        case when covid_procedures.patient_num is not null then 1 else 0 end as inc_procedure,
-        case when covid_labs.patient_num is not null then 1 else 0 end as inc_lab
+        case when covid_proc_patients.patient_num is not null then 1 else 0 end as inc_procedure,
+        case when covid_labs_patients.patient_num is not null then 1 else 0 end as inc_lab
 	from
 		covid_cohort
 		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
 		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
-		left outer join covid_procedures on covid_cohort.patient_num = covid_procedures.patient_num
-		left outer join covid_labs on covid_cohort.patient_num = covid_labs.patient_num
+		left outer join covid_proc_patients on covid_cohort.patient_num = covid_proc_patients.patient_num
+		left outer join covid_labs_patients on covid_cohort.patient_num = covid_labs_patients.patient_num
 
 )
 select * from n3c_cohort;
