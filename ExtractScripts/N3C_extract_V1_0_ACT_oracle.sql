@@ -45,7 +45,7 @@ SELECT
 FROM
     observation_fact
 WHERE
-    patient_num in (select patient_num from n3c_cohort) and start_date < '01-JAN-18';
+    patient_num in (select patient_num from n3c_cohort) and start_date >= '01-JAN-18';
     
     
 --select patient dimension the demographic facts including ethnicity are included in observation_fact table as well
@@ -100,5 +100,5 @@ SELECT
 FROM
     visit_dimension
 WHERE
-    patient_num in (select patient_num from n3c_cohort) and start_date < '01-JAN-18';
+    patient_num in (select patient_num from n3c_cohort) and start_date >= '01-JAN-18';
     
