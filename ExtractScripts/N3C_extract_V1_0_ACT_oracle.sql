@@ -6,6 +6,7 @@
 --Assumptions: 
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
 --	2. You are extracting data with a lookback period of 2 years (Not Yet)
+--  3. This currently only works for the traditional i2b2 single fact table
 
 --select concept_dimension table to allow the harmonization team to harmonize local coding
 SELECT
@@ -44,13 +45,13 @@ SELECT
 FROM
     observation_fact
 WHERE
-    patient_num in (select patient_num from n3c_cohort);
+    patient_num in (select patient_num from n3c_cohort) and start_date < '01-JAN-18';
     
     
 --select patient dimension the demographic facts including ethnicity are included in observation_fact table as well
 SELECT
     patient_num,
-    birth_date,
+    to_char(BIRTH_DATE, 'MM/YYYY') as birth_date,
     death_date,
     race_cd,
     sex_cd,
@@ -70,7 +71,7 @@ SELECT
 FROM
     patient_dimension
 WHERE
-    patient_num in (select patient_num from n3c_cohort);
+    patient_num in (select patient_num from n3c_cohort) ;
     
     
 --select visit_dimensions (encounter/visit) vary by site    
@@ -99,5 +100,5 @@ SELECT
 FROM
     visit_dimension
 WHERE
-    patient_num in (select patient_num from n3c_cohort);
+    patient_num in (select patient_num from n3c_cohort) and start_date < '01-JAN-18';
     
