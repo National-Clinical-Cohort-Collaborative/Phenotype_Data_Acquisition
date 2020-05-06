@@ -51,7 +51,7 @@ WHERE
 --select patient dimension the demographic facts including ethnicity are included in observation_fact table as well
 SELECT
     patient_num,
-    birth_date,
+    to_char(BIRTH_DATE, 'MM/YYYY') as birth_date,
     death_date,
     race_cd,
     sex_cd,
