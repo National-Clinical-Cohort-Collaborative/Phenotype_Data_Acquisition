@@ -442,8 +442,26 @@ select
    'Y' as N3C_PHENOTYPE_YN,
    '1.3' as N3C_PHENOTYPE_VERSION,
    sysdate as RUN_DATE,
-   sysdate - 2 as UPDATE_DATE,			--remember to change integer per your site's data latency
-   sysdate + 3 as NEXT_SUBMISSION_DATE	        --remember to change integer per your site's load frequency
+   sysdate - 2 as UPDATE_DATE,						--change integer based on your site's data latency
+   sysdate + 3 as NEXT_SUBMISSION_DATE,					--change integer based on your site's load frequency
+   (select count(*) from DEMOGRAPHIC) as DEMOGRAPHIC_ROW_COUNT,
+   (select count(*) from ENCOUNTER) as ENCOUNTER_ROW_COUNT,
+   (select count(*) from CONDITION) as CONDITION_ROW_COUNT,
+   (select count(*) from DEATH) as DEATH_ROW_COUNT,
+   (select count(*) from DEATH_CAUSE) as DEATH_CAUSE_ROW_COUNT,
+   (select count(*) from DIAGNOSIS) as DIAGNOSIS_ROW_COUNT,
+   (select count(*) from DISPENSING) as DISPENSING_ROW_COUNT,
+   (select count(*) from IMMUNIZATION) as IMMUNIZATION_ROW_COUNT,
+   (select count(*) from LAB_RESULT_CM) as LAB_RESULT_CM_ROW_COUNT,
+   (select count(*) from LDS_ADDRESS_HISTORY) as LDS_ADDRESS_HISTORY_ROW_COUNT,
+   (select count(*) from MED_ADMIN) as MED_ADMIN_ROW_COUNT,
+   (select count(*) from OBS_CLIN) as OBS_CLIN_ROW_COUNT,
+   (select count(*) from OBS_GEN) as OBS_GEN_ROW_COUNT,
+   (select count(*) from PRESCRIBING) as PRESCRIBING_ROW_COUNT,
+   (select count(*) from PRO_CM) as PRO_CM_ROW_COUNT,
+   (select count(*) from PROCEDURES) as PROCEDURES_ROW_COUNT,
+   (select count(*) from PROVIDER) as PROVIDER_ROW_COUNT,
+   (select count(*) from VITAL) as VITAL_ROW_COUNT
 from dual;
 
 
