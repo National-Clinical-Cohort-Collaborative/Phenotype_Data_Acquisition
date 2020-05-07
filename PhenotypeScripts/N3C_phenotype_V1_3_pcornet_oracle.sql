@@ -5,6 +5,8 @@
 
 -- modify covid_lab table expression to include your lab raw name
 
+--drop table n3c_cohort;
+
 create table n3c_cohort as
 
 -- Lab LOINC codes from phenotype doc
