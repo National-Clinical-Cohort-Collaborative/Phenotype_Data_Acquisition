@@ -51,7 +51,28 @@ with covid_loinc as
 	select '94646-7' as loinc from dual UNION
 	select '94647-5' as loinc from dual UNION
 	select '94660-8' as loinc from dual UNION
-	select '94661-6' as loinc from dual 
+	select '94661-6' as loinc from dual UNION
+    -- new for v1.4
+    	select '94306-8' as loinc from dual UNION
+	select '94503-0' as loinc from dual UNION
+	select '94504-8' as loinc from dual UNION
+	select '94531-1' as loinc from dual UNION
+	select '94720-0' as loinc from dual UNION
+	select '94758-0' as loinc from dual UNION
+	select '94759-8' as loinc from dual UNION
+	select '94760-6' as loinc from dual UNION
+	select '94762-2' as loinc from dual UNION
+	select '94763-0' as loinc from dual UNION
+	select '94764-8' as loinc from dual UNION
+	select '94765-5' as loinc from dual UNION
+	select '94766-3' as loinc from dual UNION
+	select '94767-1' as loinc from dual UNION
+	select '94768-9' as loinc from dual UNION
+	select '94769-7' as loinc from dual UNION
+	select '94819-0' as loinc from dual
+    
+    
+    
 ),
 -- Diagnosis ICD-10/SNOMED codes from phenotype doc
 covid_dx_codes as
@@ -77,6 +98,9 @@ covid_dx_codes as
 	select 'J80%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select 'R43.0' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select 'R43.2' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+    -- new for v1.4
+    	select 'R07.1' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select ' R68.83' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
     -- SNOMED
 	select '840539006' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
 	select '840544004' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
@@ -88,7 +112,26 @@ covid_dx_codes as
 	select '36955009' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select '426000000' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select '44169009' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
-	select '49727002' as dx_code,	'dx_weak_positive' as dx_category from dual
+	select '49727002' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+    -- new for v1.4
+	select '135883003' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '161855003' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '161939006' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '161940008' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '161941007' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '2237002' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '23141003' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '247410004' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '274640006' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '274664007' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '284523002' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '386661006' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '409702008' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '426976009' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '43724002' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '60845006' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select '75483001' as dx_code,	'dx_weak_positive' as dx_category from dual
+
 ),
 -- procedure codes from phenotype doc
 covid_proc_codes as
