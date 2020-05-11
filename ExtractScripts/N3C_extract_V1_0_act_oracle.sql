@@ -102,3 +102,47 @@ FROM
 WHERE
     patient_num in (select patient_num from n3c_cohort) and start_date >= '01-JAN-18';
     
+--DATA_COUNTS TABLE
+--OUTPUT_FILE: DATA_COUNTS.csv
+select * from 
+(select 
+   'OBSERVATION_FACT' as TABLE_NAME, 
+   (select count(*) from OBSERVATION_FACT) as ROW_COUNT
+from DUAL
+
+UNION
+   
+select 
+   'VISIT_DIMENSION' as TABLE_NAME,
+   (select count(*) from VISIT_DIMENSION) as ROW_COUNT
+from DUAL
+
+UNION
+   
+select 
+   'PATIENT_DIMENSION' as TABLE_NAME,
+   (select count(*) from PATIENT_DIMENSION) as ROW_COUNT
+from DUAL
+
+UNION
+   
+select 
+   'CONCEPT_DIMENSION' as TABLE_NAME,
+   (select count(*) from CONCEPT_DIMENSION) as ROW_COUNT
+from DUAL);
+
+--MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
+--OUTPUT_FILE: MANIFEST.csv
+select
+   'UNC' as SITE_ABBREV,
+   'Jane Doe' as CONTACT_NAME,
+   'jane_doe@unc.edu' as CONTACT_EMAIL,
+   'ACT' as CDM_NAME,
+   '2.0.1' as CDM_VERSION,
+   'Y' as N3C_PHENOTYPE_YN,
+   '1.3' as N3C_PHENOTYPE_VERSION,
+   TO_CHAR(sysdate, 'YYYY-MM-DD HH24:MI:SS') as RUN_DATE,
+   TO_CHAR(sysdate -2, 'YYYY-MM-DD HH24:MI:SS') as UPDATE_DATE,		--change integer based on your site's data latency
+   TO_CHAR(sysdate +3, 'YYYY-MM-DD HH24:MI:SS') as NEXT_SUBMISSION_DATE					--change integer based on your site's load frequency
+from dual;
+    
