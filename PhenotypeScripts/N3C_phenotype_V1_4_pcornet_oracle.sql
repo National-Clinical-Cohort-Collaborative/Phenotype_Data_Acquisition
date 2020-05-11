@@ -100,7 +100,7 @@ covid_dx_codes as
 	select 'R43.2' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
     -- new for v1.4
     	select 'R07.1' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
-	select ' R68.83' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+	select 'R68.83' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
     -- SNOMED
 	select '840539006' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
 	select '840544004' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
