@@ -1,12 +1,13 @@
 --OMOP v5.3.1 extraction code for N3C
 --Written by Kristin Kostka, OHDSI
 --Code written for Oracle
---This extract purposefully excludes the following PCORnet tables: ENROLLMENT, HARVEST, HASH_TOKEN, PCORNET_TRIAL
+--This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER,
+--Currently this script extracts the derived tables for DRUG_ERA, DOSE_ERA, CONDITION_ERA as well (could be modified we run these in Palantir instead)
 --Assumptions: 
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
 --	2. You are extracting data with a lookback period to 1-1-2018
 
--- To run, you will need to find and replace @cdm_database_schema, @vocabulary_database_schema with your local OMOP schema details
+-- To run, you will need to find and replace @cdm_database_schema with your local OMOP schema details
 
 --PERSON
 --OUTPUT_FILE: PERSON.csv
@@ -45,7 +46,7 @@ SELECT
    PERSON_ID,
    VISIT_CONCEPT_ID,
    TO_CHAR(VISIT_START_DATE, 'YYYY-MM-DD HH24:MI:SS') as VISIT_START_DATE,
-   TO_CHAR(VISIT_START_DATETIME, YYYY-MM-DD HH24:MI:SS') as VISIT_START_DATETIME,
+   TO_CHAR(VISIT_START_DATETIME, 'YYYY-MM-DD HH24:MI:SS') as VISIT_START_DATETIME,
    TO_CHAR(VISIT_END_DATE, 'YYYY-MM-DD HH24:MI:SS') as VISIT_END_DATE,
    TO_CHAR(VISIT_END_DATETIME, 'YYYY-MM-DD HH24:MI:SS') as VISIT_END_DATETIME,
    VISIT_TYPE_CONCEPT_ID,
@@ -204,8 +205,6 @@ SELECT
    PLACE_OF_SERVICE_SOURCE_VALUE,  
 FROM @cdm_database_schema.CARE_SITE;
 
-
-
 --PROVIDER
 --OUTPUT_FILE: PROVIDER.csv
 SELECT
@@ -265,7 +264,6 @@ SELECT
 FROM @cdm_database_schema.CONDITION_ERA ce JOIN N3C_COHORT n ON CE.PERSON_ID = N.PERSON_ID
 WHERE CONDITION_ERA_START_DATE >= '01-JAN-2018';
 
-   
 --DATA_COUNTS TABLE
 --OUTPUT_FILE: DATA_COUNTS.csv
 SELECT * from
