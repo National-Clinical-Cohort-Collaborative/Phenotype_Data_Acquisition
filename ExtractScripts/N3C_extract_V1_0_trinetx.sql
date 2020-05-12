@@ -17,12 +17,12 @@ SELECT
 	, map_rc.mt_code	AS MAPPED_RACE
 	, map_et.mt_code	AS MAPPED_ETHNICITY
 	, map_ms.mt_code	AS MAPPED_MARITAL_STATUS
-FROM CRC_SCHEMA.n3c_cohort n3c
-	JOIN CRC_SCHEMA.patient pt ON pt.patient_id = n3c.patient_id
-	LEFT JOIN CRC_SCHEMA.mapping map_sx ON map_sx.provider_cd = ('DEM|GENDER:' || pt.gender)
-	LEFT JOIN CRC_SCHEMA.mapping map_rc ON map_rc.provider_cd = ('DEM|RACE:' || pt.race)
-	LEFT JOIN CRC_SCHEMA.mapping map_et ON map_et.provider_cd = ('DEM|ETHNICITY:' || pt.ethnicity)
-	LEFT JOIN CRC_SCHEMA.mapping map_ms ON map_ms.provider_cd = ('DEM|MARITAL:' || pt.marital_status)
+FROM TNX_SCHEMA.n3c_cohort n3c
+	JOIN TNX_SCHEMA.patient pt ON pt.patient_id = n3c.patient_id
+	LEFT JOIN TNX_SCHEMA.mapping map_sx ON map_sx.provider_cd = ('DEM|GENDER:' || pt.gender)
+	LEFT JOIN TNX_SCHEMA.mapping map_rc ON map_rc.provider_cd = ('DEM|RACE:' || pt.race)
+	LEFT JOIN TNX_SCHEMA.mapping map_et ON map_et.provider_cd = ('DEM|ETHNICITY:' || pt.ethnicity)
+	LEFT JOIN TNX_SCHEMA.mapping map_ms ON map_ms.provider_cd = ('DEM|MARITAL:' || pt.marital_status)
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -37,9 +37,9 @@ SELECT
 	, enc.lencth_of_stay	AS LENGTH_OF_STAY
 	, enc.orphan	AS ORPHAN_FLAG
 	, map_et.mt_code	AS MAPPED_ENCOUNTER_TYPE
-FROM CRC_SCHEMA.n3c_cohort n3c
-	JOIN CRC_SCHEMA.encounter enc ON enc.patient_id = n3c.patient_id AND enc.start_date >= '2018-01-01'
-	LEFT JOIN CRC_SCHEMA.mapping map_et ON map_et.provider_cd = ('TNX:ENCOUNTER_TYPE:' || enc.type)
+FROM TNX_SCHEMA.n3c_cohort n3c
+	JOIN TNX_SCHEMA.encounter enc ON enc.patient_id = n3c.patient_id AND enc.start_date >= '2018-01-01'
+	LEFT JOIN TNX_SCHEMA.mapping map_et ON map_et.provider_cd = ('TNX:ENCOUNTER_TYPE:' || enc.type)
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -59,9 +59,9 @@ SELECT
 	, dx.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_dx.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_dx.mt_code,':',3)	AS MAPPED_CODE
-FROM CRC_SCHEMA.n3c_cohort n3c
-	JOIN CRC_SCHEMA.diagnosis dx ON dx.patient_id = n3c.patient_id AND dx.date >= '2018-01-01'
-	LEFT JOIN CRC_SCHEMA.mapping map_dx ON map_dx.provider_cd = (dx.code_system || ':' || dx.code)
+FROM TNX_SCHEMA.n3c_cohort n3c
+	JOIN TNX_SCHEMA.diagnosis dx ON dx.patient_id = n3c.patient_id AND dx.date >= '2018-01-01'
+	LEFT JOIN TNX_SCHEMA.mapping map_dx ON map_dx.provider_cd = (dx.code_system || ':' || dx.code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -87,9 +87,9 @@ SELECT
 		WHEN REGEXP_COUNT(map_px.mt_code,':') = 1 THEN SPLIT_PART(map_px.mt_code,':',2)
 		ELSE map_px.mt_code
 		END	AS MAPPED_CODE
-FROM CRC_SCHEMA.n3c_cohort n3c
-	JOIN CRC_SCHEMA.procedure px ON px.patient_id = n3c.patient_id AND px.date >= '2018-01-01'
-	LEFT JOIN CRC_SCHEMA.mapping map_px ON map_px.provider_cd = (px.code_system || ':' || px.code)
+FROM TNX_SCHEMA.n3c_cohort n3c
+	JOIN TNX_SCHEMA.procedure px ON px.patient_id = n3c.patient_id AND px.date >= '2018-01-01'
+	LEFT JOIN TNX_SCHEMA.mapping map_px ON map_px.provider_cd = (px.code_system || ':' || px.code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -135,9 +135,9 @@ SELECT
 		WHEN REGEXP_COUNT(map_rx.mt_code,':') = 1 THEN SPLIT_PART(map_rx.mt_code,':',2)
 		ELSE map_rx.mt_code
 		END	AS MAPPED_CODE
-FROM CRC_SCHEMA.n3c_cohort n3c
-	JOIN CRC_SCHEMA.medication rx ON rx.patient_id = n3c.patient_id AND rx.start_date >= '2018-01-01'
-	LEFT JOIN CRC_SCHEMA.mapping map_rx ON map_rx.provider_cd = (rx.code_system || ':' || rx.code)
+FROM TNX_SCHEMA.n3c_cohort n3c
+	JOIN TNX_SCHEMA.medication rx ON rx.patient_id = n3c.patient_id AND rx.start_date >= '2018-01-01'
+	LEFT JOIN TNX_SCHEMA.mapping map_rx ON map_rx.provider_cd = (rx.code_system || ':' || rx.code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -164,9 +164,9 @@ SELECT
 	, lab.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_lab.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_lab.mt_code,':',3)	AS MAPPED_CODE
-FROM CRC_SCHEMA.n3c_cohort n3c
-	JOIN CRC_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
-	LEFT JOIN CRC_SCHEMA.mapping map_lab ON map_lab.provider_cd = (lab.observation_code_system || ':' || lab.observation_code)
+FROM TNX_SCHEMA.n3c_cohort n3c
+	JOIN TNX_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
+	LEFT JOIN TNX_SCHEMA.mapping map_lab ON map_lab.provider_cd = (lab.observation_code_system || ':' || lab.observation_code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ SELECT
 	, vit.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_vit.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_vit.mt_code,':',3)	AS MAPPED_CODE
-FROM CRC_SCHEMA.n3c_cohort n3c
-	JOIN CRC_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
-	LEFT JOIN CRC_SCHEMA.mapping map_vit ON map_vit.provider_cd = (vit.code_system || ':' || vit.code)
+FROM TNX_SCHEMA.n3c_cohort n3c
+	JOIN TNX_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
+	LEFT JOIN TNX_SCHEMA.mapping map_vit ON map_vit.provider_cd = (vit.code_system || ':' || vit.code)
 ;
