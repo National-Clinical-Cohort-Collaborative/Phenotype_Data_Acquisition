@@ -1,12 +1,27 @@
 ---------------------------------------------------------------------------------------------------------
--- PATIENT DEMOGRAPHIC
+-- Drop existing output tables
 ---------------------------------------------------------------------------------------------------------
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_patient_demographic;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_encounter;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_diagnosis;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_procedure;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_medication;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_lab_result;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_vital_signs;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_data_counts;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_manifest;
+
+---------------------------------------------------------------------------------------------------------
+-- PATIENT DEMOGRAPHIC
+-- OUTPUT_FILE: PATIENT_DEMOGRAPHIC.csv
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_patient_demographic AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, LEFT(pt.birth_date::varchar,7)	AS BIRTH_DATE	--only pull YYYY-MM
 	, pt.vital_status	AS VITAL_STATUS
-	, pt.death_date	AS DEATH_DATE
-	, pt.postal_code	AS POSTAL_CODE
+	, pt.death_date::datetime	AS DEATH_DATE
+	, LEFT(pt.postal_code,5)	AS POSTAL_CODE
 	, pt.gender		AS SEX
 	, pt.race		AS RACE
 	, pt.ethnicity	AS ETHNICITY
@@ -17,35 +32,41 @@ SELECT
 	, map_rc.mt_code	AS MAPPED_RACE
 	, map_et.mt_code	AS MAPPED_ETHNICITY
 	, map_ms.mt_code	AS MAPPED_MARITAL_STATUS
-FROM TNX_SCHEMA.n3c_cohort n3c
-	JOIN TNX_SCHEMA.patient pt ON pt.patient_id = n3c.patient_id
-	LEFT JOIN TNX_SCHEMA.mapping map_sx ON map_sx.provider_cd = ('DEM|GENDER:' || pt.gender)
-	LEFT JOIN TNX_SCHEMA.mapping map_rc ON map_rc.provider_cd = ('DEM|RACE:' || pt.race)
-	LEFT JOIN TNX_SCHEMA.mapping map_et ON map_et.provider_cd = ('DEM|ETHNICITY:' || pt.ethnicity)
-	LEFT JOIN TNX_SCHEMA.mapping map_ms ON map_ms.provider_cd = ('DEM|MARITAL:' || pt.marital_status)
+FROM :TNX_SCHEMA.n3c_cohort n3c
+	JOIN :TNX_SCHEMA.patient pt ON pt.patient_id = n3c.patient_id
+	LEFT JOIN :TNX_SCHEMA.mapping map_sx ON map_sx.provider_code = ('DEM|GENDER:' || pt.gender)
+	LEFT JOIN :TNX_SCHEMA.mapping map_rc ON map_rc.provider_code = ('DEM|RACE:' || pt.race)
+	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('DEM|ETHNICITY:' || pt.ethnicity)
+	LEFT JOIN :TNX_SCHEMA.mapping map_ms ON map_ms.provider_code = ('DEM|MARITAL:' || pt.marital_status)
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- ENCOUNTERS
+-- OUTPUT FILE: ENCOUNTER.csv
 ---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_encounter AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, enc.encounter_id	AS ENCOUNTER_ID
 	, enc.type	AS ENCOUNTER_TYPE
 	, enc.start_date	AS START_DATE
 	, enc.end_date		AS END_DATE
-	, enc.lencth_of_stay	AS LENGTH_OF_STAY
+	, enc.length_of_stay	AS LENGTH_OF_STAY
 	, enc.orphan	AS ORPHAN_FLAG
 	, map_et.mt_code	AS MAPPED_ENCOUNTER_TYPE
-FROM TNX_SCHEMA.n3c_cohort n3c
-	JOIN TNX_SCHEMA.encounter enc ON enc.patient_id = n3c.patient_id AND enc.start_date >= '2018-01-01'
-	LEFT JOIN TNX_SCHEMA.mapping map_et ON map_et.provider_cd = ('TNX:ENCOUNTER_TYPE:' || enc.type)
+FROM :TNX_SCHEMA.n3c_cohort n3c
+	JOIN :TNX_SCHEMA.encounter enc ON enc.patient_id = n3c.patient_id AND enc.start_date >= '2018-01-01'
+	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('TNX:ENCOUNTER_TYPE:' || enc.type)
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- DIAGNOSES
--- Orphan = record with no associated patient/encounter
+-- OUTPUT_FILE: DIAGNOSIS.csv
 ---------------------------------------------------------------------------------------------------------
+-- NOTES:
+--		-Orphan = record with no associated patient/encounter
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_diagnosis AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, dx.encounter_id	AS ENCOUNTER_ID
@@ -59,15 +80,19 @@ SELECT
 	, dx.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_dx.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_dx.mt_code,':',3)	AS MAPPED_CODE
-FROM TNX_SCHEMA.n3c_cohort n3c
-	JOIN TNX_SCHEMA.diagnosis dx ON dx.patient_id = n3c.patient_id AND dx.date >= '2018-01-01'
-	LEFT JOIN TNX_SCHEMA.mapping map_dx ON map_dx.provider_cd = (dx.code_system || ':' || dx.code)
+FROM :TNX_SCHEMA.n3c_cohort n3c
+	JOIN :TNX_SCHEMA.diagnosis dx ON dx.patient_id = n3c.patient_id AND dx.date >= '2018-01-01'
+	LEFT JOIN :TNX_SCHEMA.mapping map_dx ON map_dx.provider_code = (dx.code_system || ':' || dx.code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- PROCEDURES
--- Orphan = record with no associated patient/encounter
+-- OUTPUT_FILE: PROCEDURE.csv
 ---------------------------------------------------------------------------------------------------------
+-- NOTES:
+--	 	-Orphan = record with no associated patient/encounter
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_procedure AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, px.encounter_id	AS ENCOUNTER_ID
@@ -87,15 +112,19 @@ SELECT
 		WHEN REGEXP_COUNT(map_px.mt_code,':') = 1 THEN SPLIT_PART(map_px.mt_code,':',2)
 		ELSE map_px.mt_code
 		END	AS MAPPED_CODE
-FROM TNX_SCHEMA.n3c_cohort n3c
-	JOIN TNX_SCHEMA.procedure px ON px.patient_id = n3c.patient_id AND px.date >= '2018-01-01'
-	LEFT JOIN TNX_SCHEMA.mapping map_px ON map_px.provider_cd = (px.code_system || ':' || px.code)
+FROM :TNX_SCHEMA.n3c_cohort n3c
+	JOIN :TNX_SCHEMA.procedure px ON px.patient_id = n3c.patient_id AND px.date >= '2018-01-01'
+	LEFT JOIN :TNX_SCHEMA.mapping map_px ON map_px.provider_code = (px.code_system || ':' || px.code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- MEDICATIONS
--- Orphan = record with no associated patient/encounter
+-- OUTPUT_FILE: MEDICATION.csv
 ---------------------------------------------------------------------------------------------------------
+-- NOTES:
+--	 	-Orphan = record with no associated patient/encounter
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_medication AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, rx.encounter_id	AS ENCOUNTER_ID
@@ -104,7 +133,7 @@ SELECT
 	, rx.name	AS RX_DESCRIPTION
 	, rx.alt_drug_code_sys	AS ALT_DRUG_CODE_SYS
 	, rx.alt_drug_code	AS ALT_DRUG_CODE
-	, rx.start_date	AS START_DATE
+	, rx.start_date::datetime	AS START_DATE
 	, rx.route_of_administration	AS ROUTE_OF_ADMINISTRATION
 	, rx.units_per_administration	AS UNITS_PER_ADMINISTRATION
 	, rx.frequency	AS FREQUENCY
@@ -118,7 +147,7 @@ SELECT
 	, rx.indication_desc	AS INDICATION_DESC
 	, rx.alt_drug_name	AS ALT_DRUG_NAME
 	, rx.clinical_drug	AS CLINICAL_DRUG
-	, rx.end_date	AS END_DATE
+	, rx.end_date::datetime	AS END_DATE
 	, rx.quantity_dispensed	AS QTY_DISPENSED
 	, rx.dose_amount	AS DOSE_AMOUNT
 	, rx.dose_unit	AS DOSE_UNIT
@@ -135,15 +164,19 @@ SELECT
 		WHEN REGEXP_COUNT(map_rx.mt_code,':') = 1 THEN SPLIT_PART(map_rx.mt_code,':',2)
 		ELSE map_rx.mt_code
 		END	AS MAPPED_CODE
-FROM TNX_SCHEMA.n3c_cohort n3c
-	JOIN TNX_SCHEMA.medication rx ON rx.patient_id = n3c.patient_id AND rx.start_date >= '2018-01-01'
-	LEFT JOIN TNX_SCHEMA.mapping map_rx ON map_rx.provider_cd = (rx.code_system || ':' || rx.code)
+FROM :TNX_SCHEMA.n3c_cohort n3c
+	JOIN :TNX_SCHEMA.medication rx ON rx.patient_id = n3c.patient_id AND rx.start_date >= '2018-01-01'
+	LEFT JOIN :TNX_SCHEMA.mapping map_rx ON map_rx.provider_code = (rx.code_system || ':' || rx.code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- LAB RESULTS
--- Orphan = record with no associated patient/encounter
+-- OUTPUT_FILE: LAB_RESULT.csv
 ---------------------------------------------------------------------------------------------------------
+-- NOTES:
+--	 	-Orphan = record with no associated patient/encounter
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_lab_result AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, lab.encounter_id	AS ENCOUNTER_ID
@@ -164,15 +197,19 @@ SELECT
 	, lab.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_lab.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_lab.mt_code,':',3)	AS MAPPED_CODE
-FROM TNX_SCHEMA.n3c_cohort n3c
-	JOIN TNX_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
-	LEFT JOIN TNX_SCHEMA.mapping map_lab ON map_lab.provider_cd = (lab.observation_code_system || ':' || lab.observation_code)
+FROM :TNX_SCHEMA.n3c_cohort n3c
+	JOIN :TNX_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
+	LEFT JOIN :TNX_SCHEMA.mapping map_lab ON map_lab.provider_code = (lab.observation_code_system || ':' || lab.observation_code)
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- VITAL SIGNS
--- Orphan = record with no associated patient/encounter
+-- OUTPUT_FILE: VITAL_SIGNS.csv
 ---------------------------------------------------------------------------------------------------------
+-- NOTES:
+--	 	-Orphan = record with no associated patient/encounter
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_vital_signs AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, vit.encounter_id	AS ENCOUNTER_ID
@@ -188,7 +225,43 @@ SELECT
 	, vit.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_vit.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_vit.mt_code,':',3)	AS MAPPED_CODE
-FROM TNX_SCHEMA.n3c_cohort n3c
-	JOIN TNX_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
-	LEFT JOIN TNX_SCHEMA.mapping map_vit ON map_vit.provider_cd = (vit.code_system || ':' || vit.code)
+FROM :TNX_SCHEMA.n3c_cohort n3c
+	JOIN :TNX_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
+	LEFT JOIN :TNX_SCHEMA.mapping map_vit ON map_vit.provider_code = (vit.code_system || ':' || vit.code)
+;
+
+---------------------------------------------------------------------------------------------------------
+-- DATA COUNTS
+-- OUTPUT_FILE: DATA_COUNTS.csv
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_data_counts (
+	TABLE_NAME	varchar(200)
+	, ROW_COUNT	int
+);
+
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'PATIENT_DEMOGRAPHIC', count(1) FROM :TNX_SCHEMA.n3c_patient_demographic;
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'ENCOUNTER', count(1) FROM :TNX_SCHEMA.n3c_encounter;
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'DIAGNOSIS', count(1) FROM :TNX_SCHEMA.n3c_diagnosis;
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'PROCEDURE', count(1) FROM :TNX_SCHEMA.n3c_procedure;
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'MEDICATION', count(1) FROM :TNX_SCHEMA.n3c_medication;
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'LAB_RESULT', count(1) FROM :TNX_SCHEMA.n3c_lab_result;
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'VITAL_SIGNS', count(1) FROM :TNX_SCHEMA.n3c_vital_signs;
+COMMIT;
+
+---------------------------------------------------------------------------------------------------------
+-- MANIFEST TABLE (updated per site)
+-- OUTPUT_FILE: MANIFEST.csv
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_manifest AS
+SELECT
+	''	AS SITE_ABBREV
+	, ''	AS CONTACT_NAME
+	, ''	AS CONTACT_EMAIL
+	, 'TRINETX'	AS CDM_NAME
+	, ''	AS CDM_VERSION
+	, 'Y'	AS N3C_PHENOTYPE_YN
+	, '1.4'	AS N3C_PHENOTYPE_VERSION
+	, CURRENT_TIMESTAMP()::datetime	AS RUN_DATE
+	, TIMESTAMPADD(DAY, -2, CURRENT_TIMESTAMP(0))::datetime	AS UPDATE_DATE
+	, TIMESTAMPADD(DAY, 3, CURRENT_TIMESTAMP(0))::datetime	AS NEXT_SUBMISSION_DATE
 ;
