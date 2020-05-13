@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, PCORnet CDM, Oracle
---N3C phenotype V1.3
+--N3C phenotype V1.4
 
 -- start date is set to '2020-01-01'
 
