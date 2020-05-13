@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------------------------------------
 -- Drop existing output tables
 ---------------------------------------------------------------------------------------------------------
-DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_patient_demographic;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_patient;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_encounter;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_diagnosis;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_procedure;
@@ -12,10 +12,10 @@ DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_data_counts;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_manifest;
 
 ---------------------------------------------------------------------------------------------------------
--- PATIENT DEMOGRAPHIC
--- OUTPUT_FILE: PATIENT_DEMOGRAPHIC.csv
+-- PATIENTS
+-- OUTPUT_FILE: PATIENT.csv
 ---------------------------------------------------------------------------------------------------------
-CREATE TABLE :TNX_SCHEMA.n3c_patient_demographic AS
+CREATE TABLE :TNX_SCHEMA.n3c_patient AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
 	, LEFT(pt.birth_date::varchar,7)	AS BIRTH_DATE	--only pull YYYY-MM
@@ -239,7 +239,7 @@ CREATE TABLE :TNX_SCHEMA.n3c_data_counts (
 	, ROW_COUNT	int
 );
 
-INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'PATIENT_DEMOGRAPHIC', count(1) FROM :TNX_SCHEMA.n3c_patient_demographic;
+INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'PATIENT', count(1) FROM :TNX_SCHEMA.n3c_patient;
 INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'ENCOUNTER', count(1) FROM :TNX_SCHEMA.n3c_encounter;
 INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'DIAGNOSIS', count(1) FROM :TNX_SCHEMA.n3c_diagnosis;
 INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'PROCEDURE', count(1) FROM :TNX_SCHEMA.n3c_procedure;
