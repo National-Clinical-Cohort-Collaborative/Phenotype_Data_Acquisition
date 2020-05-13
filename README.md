@@ -27,9 +27,9 @@ Conversion notes:
 
 You’ll find the most recent phenotype [here](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype).
 
-**If you’re a new N3C site: **You may want to start with the [documentation ](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki)we’ve written for running our scripts, customized for each data model. 
+**If you’re a new N3C site:** You may want to start with the [documentation ](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki)we’ve written for running our scripts, customized for each data model. 
 
-**Want to work with us? How to get involved.  **We encourage participation from the community! If you have a bug or an idea, browse the open issues before opening a new one. You can also take a look at the [Open Source Guide](https://opensource.guide/). Please use the GitHub issue tracker to submit any comments or suggestions.
+**Want to work with us? How to get involved.** We encourage participation from the community! If you have a bug or an idea, browse the open issues before opening a new one. You can also take a look at the [Open Source Guide](https://opensource.guide/). Please use the GitHub issue tracker to submit any comments or suggestions.
 
 **Where to find known issues**
 
@@ -51,6 +51,6 @@ We will use the [Wiki ](https://github.com/National-COVID-Cohort-Collaborative/P
 
 It’s important to us to keep our community awesome, growing and collaborative and ask for your help in keeping it that way.  Please refer to our [Code of Conduct](https://docs.google.com/document/d/1UOAHAoa0S7U2HFoepACaENKE2Vomr7y2LgPF29AW8zw/edit) for some guidelines. 
 
-**How to connect with us. **Want to ask a question or just say hi? We’d love to hear from you. If you have already onboarded you can find us on the #n3c-phenotype channel on Slack.  To learn more about the N3C and onboard, please visit us [here](https://covid.cd2h.org/N3C). 
+**How to connect with us.** Want to ask a question or just say hi? We’d love to hear from you. If you have already onboarded you can find us on the #n3c-phenotype channel on Slack.  To learn more about the N3C and onboard, please visit us [here](https://covid.cd2h.org/N3C). 
 
 **We can’t do this without you.**  Big thanks to all our [contributors](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/graphs/contributors)! 
