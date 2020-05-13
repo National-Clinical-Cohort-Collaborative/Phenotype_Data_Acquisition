@@ -9,6 +9,9 @@
 --  3. This currently only works for the traditional i2b2 single fact table
 
 --select concept_dimension table to allow the harmonization team to harmonize local coding
+
+--CONCEPT_DIMENSION TABLE
+--OUTPUT_FILE: CONCEPT_DIMENSION.CSV
 SELECT
     concept_path,
     concept_cd,
@@ -22,6 +25,8 @@ FROM
     concept_dimension;
 
 --select all facts - concept_cd determines domain/value    
+--OBSERVATION_FACT TABLE
+--OUTPUT_FILE: OBSERVATION_FACT.CSV
 SELECT
     encounter_num,
     patient_num,
@@ -43,12 +48,14 @@ SELECT
     sourcesystem_cd,
     upload_id
 FROM
-    observation_fact
+    observation_fact join n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
 WHERE
-    patient_num in (select patient_num from n3c_cohort) and start_date >= '01-JAN-18';
+    start_date >= '01-JAN-18';
     
     
 --select patient dimension the demographic facts including ethnicity are included in observation_fact table as well
+--PATIENT_DIMENSION TABLE
+--OUTPUT_FILE: PATIENT_DIMENSION.csv
 SELECT
     patient_num,
     to_char(BIRTH_DATE, 'MM/YYYY') as birth_date,
@@ -69,12 +76,13 @@ SELECT
     sourcesystem_cd,
     upload_id
 FROM
-    patient_dimension
-WHERE
-    patient_num in (select patient_num from n3c_cohort) ;
+     patient_dimension join n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num ;
+
     
     
---select visit_dimensions (encounter/visit) vary by site    
+--select visit_dimensions (encounter/visit) vary by site  
+--VISIT_DIMENSION TABLE
+--OUTPUT_FILE: VISIT_DIMENSION.csv
 SELECT
     source_id,
     encounter_num,
@@ -98,30 +106,34 @@ SELECT
     n_dept_facility_cd,
     patient_num
 FROM
-    visit_dimension
+    visit_dimiension join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
 WHERE
-    patient_num in (select patient_num from n3c_cohort) and start_date >= '01-JAN-18';
+    start_date < '01-JAN-18'
     
 --DATA_COUNTS TABLE
 --OUTPUT_FILE: DATA_COUNTS.csv
 select * from 
 (select 
    'OBSERVATION_FACT' as TABLE_NAME, 
-   (select count(*) from OBSERVATION_FACT) as ROW_COUNT
+   (select count(*) from OBSERVATION_FACT join n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
+WHERE
+    start_date >= '01-JAN-18') as ROW_COUNT
 from DUAL
 
 UNION
    
 select 
    'VISIT_DIMENSION' as TABLE_NAME,
-   (select count(*) from VISIT_DIMENSION) as ROW_COUNT
+   (select count(*) from VISIT_DIMENSION join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
+WHERE
+    start_date < '01-JAN-18') as ROW_COUNT
 from DUAL
 
 UNION
    
 select 
    'PATIENT_DIMENSION' as TABLE_NAME,
-   (select count(*) from PATIENT_DIMENSION) as ROW_COUNT
+   (select count(*) from PATIENT_DIMENSION join n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num) as ROW_COUNT
 from DUAL
 
 UNION
