@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, ACT/i2b2, Oracle
---N3C phenotype V1.2
+--N3C phenotype V1.4
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
 --05.01.2020 Michele Morris add create table
@@ -56,7 +56,20 @@ with covid_loinc as
     	select 'UMLS:C1335447' as loinc from dual UNION
     	select 'UMLS:C1334932' as loinc from dual UNION
     	select 'UMLS:C1334932' as loinc from dual UNION
-    	select 'UMLS:C1335447' as loinc from dual
+    	select 'UMLS:C1335447' as loinc from dual UNION
+	select 'LOINC:94720-0' as loinc from dual UNION
+	select 'LOINC:94758-0' as loinc from dual UNION
+	select 'LOINC:94759-8' as loinc from dual UNION
+	select 'LOINC:94760-6' as loinc from dual UNION
+	select 'LOINC:94762-2' as loinc from dual UNION
+	select 'LOINC:94763-0' as loinc from dual UNION
+	select 'LOINC:94764-8' as loinc from dual UNION
+	select 'LOINC:94765-5' as loinc from dual UNION
+	select 'LOINC:94766-3' as loinc from dual UNION
+	select 'LOINC94767-1' as loinc from dual UNION
+	select 'LOINC:94768-9' as loinc from dual UNION
+	select 'LOINC:94769-7' as loinc from dual UNION
+	select 'LOINC:94819-0' as loinc from dual
 ),
 -- Diagnosis ICD-10 codes from phenotype doc
 covid_icd10 as
@@ -80,7 +93,9 @@ covid_icd10 as
 	select 'ICD10CM:J98.8' as icd10_code,	'2_weak_positive' as dx_category from dual UNION
 	select 'ICD10CM:J80%' as icd10_code,	'2_weak_positive' as dx_category from dual UNION
 	select 'ICD10CM:R43.0' as icd10_code,	'2_weak_positive' as dx_category from dual UNION
-	select 'ICD10CM:R43.2' as icd10_code,	'2_weak_positive' as dx_category from dual
+	select 'ICD10CM:R43.2' as icd10_code,	'2_weak_positive' as dx_category from dual UNION
+	select 'ICD10CM:R07.1' as icd10_code,	'2_weak_positive' as dx_category from dual UNION
+	select 'ICD10CM:R68.83' as icd10_code,	'2_weak_positive' as dx_category from dual 
 ),
 -- procedure codes from phenotype doc
 covid_proc_codes as
