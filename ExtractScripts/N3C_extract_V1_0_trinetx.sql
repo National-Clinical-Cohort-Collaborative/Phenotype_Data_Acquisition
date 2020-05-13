@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_medication;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_lab_result;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_vital_signs;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_data_counts;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_manifest;
 
 ---------------------------------------------------------------------------------------------------------
 -- PATIENT DEMOGRAPHIC
@@ -246,3 +247,21 @@ INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'MEDICATION', count(1) FROM :TNX_
 INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'LAB_RESULT', count(1) FROM :TNX_SCHEMA.n3c_lab_result;
 INSERT INTO :TNX_SCHEMA.n3c_data_counts SELECT 'VITAL_SIGNS', count(1) FROM :TNX_SCHEMA.n3c_vital_signs;
 COMMIT;
+
+---------------------------------------------------------------------------------------------------------
+-- MANIFEST TABLE (updated per site)
+-- OUTPUT_FILE: MANIFEST.csv
+---------------------------------------------------------------------------------------------------------
+CREATE TABLE :TNX_SCHEMA.n3c_manifest AS
+SELECT
+	''	AS SITE_ABBREV
+	, ''	AS CONTACT_NAME
+	, ''	AS CONTACT_EMAIL
+	, 'TRINETX'	AS CDM_NAME
+	, ''	AS CDM_VERSION
+	, 'Y'	AS N3C_PHENOTYPE_YN
+	, '1.4'	AS N3C_PHENOTYPE_VERSION
+	, CURRENT_TIMESTAMP()::datetime	AS RUN_DATE
+	, TIMESTAMPADD(DAY, -2, CURRENT_TIMESTAMP(0))::datetime	AS UPDATE_DATE
+	, TIMESTAMPADD(DAY, 3, CURRENT_TIMESTAMP(0))::datetime	AS NEXT_SUBMISSION_DATE
+;
