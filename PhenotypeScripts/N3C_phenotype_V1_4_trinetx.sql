@@ -17,7 +17,7 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_cohort;
 --				- Added new codes for phenotype v1.4
 ---------------------------------------------------------------------------------------------------------
 
-INSERT INTO n3c_cohort
+INSERT INTO :TNX_SCHEMA.n3c_cohort
 SELECT distinct patient_id
 FROM (
 	---------------------------------------------------------------------------------------------------------
