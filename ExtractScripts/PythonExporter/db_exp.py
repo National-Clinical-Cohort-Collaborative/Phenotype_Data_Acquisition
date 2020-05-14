@@ -48,9 +48,9 @@ def parse_sql(input_sql):
     return(exports)
 
 
-def db_export(conn, sql, csvwriter):
+def db_export(conn, sql, csvwriter, arraysize):
     cursor=conn.cursor()
-    cursor.arraysize = 50000
+    cursor.arraysize = arraysize
 
     cursor.execute(sql);
     header = [column[0] for column in cursor.description]
@@ -72,6 +72,7 @@ clparse.add_argument('--sql', required=True, help='name of sql file to use for e
 clparse.add_argument('--database_ini', required=True, help='name of database ini file')
 clparse.add_argument('--database_type', required=True, help='oracle or mssql')
 clparse.add_argument('--output_dir', default=".", help='csv files will be exported to this directory')
+clparse.add_argument('--arraysize', default="10000", help='cursor array size, must be integer. This is how many records are fetched at once from DB, if you run into memory issues reduce this number')
 args = clparse.parse_args()
 if args.sql == None:
     print("invalid input, type <programfile> -h for usage")
@@ -81,6 +82,7 @@ output_dir = args.output_dir
 sql_fname = args.sql
 database_ini = args.database_ini
 database = args.database_type
+arraysize = int(args.arraysize)
 
 exports = parse_sql(sql_fname)
 
@@ -98,11 +100,26 @@ else:
     print("Invalid database type, use mssql or oracle")
     exit()
 
+# put domain data in datafiles subdir of output directory
+datafiles_dir = output_dir + os.path.sep + 'datafiles'
+# put files below in root output directory
+root_files = ('MANIFEST.csv','DATA_COUNTS.csv')
+# test for datafiles subdir exists
+if not os.path.exists(datafiles_dir):
+    print("ERROR: path not found {}\n".format(datafiles_dir) )
+    exit()
+
 for exp in exports:
-    print( "output file: " + exp['output_file'] )
-    outfname = output_dir + os.path.sep + exp['output_file']
+    if 'output_file' in exp:
+        output_file = exp['output_file']
+    else:
+        print("ERROR: output_file not found in sql block")
+        exit()
+    print( "processing output file: {}\n".format(output_file) )
+    if output_file in root_files:
+        outfname = output_dir + os.path.sep + exp['output_file']
+    else:
+        outfname = datafiles_dir + os.path.sep + exp['output_file']
     outf = open(outfname, 'w', newline='')
     csvwriter = csv.writer(outf, delimiter='|', quotechar='"', quoting=csv.QUOTE_ALL)
-    db_export(db_conn, exp['sql'], csvwriter)
-
-
+    db_export(db_conn, exp['sql'], csvwriter, arraysize)
