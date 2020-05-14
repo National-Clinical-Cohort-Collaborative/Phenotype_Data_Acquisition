@@ -200,5 +200,5 @@ FROM (
 		OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
 		OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
 	)
-) pt_list
-WHERE patient_id not IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_cohort)
+) pt_list;
+COMMIT;
