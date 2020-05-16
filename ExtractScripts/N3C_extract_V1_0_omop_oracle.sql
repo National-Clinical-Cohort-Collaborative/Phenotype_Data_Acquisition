@@ -27,7 +27,9 @@ SELECT
    RACE_SOURCE_CONCPT_ID,
    ETHNICITY_SOURCE_VALUE,
    ETHNICITY_SOURCE_CONCEPT_ID,
-  FROM @cdm_database_schema.PERSON p JOIN @cdm_database_schema.N3C_COHORT n ON p.PERSON.PERSON_ID = n.N3C_COHORT.PERSON_ID;
+  FROM @cdm_database_schema.PERSON p 
+  JOIN @cdm_database_schema.N3C_COHORT n 
+    ON p.PERSON.PERSON_ID = n.N3C_COHORT.PERSON_ID;
 
 --OBSERVATION_PERIOD
 --OUTPUT_FILE: OBSERVATION_PERIOD.csv
@@ -37,7 +39,9 @@ SELECT
    TO_CHAR(OBSERVATION_PERIOD_START_DATE, 'YYYY-MM-DD HH24:MI:SS') as OBSERVATION_PERIOD_START_DATE,
    TO_CHAR(OBSERVATION_PERIOD_END_DATE, 'YYYY-MM-DD HH24:MI:SS') as OBSERVATION_PERIOD_END_DATE,
    PERIOD_TYPE_CONCEPT_ID,
- FROM @cdm_database_schema.OBSERVATION_PERIOD p JOIN @cdm_database_schema.N3C_COHORT n ON p.PERSON_ID = n.PERSON_ID;
+ FROM @cdm_database_schema.OBSERVATION_PERIOD p 
+ JOIN @cdm_database_schema.N3C_COHORT n 
+   ON p.PERSON_ID = n.PERSON_ID;
  
 --VISIT_OCCURRENCE
 --OUTPUT_FILE: VISIT_OCCURRENCE.csv
@@ -59,8 +63,10 @@ SELECT
    DISCHARGE_TO_CONCEPT_ID,
    DISCHARGE_TO_SOURCE_VALUE,
    PRECEDING_VISIT_OCCURRENCE_ID,
-FROM @cdm_database_schema.VISIT_OCCURRENCE v JOIN N3C_COHORT n ON v.PERSON_ID = n.PERSON_ID
-WHERE VISIT_START_DATE >= '01-JAN-2018';
+FROM @cdm_database_schema.VISIT_OCCURRENCE v 
+JOIN @cdm_database_schema.N3C_COHORT n 
+  ON v.PERSON_ID = n.PERSON_ID
+WHERE v.VISIT_START_DATE >= '01-JAN-2018';
 
 --CONDITION_OCCURRENCE
 --OUTPUT_FILE: CONDITION_OCCURRENCE.csv
@@ -80,8 +86,10 @@ SELECT
    CONDITION_SOURCE_VALUE,
    CONDITION_SOURCE_CONCEPT_ID,
    CONDITON_STATUS_SOURCE_VALUE,
-FROM @cdm_database_schema.CONDITION_OCCURRENCE co JOIN N3C_COHORT n ON CO.person_id = n.person_id
-WHERE REPORT_DATE >= '01-JAN-2018';
+FROM @cdm_database_schema.CONDITION_OCCURRENCE co 
+JOIN @cdm_database_schema.N3C_COHORT n 
+  ON CO.person_id = n.person_id
+WHERE co.CONDITION_START_DATE >= '01-JAN-2018'; --changed from report_date
 
 --DRUG_EXPOSURE
 --OUTPUT_FILE: DRUG_EXPOSURE.csv
@@ -108,8 +116,10 @@ SELECT
    DRUG_SOURCE_CONCEPT_ID,
    ROUTE_SOURCE_VALUE,
    DOSE_UNIT_SOURCE_VALUE,
-FROM @cdm_database_schema.DRUG_EXPOSURE de JOIN N3C_COHORT n ON de.PERSON_ID = n.PERSON_ID
-WHERE DRUG_EXPOSURE_START_DATE >= '01-JAN-2018';
+FROM @cdm_database_schema.DRUG_EXPOSURE de 
+JOIN @cdm_database_schema.N3C_COHORT n 
+  ON de.PERSON_ID = n.PERSON_ID
+WHERE de.DRUG_EXPOSURE_START_DATE >= '01-JAN-2018';
 
 --PROCEDURE_OCCURRENCE
 --OUTPUT_FILE: PROCEDURE_OCCURRENCE.csv
@@ -128,8 +138,10 @@ SELECT
    PROCEDURE_SOURCE_VALUE,
    PROCEDURE_SOURCE_CONCEPT_ID,
    MODIFIER_SOURCE_VALUE
-FROM @cdm_database_schema.PROCEDURE_OCCURRENCE po JOIN N3C_COHORT n ON PO.PERSON_ID = N.PERSON_ID
-WHERE PROCEDURE_DATE >= '01-JAN-2018';
+FROM @cdm_database_schema.PROCEDURE_OCCURRENCE po 
+JOIN @cdm_database_schema.N3C_COHORT n 
+  ON PO.PERSON_ID = N.PERSON_ID
+WHERE po.PROCEDURE_DATE >= '01-JAN-2018';
 
 --MEASUREMENT
 --OUTPUT_FILE: MEASUREMENT.csv
@@ -154,8 +166,10 @@ SELECT
    MEASUREMENT_SOURCE_CONCEPT_ID,
    UNIT_SOURCE_VALUE,
    VALUE_SOURCE_VALUE
-FROM @cdm_database_schema.MEASURMENT m JOIN N3C_COHORT n ON M.PERSON_ID = N.PERSON_ID
-WHERE MEASUREMENT_DATE >= '01-JAN-2018';
+FROM @cdm_database_schema.MEASURMENT m 
+JOIN N3C_COHORT n 
+  ON M.PERSON_ID = N.PERSON_ID
+WHERE m.MEASUREMENT_DATE >= '01-JAN-2018';
 
 --OBSERVATION
 --OUTPUT_FILE: OBSERVATION.csv
@@ -178,8 +192,10 @@ SELECT
    OBSERVATION_SOURCE_CONCEPT_ID,
    UNIT_SOURCE_VALUE,
    QUALIFIER_SOURCE_VALUE
-FROM @cdm_database_schema.OBSERVATION o JOIN N3C_COHORT n ON O.PERSON_ID = N.PERSON_ID
-WHERE OBSERVATION_DATE >= '01-JAN-2018';
+FROM @cdm_database_schema.OBSERVATION o 
+JOIN @cdm_database_schema.N3C_COHORT n 
+  ON O.PERSON_ID = N.PERSON_ID
+WHERE o.OBSERVATION_DATE >= '01-JAN-2018';
 
 --LOCATION
 --OUTPUT_FILE: LOCATION.csv
@@ -192,7 +208,22 @@ SELECT
    ZIP,
    COUNTY,
    LOCATION_SOURCE_VALUE,
-FROM @cdm_database_schema.LOCATION;
+FROM @cdm_database_schema.LOCATION l
+JOIN (
+        SELECT DISTINCT cs.LOCATION_ID
+        FROM @cdm_database_schema.VISIT_OCCURRENCE vo
+        JOIN @cdm_database_schema.N3C_COHORT n
+          ON vo.person_id = n.person_id
+        JOIN @cdm_database_schema.CARE_SITE cs
+          ON vo.care_site_id = cs.care_site_id
+        UNION
+        SELECT DISTINCT p.LOCATION_ID
+        FROM @cdm_database_schema.PERSON p
+        JOIN @cdm_database_schema.N3C_COHORT n
+          ON p.person_id = n.person_id
+      ) a
+  ON l.location_id = a.location_id
+;
 
 --CARE_SITE
 --OUTPUT_FILE: CARE_SITE.csv
@@ -203,7 +234,15 @@ SELECT
    LOCATION_ID,
    CARE_SITE_SOURCE_VALUE,
    PLACE_OF_SERVICE_SOURCE_VALUE,  
-FROM @cdm_database_schema.CARE_SITE;
+FROM @cdm_database_schema.CARE_SITE cs
+JOIN (
+        SELECT DISTINCT CARE_SITE_ID
+        FROM @cdm_database_schema.VISIT_OCCURRENCE vo
+        JOIN @cdm_database_schema.N3C_COHORT n
+          ON vo.person_id = n.person_id
+      ) a
+  ON cs.CARE_SITE_ID = a.CARE_SITE_ID   
+;
 
 --PROVIDER
 --OUTPUT_FILE: PROVIDER.csv
@@ -221,7 +260,35 @@ SELECT
    SPECIALTY_SOURCE_CONCEPT_ID,
    GENDER_SOURCE_VALUE,
    GENDER_SOURCE_CONCEPT_ID
-FROM @cdm_database_schema.PROVIDER;
+FROM @cdm_database_schema.PROVIDER pr
+JOIN (
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdm_database_schema.VISIT_OCCURRENCE vo
+       JOIN @cdm_database_schema.N3C_COHORT n
+          ON vo.PERSON_ID = n.PERSON_ID
+       UNION 
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdm_database_schema.DRUG_EXPOSURE de
+       JOIN @cdm_database_schema.N3C_COHORT n
+          ON de.PERSON_ID = n.PERSON_ID
+       UNION 
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdm_database_schema.MEASUREMENT m
+       JOIN @cdm_database_schema.N3C_COHORT n
+          ON m.PERSON_ID = n.PERSON_ID
+       UNION 
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdm_database_schema.PROCEDURE_OCCURRENCE po
+       JOIN @cdm_database_schema.N3C_COHORT n
+          ON po.PERSON_ID = n.PERSON_ID
+       UNION 
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdm_database_schema.OBSERVATION o
+       JOIN @cdm_database_schema.N3C_COHORT n
+          ON o.PERSON_ID = n.PERSON_ID
+     ) a
+ ON pr.PROVIDER_ID = a.PROVIDER_ID     
+;
  
 --Note: it has yet to be decided if Era tables will be constructured downstream in Palantir platform.
 -- If it is decided that eras will be reconstructed, these three tables will be omitted.
@@ -236,7 +303,9 @@ SELECT
    TO_CHAR(DRUG_ERA_END_DATE, 'YYYY-MM-DD HH24:MI:SS') as DRUG_ERA_END_DATE,   
    DRUG_EXPOSURE_COUNT,
    GAP_DAYS
-FROM @cdm_database_schema.DRUG_ERA dre JOIN N3C_COHORT n ON DRE.PERSON_ID = N.PERSON_ID
+FROM @cdm_database_schema.DRUG_ERA dre 
+JOIN @cdm_database_schema.N3C_COHORT n 
+  ON DRE.PERSON_ID = N.PERSON_ID
 WHERE DRUG_ERA_START_DATE >= '01-JAN-2018';
 
 --DOSE_ERA
@@ -249,7 +318,7 @@ SELECT
    DOSE_VALUE,
    TO_CHAR(DOSE_ERA_START_DATE, 'YYYY-MM-DD HH24:MI:SS') as DOSE_ERA_START_DATE,
    TO_CHAR(DOSE_ERA_END_DATE, 'YYYY-MM-DD HH24:MI:SS') as DOSE_ERA_END_DATE,   
-FROM @cdm_database_schema.DOSE_ERA do JOIN N3C_COHORT n ON DO.PERSON_ID = N.PERSON_ID
+FROM @cdm_database_schema.DOSE_ERA do JOIN @cdm_database_schema.N3C_COHORT n ON DO.PERSON_ID = N.PERSON_ID
 WHERE DOSE_ERA_START_DATE >= '01-JAN-2018';
 
 --CONDITION_ERA
@@ -261,7 +330,7 @@ SELECT
    TO_CHAR(CONDITON_ERA_START_DATE, 'YYYY-MM-DD HH24:MI:SS') as CONDITION_ERA_START_DATE,
    TO_CHAR(CONDITION_ERA_END_DATE, 'YYYY-MM-DD HH24:MI:SS') as CONDITION_ERA_END_DATE,   
    CONDITION_OCCURRENCE_COUNT
-FROM @cdm_database_schema.CONDITION_ERA ce JOIN N3C_COHORT n ON CE.PERSON_ID = N.PERSON_ID
+FROM @cdm_database_schema.CONDITION_ERA ce JOIN @cdm_database_schema.N3C_COHORT n ON CE.PERSON_ID = N.PERSON_ID
 WHERE CONDITION_ERA_START_DATE >= '01-JAN-2018';
 
 --DATA_COUNTS TABLE
