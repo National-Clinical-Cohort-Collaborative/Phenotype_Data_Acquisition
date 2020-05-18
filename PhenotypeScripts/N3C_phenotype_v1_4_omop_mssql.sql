@@ -352,7 +352,7 @@ FROM #final_cohort CO
 DROP TABLE IF EXISTS @cohortDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD 
 
 CREATE @cohortDatabaseSchema.n3c_cohort AS
-	  SELECT person_id, event_date, event_type
+	  SELECT person_id, start_date, end_date
 	  FROM #final_cohort;
 
 TRUNCATE TABLE #cohort_rows;
