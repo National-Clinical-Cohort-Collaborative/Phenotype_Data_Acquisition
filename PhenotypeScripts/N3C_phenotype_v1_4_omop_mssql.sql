@@ -347,40 +347,13 @@ select @target_cohort_id as cohort_definition_id, person_id, start_date, end_dat
 FROM #final_cohort CO
 ;
 
-
 # BEGIN N3C_COHORT table to be retained
 
-#DROP TABLE n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD 
+DROP TABLE IF EXISTS @cohortDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD 
 
-CREATE TABLE #n3c_cohort AS
-(SELECT
-person_id, event_date, event_type
- from #final_cohort F
- JOIN
-#qualified_events Q
-on F.person_id = Q.person_id),
-WITH 
-covid_loinc as (
-select concept_id
-from #Codesets G
-where g.codeset_id = 0
-),
-covid_dx_strong as (
-select concept_id
- #Codesets G 
-where g.codeset_id = 3
-),
-covid_dx_weak as (
-select concept_id
- #Codesets G 
-where g.codeset_id = 2
-),
-covid_proc_codes as (
-select concept_id
- #Codesets G 
-where g.codeset_id = 1
-);
-
+CREATE @cohortDatabaseSchema.n3c_cohort AS
+	  SELECT person_id, event_date, event_type
+	  FROM #final_cohort;
 
 TRUNCATE TABLE #cohort_rows;
 DROP TABLE #cohort_rows;
