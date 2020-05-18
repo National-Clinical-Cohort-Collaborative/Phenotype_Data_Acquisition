@@ -16,7 +16,7 @@
 # To run, you will need to find and replace @cdm_database_schema, @vocabulary_database_schema with your local OMOP schema details
 # Harmonization note:
 # In OHDSI conventions, we do not usually write tables to the main database schema. 
-# OHDSI uses @cohortDatabaseSchema as a results schema build cohort tables for specific analysis. We will build the N3C_COHORT table in this results schema.
+# NOTE: OHDSI uses @cohortDatabaseSchema as a results schema build cohort tables for specific analysis. We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdm_database_schema.
 
 
 # Begin building cohort following OHDSI standard cohort definition process 
