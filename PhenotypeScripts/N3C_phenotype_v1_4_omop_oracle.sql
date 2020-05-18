@@ -304,7 +304,7 @@ FROM @temp_database_schema.N3Cfinal_cohort CO
 
 # BEGIN N3C_COHORT table to be retained -- NOTE: to confirm output matches Phenotype group use cases.
 	      
-#DROP TABLE n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD 
+DROP TABLE @cohortDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD 
 
 CREATE TABLE @cohortDatabaseSchema.n3c_cohort AS
 (SELECT
