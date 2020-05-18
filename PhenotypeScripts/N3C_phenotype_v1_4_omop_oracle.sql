@@ -7,7 +7,7 @@
 # Instructions:
 # Cohorts were assembled using OHDSI Atlas (atlas-covid19.ohdsi.org)
 # This Oracle SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/947
-# If desiredd to evaluate feasibility of each cohort, individual cohorts are available:
+# If desired to evaluate feasibility of each cohort, individual cohorts are available:
 # 1- “Lab-confirmed positive cases” (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
 # 2- "Lab-confirmed negative cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/656)
 # 3- "Suspected positive cases"	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
