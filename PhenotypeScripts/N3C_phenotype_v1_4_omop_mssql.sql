@@ -1,25 +1,26 @@
-# Change log:
-# Version 1 - initial commit
-# Version 2 - updated possible positive cases (typo in name of concept set name) and added additional NIH VSAC codeset_id
-# NOTE: as of V2, OMOP vocabularies have released an update to include new LOINC codes but the load of these concept_ids into atlas-covid19 has not been completed, when this is done we will include these into the concept_set generated
-# Version 3 - consolidated to single cohort definition and added N3C COHORT table + labeling statements
+/** Change log:
+-- Version 1 - initial commit
+-- Version 2 - updated possible positive cases (typo in name of concept set name) and added additional NIH VSAC codeset_id
+-- NOTE: as of V2, OMOP vocabularies have released an update to include new LOINC codes but the load of these concept_ids into atlas-covid19 has not been completed, when this is done we will include these into the concept_set generated
+-- Version 3 - consolidated to single cohort definition and added N3C COHORT table + labeling statements
 
-# Instructions:
-# Cohorts were assembled using OHDSI Atlas (atlas-covid19.ohdsi.org)
-# This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/947
-# If desiredd to evaluate feasibility of each cohort, individual cohorts are available:
-# 1- “Lab-confirmed positive cases” (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
-# 2- "Lab-confirmed negative cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/656)
-# 3- "Suspected positive cases"	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
-# 4- "Possible positive cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/658)
+-- Instructions:
+-- Cohorts were assembled using OHDSI Atlas (atlas-covid19.ohdsi.org)
+-- This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/947
+-- If desiredd to evaluate feasibility of each cohort, individual cohorts are available:
+-- 1- “Lab-confirmed positive cases” (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
+-- 2- "Lab-confirmed negative cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/656)
+-- 3- "Suspected positive cases"	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
+-- 4- "Possible positive cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/658)
 
-# To run, you will need to find and replace @cdm_database_schema, @vocabulary_database_schema with your local OMOP schema details
-# Harmonization note:
-# In OHDSI conventions, we do not usually write tables to the main database schema. 
-# NOTE: OHDSI uses @cohortDatabaseSchema as a results schema build cohort tables for specific analysis. We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdm_database_schema.
+-- To run, you will need to find and replace @cdm_database_schema, @vocabulary_database_schema with your local OMOP schema details
+-- Harmonization note:
+-- In OHDSI conventions, we do not usually write tables to the main database schema. 
+-- NOTE: OHDSI uses @cohortDatabaseSchema as a results schema build cohort tables for specific analysis. We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdm_database_schema.
 
 
-# Begin building cohort following OHDSI standard cohort definition process 
+-- Begin building cohort following OHDSI standard cohort definition process 
+**/
 
 CREATE TABLE #Codesets (
   codeset_id int NOT NULL,
@@ -341,19 +342,16 @@ from cteEnds
 group by person_id, end_date
 ;
 
-DELETE FROM @target_database_schema.@target_cohort_table where cohort_definition_id = @target_cohort_id;
-INSERT INTO @target_database_schema.@target_cohort_table (cohort_definition_id, subject_id, cohort_start_date, cohort_end_date)
-select @target_cohort_id as cohort_definition_id, person_id, start_date, end_date 
-FROM #final_cohort CO
-;
+-- BEGIN N3C_COHORT table to be retained
 
-# BEGIN N3C_COHORT table to be retained
+--DROP TABLE IF EXISTS @cohortDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD
+IF OBJECT_ID('@cohortDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- Drop temp table if it exists
+  DROP TABLE @cohortDatabaseSchema.n3c_cohort;
 
-DROP TABLE IF EXISTS @cohortDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD 
-
-CREATE @cohortDatabaseSchema.n3c_cohort AS
-	  SELECT person_id, start_date, end_date
-	  FROM #final_cohort;
+--SELECT person_id, event_date, event_type
+SELECT DISTINCT person_id, start_date, end_date
+INTO @cohortDatabaseSchema.n3c_cohort
+FROM #final_cohort;
 
 TRUNCATE TABLE #cohort_rows;
 DROP TABLE #cohort_rows;
