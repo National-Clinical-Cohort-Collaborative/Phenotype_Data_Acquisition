@@ -7,8 +7,6 @@
 
 drop table n3c_cohort;
 
-create table n3c_cohort as
-
 -- Lab LOINC codes from phenotype doc
 with covid_loinc as
 (
@@ -112,7 +110,7 @@ covid_proc_codes as
 covid_lab as
 (
     select
-        observation_fact.*
+        observation_fact.patient_num
     from
         observation_fact
     where
@@ -220,7 +218,7 @@ dx_weak as
 covid_procedure as
 (
     select
-        observation_fact.*
+        observation_fact.patient_num
     from
         observation_fact
     where
@@ -257,4 +255,4 @@ n3c_cohort as
 		left outer join covid_lab_patients on covid_cohort.patient_num = covid_lab_patients.patient_num
 
 )
-select * from n3c_cohort;
+select * into dbo.n3c_cohort from n3c_cohort
