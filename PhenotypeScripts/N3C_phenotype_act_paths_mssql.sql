@@ -1,8 +1,9 @@
---N3C covid-19 phenotype, ACT/i2b2, Oracle
---N3C phenotype V1.2
+--N3C covid-19 phenotype, ACT/i2b2, MS SQL Server
+--N3C phenotype V1.4
 --Modified Marshall's code to fit ACT
 --04.27.2020 Michele Morris
 --04.29.2020 Michele Morris hardcode variables
+--05.15.2020 Emily Pfaff converted to SQL Server
 
 --This is for sites that have implemented the ACT_COVID ontology which contains the new COVID concepts
 --This code utilizes i2b2 ontology paths to determine the code set
@@ -10,9 +11,7 @@
 --If a local ontology has been created to contain the appropriate terms this code should be 
 --easily modified
 
--- start date '2020-01-01';
 --drop table n3c_cohort;
-create table n3c_cohort as
 
 -- Lab LOINC codes from phenotype doc
 with covid_loinc_concepts as
@@ -89,11 +88,11 @@ covid_proc_codes as
 covid_labs as
 (
     select
-        observation_fact.*
+        observation_fact.patient_num
     from
         observation_fact
     where
-        observation_fact.start_date >= to_date('2020-01-01','YYYY-MM-DD')
+        observation_fact.start_date >= convert(DATETIME, '2020-01-01')
         and 
         (
             observation_fact.concept_cd in (select loinc from covid_loinc)
@@ -112,8 +111,8 @@ covid_diagnosis as
         start_date as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in (select concept_cd from covid_dx_time_depend_pos) and start_date < to_date('2020-04-01','YYYY-MM-DD')  then '1_strong_positive'
-			when dx in (select concept_cd from covid_dx_time_depend_pos) and start_date >= to_date('2020-04-01','YYYY-MM-DD') then '2_weak_positive'
+			when dx in (select concept_cd from covid_dx_time_depend_pos) and start_date < convert(DATETIME, '2020-04-01')  then '1_strong_positive'
+			when dx in (select concept_cd from covid_dx_time_depend_pos) and start_date >= convert(DATETIME, '2020-04-01') then '2_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     from
@@ -128,7 +127,7 @@ covid_diagnosis as
             observation_fact
             join covid_icd10 on observation_fact.concept_cd like covid_icd10.icd10_code
         where
-             observation_fact.start_date >= to_date('2020-01-01','YYYY-MM-DD')
+             observation_fact.start_date >= convert(DATETIME, '2020-01-01')
     ) dxq
 ),
 -- patients with strong positive DX included
@@ -198,11 +197,11 @@ dx_weak as
 covid_procedures as
 (
     select
-        observation_fact.*
+        observation_fact.patient_num
     from
         observation_fact
     where
-        observation_fact.start_date >=  to_date('2020-01-01','YYYY-MM-DD')
+        observation_fact.start_date >=  convert(DATETIME, '2020-01-01')
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
 
 ),
@@ -236,6 +235,4 @@ n3c_cohort as
 		left outer join covid_labs_patients on covid_cohort.patient_num = covid_labs_patients.patient_num
 
 )
-select * from n3c_cohort;
-commit;
-
+select * into dbo.n3c_cohort from n3c_cohort;
