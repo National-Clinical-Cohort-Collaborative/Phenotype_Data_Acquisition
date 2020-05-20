@@ -18,7 +18,7 @@ extractCohortData <- function(connectionDetails,
 
   result <- DatabaseConnector::querySql(conn, sql)
 
-  write.table(result, file = paste0(outputFolder, fileName ))
+  write.table(result, file = paste0(outputFolder, fileName ), sep="|")
 
   DatabaseConnector::disconnect(conn)
 }
