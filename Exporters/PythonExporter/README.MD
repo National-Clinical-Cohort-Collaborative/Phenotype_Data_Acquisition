@@ -32,16 +32,15 @@ You can (optionally) use our Python Data Exporter to run the N3C data extract sc
 *   Python 3.x
 *   Oracle or MS SqlServer
 *   To use the sftp feature, you may need to install paramiko:  python -m pip install paramiko
-*   You should have already copied one of the [extract SQL files](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/ExtractScripts) to a local directory.
-*   You should also copy the [phenotype SQL file](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/PhenotypeScripts) to a local directory.
+*   You should have already copied one of the [extract SQL files](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/ExtractScripts) and [phenotype SQL file](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/PhenotypeScripts) to a local directory.
 
 **Running the Exporter**
 
 
 
-1. Copy or download the contents of this folder to your local system. To make it easy, use the same directory where your extract SQL file is located.
-2. You may need to edit the extract SQL and phenotype SQL to work on your local system. 
-3. Use the "config_example.ini" file to create your own configuration.  You will want to edit your config file and enter in information for database connection, sftp connection and zip file create (site)
+1. Copy or download the contents of this folder to your local system. To make it easy, use the same directory where your extract SQL and phenotype SQL files are located.
+2. You may need to edit the extract SQL and phenotype SQL for the queries to work on your local system. 
+3. Use the "config_example.ini" file to create your own configuration.  You will want to edit your config file and enter in information for database connection, sftp connection and zip file create (site).
 4. Run the following command, replacing the arguments with whatever options make sense for your environment. 
 
 
@@ -53,11 +52,11 @@ python db_exp.py --config config.ini --database oracle phenotype N3C_phenotype_V
 
 
 *   --help
-*   --config <config file name>  See file "config_example.ini"
-*   --phenotype <phenotype SQL file name>  *optional*
-*   --sql <extract SQL file name>   *optional*
-*   --database <oracle or mssql> *optional*
-*   --output_dir <output directory for export>   Output directory must have a sub-directory "datafiles".
+*   --config (config file name)  See file "config_example.ini"
+*   --phenotype (phenotype SQL file name)
+*   --sql (extract SQL file name)
+*   --database (oracle or mssql)
+*   --output_dir (output directory for export)   Output directory must have a sub-directory "datafiles".
 *   --zip
 *   --sftp
 
