@@ -27,7 +27,7 @@ Conversion notes:
 
 You’ll find the most recent phenotype [here](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype).
 
-**If you’re a new N3C site:** You may want to start with the [documentation ](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki)we’ve written for running our scripts, customized for each data model. 
+**If you’re a new N3C site:** Please start by reviewing the [documentation ](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki)we’ve written for running our scripts, customized for each data model. 
 
 **Want to work with us? How to get involved.** We encourage participation from the community! If you have a bug or an idea, browse the open issues before opening a new one. Please use the GitHub issue tracker to submit any comments or suggestions.
 
