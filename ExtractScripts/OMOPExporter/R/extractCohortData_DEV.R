@@ -47,7 +47,7 @@ parse_sql <- function(sqlFile) {
   
 }
 
-allSQL <- parse_sql("/path/to/big/SQL/file") #swap this out as needed
+allSQL <- parse_sql("source_extract_scripts.sql") #swap this out as needed
 
 runExtraction  <- function(connectionDetails,
                            cdmDatabaseSchema,
