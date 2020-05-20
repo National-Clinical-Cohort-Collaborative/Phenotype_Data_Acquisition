@@ -23,29 +23,33 @@ Conversion notes:
 
 **Python Data Exporter**
 
-You can (optionally) use our Python Data Exporter to run the N3C data extract scripts in sequence, basically hands-free. You can schedule this to run as a cron job if you’d like to use it to dump your data on a recurring basis.
+You can (optionally) use our Python Data Exporter to run the N3C data extract scripts in sequence, basically hands-free. You can schedule this to run as a cron job if youâ€™d like to use it to dump your data on a recurring basis.
 
 **System Prerequisites**
 
 
 
 *   Python 3.x
+*   Oracle or MS SqlServer
+*   To use the sftp feature, you may need to install paramiko:  python -m pip install paramiko
 *   You should have already copied one of the [extract SQL files](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/ExtractScripts) to a local directory.
+*   You should also copy the [phenotype SQL file](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/PhenotypeScripts) to a local directory.
 
 **Running the Exporter**
 
 
 
 1. Copy or download the contents of this folder to your local system. To make it easy, use the same directory where your extract SQL file is located.
-2. In the “database_example” file, fill in the details of your database connection. (You can change the name of this file to whatever makes sense for you.) Right now, we support Oracle and SQL Server. 
-3. Run the following command, replacing the arguments with whatever options make sense for your environment. 
+2. You may need to edit the extract SQL and phenotype SQL to work on your local system. 
+3. Use the "config_example.ini" file to create your own configuration.  You will want to edit your config file and enter in information for database connection, sftp connection and zip file create (site)
+4. Run the following command, replacing the arguments with whatever options make sense for your environment. 
 
 
 ```
-python db_exp.py --sql N3C_extract_V1_0_act_oracle.sql --database_type oracle --database_ini database_example.ini --output_dir E:\N3C
+python db_exp.py --config config.ini --database oracle phenotype N3C_phenotype_V1_0_act_oracle.sql --sql N3C_extract_V1_0_act_oracle.sql --output_dir E:\N3C --zip --sftp
 ```
 
 
 **Bug Reports/Enhancement Requests/Contributions**
 
-We would love to hear from you about this script, as we hope to continue to improve and enhance it. We also welcome contributions, if there’s a cool feature you’ve added locally. Please feel free to open an issue or create a pull request as needed!
+We would love to hear from you about this script, as we hope to continue to improve and enhance it. We also welcome contributions, if thereâ€™s a cool feature youâ€™ve added locally. Please feel free to open an issue or create a pull request as needed!
