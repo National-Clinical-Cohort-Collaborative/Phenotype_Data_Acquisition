@@ -40,9 +40,11 @@ def parse_sql(sql_fname):
         inrows = inf.readlines()
 
     for row in inrows:
+        if (row.strip().startswith('--') == True) and (row.find(output_file_tag) < 0):
+            continue
         sql = sql + row
         if row.find(output_file_tag) >= 0:
-            output_file = row[ row.find(output_file_tag) + len(output_file_tag):].strip()
+            output_file = row[ row.find(output_file_tag) + len(output_file_tag):].strip().upper()
 
         if row.upper().find('DROP ') >= 0:
             drop = True
@@ -142,7 +144,7 @@ if sql_fname != None:
     # put domain data in datafiles subdir of output directory
     datafiles_dir = output_dir + os.path.sep + 'datafiles'
     # put files below in root output directory
-    root_files = ('MANIFEST.csv','DATA_COUNTS.csv')
+    root_files = ('MANIFEST.CSV','DATA_COUNTS.CSV')
     # test for datafiles subdir exists
     if not os.path.exists(datafiles_dir):
         print("ERROR: export path not found {}.  You may need to create a 'datafiles' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
@@ -156,7 +158,7 @@ if sql_fname != None:
             exit()
         print( "processing output file: {}\n".format(output_file) )
         if output_file in root_files:
-            outfname = output_dir + os.path.sep + exp['output_file']
+            outfname = output_dir + os.path.sep + exp['output_file'] 
         else:
             outfname = datafiles_dir + os.path.sep + exp['output_file']
         outf = open(outfname, 'w', newline='')
@@ -187,3 +189,4 @@ if sftp_zip == True:
     sftp = paramiko.SFTPClient.from_transport(transport)
     sftp.chdir(config['sftp']['remote_dir'])
     sftp.put(zip_fname,zip_fname)
+
