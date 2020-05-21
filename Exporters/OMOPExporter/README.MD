@@ -41,9 +41,9 @@ To utilize the Exporter, in `R` use the following code to install the dependenci
 ```r
 	install.packages("devtools")
 	library(devtools)
-	install_github("ohdsi/SqlRender", ref = "v1.6.3")
 	install_github("ohdsi/DatabaseConnector", ref = "v2.4.1")
 	install_github("ohdsi/OhdsiSharing", ref = "v0.1.3")
+	install.packages("SqlRender", ref = "v1.6.6")
 	
 	library("devtools")
 	install_github("National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/Exporters/OMOPExporter")
