@@ -6,12 +6,13 @@ extractCohortData <- function(connectionDetails,
                               outputFolder) {
   
   
-  sql <- SqlRender::loadRenderTranslateSql(sqlFilename = sqlFile,
-                                           packageName = "N3cOhdsi",
-                                           dbms = connectionDetails$dbms,
-                                           cdmDatabaseSchema = cdmDatabaseSchema,
-                                           cohortDatabaseSchema = resultsDatabaseSchema
+  src_sql <-  SqlRender::loadRenderTranslateSql(sqlFilename = "source_extract_scripts.sql",
+                                                packageName = "N3cOhdsi",
+                                                dbms = connectionDetails$dbms,
+                                                cdmDatabaseSchema = cdmDatabaseSchema,
+                                                cohortDatabaseSchema = resultsDatabaseSchema
   )
+
   conn <- DatabaseConnector::connect(connectionDetails)
   
   result <- DatabaseConnector::querySql(conn, sql)
@@ -25,7 +26,7 @@ extractCohortData <- function(connectionDetails,
 parse_sql <- function(sqlFile) {
   sql <- ""
   output_file_tag <- "OUTPUT_FILE:"
-  inrows <- readLines(file(sqlFile, "r"))
+  inrows <- unlist(strsplit(sqlFile, "\r\n"))
   statements <- list()
   outputs <- list()
   statementnum <- 0
@@ -60,7 +61,7 @@ runExtraction  <- function(connectionDetails,
   if (!file.exists(paste0(outputFolder,"DATAFILES")))
     dir.create(paste0(outputFolder,"DATAFILES"), recursive = TRUE)
   
-  allSQL <- parse_sql("source_extract_scripts.sql") #swap this out as needed
+  allSQL <- parse_sql(src_sql) 
   
   #iterate through query list
   for (i in seq(from = 1, to = length(allSQL), by = 2)) {
