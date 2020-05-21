@@ -85,9 +85,9 @@ To utilize the Exporter, in `R` use the following code to install the dependenci
 
 Note: if you cannot call out to the internet from R, you may download the [TAR here](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/archive/master.zip). 
 
-When you download this, you'll need to `Upload` the package into your RStudio environment (if in the cloud) or simply find the file pathway (if local RStudio). Once uploaded, you will need to open the `N3cOhdsi.Rprog` and the `Build` tab will show up in the upper right windows (next to Environment, History, Connections, Build). Proceed to `Install and Restart` to build the `N3COhdsi` library. You may access the file `example_execution.R` to retrieve the code referenced above.
+When you download this, you'll need to `Upload` the package into your RStudio environment (if in the cloud) or simply find the file pathway (if local RStudio). Once uploaded, you will need to open the `N3cOhdsi.Rprog` and the `Build` tab will show up in the upper right windows (next to Environment, History, Connections, Build). Proceed to `Install and Restart` to build the `N3cOhdsi` library. You may access the file `example_execution.R` to retrieve the code referenced above.
 
 
 **Bug Reports/Enhancement Requests/Contributions**
 
-We would love to hear from you about this script, as we hope to continue to improve and enhance it. We also welcome contributions, if there?s a cool feature you've added locally. Please feel free to open an issue or create a pull request as needed!
+We would love to hear from you about this script, as we hope to continue to improve and enhance it. We also welcome contributions, if there's a cool feature you've added locally. Please feel free to open an issue or create a pull request as needed!
