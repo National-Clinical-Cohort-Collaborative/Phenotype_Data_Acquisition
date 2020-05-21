@@ -47,8 +47,6 @@ parse_sql <- function(sqlFile) {
   
 }
 
-allSQL <- parse_sql("source_extract_scripts.sql") #swap this out as needed
-
 runExtraction  <- function(connectionDetails,
                            cdmDatabaseSchema,
                            resultsDatabaseSchema,
@@ -61,6 +59,8 @@ runExtraction  <- function(connectionDetails,
   
   if (!file.exists(paste0(outputFolder,"DATAFILES")))
     dir.create(paste0(outputFolder,"DATAFILES"), recursive = TRUE)
+  
+  allSQL <- parse_sql("source_extract_scripts.sql") #swap this out as needed
   
   #iterate through query list
   for (i in seq(from = 1, to = length(allSQL), by = 2)) {
