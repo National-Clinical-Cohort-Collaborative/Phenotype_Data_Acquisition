@@ -99,7 +99,7 @@ SELECT
     sourcesystem_cd,
     upload_id,
 FROM
-    visit_dimiension join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
+    visit_dimension join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
 WHERE    start_date < '1/1/2018'
     
 --DATA_COUNTS TABLE
