@@ -29,7 +29,7 @@ FROM
 --OUTPUT_FILE: OBSERVATION_FACT.CSV
 SELECT
     encounter_num,
-    patient_num,
+    observation_fact.patient_num,
     concept_cd,
     provider_id,
     start_date,
@@ -57,7 +57,7 @@ WHERE
 --PATIENT_DIMENSION TABLE
 --OUTPUT_FILE: PATIENT_DIMENSION.csv
 SELECT
-    patient_num,
+    patient_dimension.patient_num,
     to_char(BIRTH_DATE, 'MM/YYYY') as birth_date,
     death_date,
     race_cd,
@@ -84,7 +84,7 @@ FROM
 --VISIT_DIMENSION TABLE
 --OUTPUT_FILE: VISIT_DIMENSION.csv
 SELECT
-    patient_num,
+    visit_dimension.patient_num,
     encounter_num,
     active_status_cd,
     start_date,
