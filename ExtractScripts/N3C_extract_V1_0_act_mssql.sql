@@ -84,7 +84,7 @@ FROM
 --VISIT_DIMENSION TABLE
 --OUTPUT_FILE: VISIT_DIMENSION.csv
 SELECT
-    source_id,
+    patient_num,
     encounter_num,
     active_status_cd,
     start_date,
@@ -98,17 +98,9 @@ SELECT
     import_date,
     sourcesystem_cd,
     upload_id,
-    age_at_visit,
-    n_hosp_service_cd,
-    n_provider_id,
-    visit_year,
-    n_enc_type_cd,
-    n_dept_facility_cd,
-    patient_num
 FROM
     visit_dimiension join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
-WHERE
-    start_date < '1/1/2018'
+WHERE    start_date < '1/1/2018'
     
 --DATA_COUNTS TABLE
 --OUTPUT_FILE: DATA_COUNTS.csv
