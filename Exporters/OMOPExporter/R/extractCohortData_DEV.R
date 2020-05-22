@@ -7,7 +7,7 @@ extractCohortData <- function(connectionDetails,
 
   conn <- DatabaseConnector::connect(connectionDetails)
   
-  result <- DatabaseConnector::querySql(conn, sql)
+  result <- DatabaseConnector::querySql(conn, sqlFile)
   
   write.table(result, file = paste0(outputFolder, fileName ), sep = "|")
   
@@ -18,7 +18,7 @@ extractCohortData <- function(connectionDetails,
 parse_sql <- function(sqlFile) {
   sql <- ""
   output_file_tag <- "OUTPUT_FILE:"
-  inrows <- unlist(strsplit(sqlFile, "\r\n"))
+  inrows <- unlist(strsplit(sqlFile, "\n"))
   statements <- list()
   outputs <- list()
   statementnum <- 0
