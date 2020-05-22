@@ -4,14 +4,6 @@ extractCohortData <- function(connectionDetails,
                               cdmDatabaseSchema,
                               resultsDatabaseSchema,
                               outputFolder) {
-  
-  
-  src_sql <-  SqlRender::loadRenderTranslateSql(sqlFilename = "source_extract_scripts.sql",
-                                                packageName = "N3cOhdsi",
-                                                dbms = connectionDetails$dbms,
-                                                cdmDatabaseSchema = cdmDatabaseSchema,
-                                                cohortDatabaseSchema = resultsDatabaseSchema
-  )
 
   conn <- DatabaseConnector::connect(connectionDetails)
   
@@ -60,6 +52,14 @@ runExtraction  <- function(connectionDetails,
   
   if (!file.exists(paste0(outputFolder,"DATAFILES")))
     dir.create(paste0(outputFolder,"DATAFILES"), recursive = TRUE)
+  
+  
+  src_sql <-  SqlRender::loadRenderTranslateSql(sqlFilename = "source_extract_scripts.sql",
+                                                packageName = "N3cOhdsi",
+                                                dbms = connectionDetails$dbms,
+                                                cdmDatabaseSchema = cdmDatabaseSchema,
+                                                cohortDatabaseSchema = resultsDatabaseSchema
+  )
   
   allSQL <- parse_sql(src_sql) 
   
