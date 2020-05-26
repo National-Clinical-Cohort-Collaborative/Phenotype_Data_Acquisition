@@ -1,21 +1,10 @@
-/*	N3C COVID-19 phenotype, PCORnet CDM, SQL Server
-**	N3C phenotype V1.4
-**
-** 	start date is set to '2020-01-01'
-**
-***********************************************************************************************************************
-***	BEFORE USE, COMPLETE THE FOLLOWING STEPS:																		***
-*** 	1. Modify covid_lab table WHERE expression to include your applicable lab test raw names					***
-***				a.  FIND: lab_result_cm.raw_lab_name																***
-*** 	2. Use Find+Replace to update the source and destination database/schemas. 									***
-***			FIND: SOURCE_PCORNET_SCHEMA			==> REPLACE: SOURCE_SCHEMA.DATABASE 		(e.g., PCORNET.dbo)		***
-***			FIND: DESTINATION_N3C_SCHEMA		==> REPLACE: DESTINATION_SCHEMA.DATABASE 	(e.g., PCORNET.n3c)		***
-***				a.  If your source/destination database schemas are the same, replace with the same 				***
-***					value both times (e.g., PCORNET.dbo)															***
-***********************************************************************************************************************
-*/
+--N3C covid-19 phenotype, PCORnet CDM, MS SqlServer
+--N3C phenotype V1.5
 
---drop table SOURCE_PCORNET_SCHEMA.n3c_cohort;
+-- start date is set to '2020-01-01'
+
+-- modify covid_lab table expression to include your lab raw name
+--drop table n3c_cohort;
 
 -- Lab LOINC codes from phenotype doc
 with covid_loinc as
@@ -60,8 +49,7 @@ with covid_loinc as
 	select '94647-5' as loinc UNION
 	select '94660-8' as loinc UNION
 	select '94661-6' as loinc UNION
-    -- new for v1.4
-    select '94306-8' as loinc UNION
+    	select '94306-8' as loinc UNION
 	select '94503-0' as loinc UNION
 	select '94504-8' as loinc UNION
 	select '94531-1' as loinc UNION
@@ -77,10 +65,17 @@ with covid_loinc as
 	select '94767-1' as loinc UNION
 	select '94768-9' as loinc UNION
 	select '94769-7' as loinc UNION
-	select '94819-0' as loinc
-    
-    
-    
+	select '94819-0' as loinc UNION
+    -- new for v1.5
+	select '94745-7' as loinc UNION    
+	select '94746-5' as loinc UNION    
+	select '94756-4' as loinc UNION    
+	select '94757-2' as loinc UNION    
+	select '94761-4' as loinc UNION    
+	select '94822-4' as loinc UNION    
+	select '94845-5' as loinc UNION    
+	select '95125-1' as loinc UNION    
+	select '95209-3' as loinc    
 ),
 -- Diagnosis ICD-10/SNOMED codes from phenotype doc
 covid_dx_codes as
@@ -106,8 +101,7 @@ covid_dx_codes as
 	select 'J80%' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select 'R43.0' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select 'R43.2' as dx_code,	'dx_weak_positive' as dx_category UNION
-    -- new for v1.4
-    select 'R07.1' as dx_code,	'dx_weak_positive' as dx_category UNION
+    	select 'R07.1' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select 'R68.83' as dx_code,	'dx_weak_positive' as dx_category UNION
     -- SNOMED
 	select '840539006' as dx_code,	'dx_strong_positive' as dx_category UNION
@@ -121,7 +115,6 @@ covid_dx_codes as
 	select '426000000' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select '44169009' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select '49727002' as dx_code,	'dx_weak_positive' as dx_category UNION
-    -- new for v1.4
 	select '135883003' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select '161855003' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select '161939006' as dx_code,	'dx_weak_positive' as dx_category UNION
@@ -157,7 +150,7 @@ covid_lab as
     select distinct
         lab_result_cm.patid
     from
-		SOURCE_PCORNET_SCHEMA.lab_result_cm lab_result_cm
+	lab_result_cm
     where
         lab_result_cm.result_date >= convert(DATETIME, '2020-01-01')
         and 
@@ -191,8 +184,8 @@ covid_diagnosis as
             diagnosis.dx_date,
             covid_dx_codes.dx_category as orig_dx_category
         from
-           SOURCE_PCORNET_SCHEMA.diagnosis diagnosis
-            join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
+           diagnosis
+           join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
         where
             coalesce(dx_date,admit_date) >= convert(DATETIME, '2020-01-01')
     ) dxq
@@ -265,8 +258,8 @@ covid_procedure as
     select distinct
         procedures.patid
     from
-        SOURCE_PCORNET_SCHEMA.procedures
-        join covid_proc_codes on procedures.px = covid_proc_codes.procedure_code
+		procedures
+		join covid_proc_codes on procedures.px = covid_proc_codes.procedure_code
     where
         procedures.px_date >=  convert(DATETIME, '2020-01-01')
 
@@ -280,20 +273,21 @@ covid_cohort as
     select distinct patid from covid_procedure
     UNION
     select distinct patid from covid_lab
+),
+cohort as
+(
+	select
+		covid_cohort.patid,
+        case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
+        case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
+        case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
+        case when covid_lab.patid is not null then 1 else 0 end as inc_lab
+	from
+		covid_cohort
+		left outer join dx_strong on covid_cohort.patid = dx_strong.patid
+		left outer join dx_weak on covid_cohort.patid = dx_weak.patid
+		left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
+		left outer join covid_lab on covid_cohort.patid = covid_lab.patid
+
 )
-
-select
-	covid_cohort.patid,
-	case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
-	case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
-	case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
-	case when covid_lab.patid is not null then 1 else 0 end as inc_lab
-INTO DESTINATION_N3C_SCHEMA.N3C_COHORT
-from
-	covid_cohort
-	left outer join dx_strong on covid_cohort.patid = dx_strong.patid
-	left outer join dx_weak on covid_cohort.patid = dx_weak.patid
-	left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
-	left outer join covid_lab on covid_cohort.patid = covid_lab.patid;
-
-select * from DESTINATION_N3C_SCHEMA.n3c_cohort;
+select * into n3c_cohort from cohort;
