@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, PCORnet CDM, Oracle
---N3C phenotype V1.4
+--N3C phenotype V1.5
 
 -- start date is set to '2020-01-01'
 
@@ -52,8 +52,7 @@ with covid_loinc as
 	select '94647-5' as loinc from dual UNION
 	select '94660-8' as loinc from dual UNION
 	select '94661-6' as loinc from dual UNION
-    -- new for v1.4
-    	select '94306-8' as loinc from dual UNION
+   	select '94306-8' as loinc from dual UNION
 	select '94503-0' as loinc from dual UNION
 	select '94504-8' as loinc from dual UNION
 	select '94531-1' as loinc from dual UNION
@@ -69,7 +68,17 @@ with covid_loinc as
 	select '94767-1' as loinc from dual UNION
 	select '94768-9' as loinc from dual UNION
 	select '94769-7' as loinc from dual UNION
-	select '94819-0' as loinc from dual
+	select '94819-0' as loinc from dual UNION
+    -- new for v1.5
+	select '94745-7' as loinc from dual UNION    
+	select '94746-5' as loinc from dual UNION    
+	select '94756-4' as loinc from dual UNION    
+	select '94757-2' as loinc from dual UNION    
+	select '94761-4' as loinc from dual UNION    
+	select '94822-4' as loinc from dual UNION    
+	select '94845-5' as loinc from dual UNION    
+	select '95125-1' as loinc from dual UNION    
+	select '95209-3' as loinc from dual
     
     
     
@@ -98,8 +107,7 @@ covid_dx_codes as
 	select 'J80%' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select 'R43.0' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select 'R43.2' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
-    -- new for v1.4
-    	select 'R07.1' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
+   	select 'R07.1' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select 'R68.83' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
     -- SNOMED
 	select '840539006' as dx_code,	'dx_strong_positive' as dx_category from dual UNION
@@ -113,7 +121,6 @@ covid_dx_codes as
 	select '426000000' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select '44169009' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select '49727002' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
-    -- new for v1.4
 	select '135883003' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select '161855003' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
 	select '161939006' as dx_code,	'dx_weak_positive' as dx_category from dual UNION
