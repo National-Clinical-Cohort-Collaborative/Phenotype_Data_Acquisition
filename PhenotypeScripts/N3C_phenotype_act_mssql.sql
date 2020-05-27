@@ -123,7 +123,7 @@ covid_proc_codes as
 covid_lab as
 (
     select
-        observation_fact.patient_num
+        distinct observation_fact.patient_num
     from
         observation_fact
     where
@@ -132,9 +132,6 @@ covid_lab as
         (
             observation_fact.concept_cd in (select loinc from covid_loinc)
         )
-),
-covid_lab_patients as (
-  select distinct patient_num from covid_lab
 ),
 -- patients with covid related diagnosis since start_date
 -- if using i2b2 multi-fact table please substitute 'observation_fact' with appropriate fact view
@@ -231,16 +228,13 @@ dx_weak as
 covid_procedure as
 (
     select
-        observation_fact.patient_num
+        distinct observation_fact.patient_num
     from
         observation_fact
     where
         observation_fact.start_date >=  convert(DATETIME, '2020-01-01')
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
 
-),
-covid_proc_patients as (
-  select distinct patient_num from covid_procedure
 ),
 covid_cohort as
 (
@@ -258,14 +252,14 @@ n3c_cohort as
 		covid_cohort.patient_num,
         case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
         case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
-        case when covid_proc_patients.patient_num is not null then 1 else 0 end as inc_procedure,
-        case when covid_lab_patients.patient_num is not null then 1 else 0 end as inc_lab
+        case when covid_procedure.patient_num is not null then 1 else 0 end as inc_procedure,
+        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab
 	from
 		covid_cohort
 		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
 		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
-		left outer join covid_proc_patients on covid_cohort.patient_num = covid_proc_patients.patient_num
-		left outer join covid_lab_patients on covid_cohort.patient_num = covid_lab_patients.patient_num
+		left outer join covid_procedure on covid_cohort.patient_num = covid_procedure.patient_num
+		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
 
 )
 select * into dbo.n3c_cohort from n3c_cohort
