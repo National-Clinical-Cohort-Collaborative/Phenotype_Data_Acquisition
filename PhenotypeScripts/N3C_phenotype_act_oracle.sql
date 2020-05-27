@@ -1,8 +1,9 @@
 --N3C covid-19 phenotype, ACT/i2b2, Oracle
---N3C phenotype V1.4
+--N3C phenotype V1.5
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
 --05.01.2020 Michele Morris add create table
+--05.27.2020 Michele Morris add V1.5 Phenotype LOINCs
 
 -- start date '2020-01-01';
 drop table n3c_cohort;
@@ -69,7 +70,17 @@ with covid_loinc as
 	select 'LOINC94767-1' as loinc from dual UNION
 	select 'LOINC:94768-9' as loinc from dual UNION
 	select 'LOINC:94769-7' as loinc from dual UNION
-	select 'LOINC:94819-0' as loinc from dual
+	select 'LOINC:94819-0' as loinc from dual UNION
+	-- new for v1.5
+	select 'LOINC:94745-7' as loinc from dual UNION    
+	select 'LOINC:94746-5' as loinc from dual UNION    
+	select 'LOINC:94756-4' as loinc from dual UNION    
+	select 'LOINC:94757-2' as loinc from dual UNION    
+	select 'LOINC:94761-4' as loinc from dual UNION    
+	select 'LOINC:94822-4' as loinc from dual UNION    
+	select 'LOINC:94845-5' as loinc from dual UNION    
+	select 'LOINC:95125-1' as loinc from dual UNION    
+	select 'LOINC:95209-3' as loinc from dual 
 ),
 -- Diagnosis ICD-10 codes from phenotype doc
 covid_icd10 as
@@ -112,7 +123,7 @@ covid_proc_codes as
 covid_lab as
 (
     select
-        observation_fact.*
+        distinct observation_fact.patient_num
     from
         observation_fact
     where
@@ -121,9 +132,6 @@ covid_lab as
         (
             observation_fact.concept_cd in (select loinc from covid_loinc)
         )
-),
-covid_lab_patients as (
-  select distinct patient_num from covid_lab
 ),
 -- patients with covid related diagnosis since start_date
 -- if using i2b2 multi-fact table please substitute 'obseravation_fact' with appropriate fact view
@@ -220,16 +228,13 @@ dx_weak as
 covid_procedure as
 (
     select
-        observation_fact.*
+        distinct observation_fact.patient_num
     from
         observation_fact
     where
         observation_fact.start_date >=  to_date('2020-01-01','YYYY-MM-DD')
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
 
-),
-covid_proc_patients as (
-  select distinct patient_num from covid_procedure
 ),
 covid_cohort as
 (
@@ -247,14 +252,14 @@ n3c_cohort as
 		covid_cohort.patient_num,
         case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
         case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
-        case when covid_proc_patients.patient_num is not null then 1 else 0 end as inc_procedure,
-        case when covid_lab_patients.patient_num is not null then 1 else 0 end as inc_lab
+        case when covid_procedure.patient_num is not null then 1 else 0 end as inc_procedure,
+        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab
 	from
 		covid_cohort
 		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
 		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
-		left outer join covid_proc_patients on covid_cohort.patient_num = covid_proc_patients.patient_num
-		left outer join covid_lab_patients on covid_cohort.patient_num = covid_lab_patients.patient_num
+		left outer join covid_procedure on covid_cohort.patient_num = covid_procedure.patient_num
+		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
 
 )
 select * from n3c_cohort;
