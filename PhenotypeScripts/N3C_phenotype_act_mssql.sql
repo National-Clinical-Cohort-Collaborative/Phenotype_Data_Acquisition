@@ -1,9 +1,10 @@
 --N3C covid-19 phenotype, ACT/i2b2, MS SQL Server
---N3C phenotype V1.4
+--N3C phenotype V1.5
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
 --05.01.2020 Michele Morris add create table
 --05.15.2020 Emily Pfaff converted to SQL Server
+--05.27.2020 Michele Morris added 1.5 loincs
 
 drop table n3c_cohort;
 
@@ -64,10 +65,22 @@ with covid_loinc as
 	select 'LOINC:94764-8' as loinc UNION
 	select 'LOINC:94765-5' as loinc UNION
 	select 'LOINC:94766-3' as loinc UNION
-	select 'LOINC94767-1' as loinc UNION
+	select 'LOINC:94767-1' as loinc UNION
 	select 'LOINC:94768-9' as loinc UNION
 	select 'LOINC:94769-7' as loinc UNION
-	select 'LOINC:94819-0' as loinc
+	select 'LOINC:94819-0' as loinc UNION
+	-- new for v1.5
+	select 'LOINC:94745-7' as loinc UNION    
+	select 'LOINC:94746-5' as loinc UNION    
+	select 'LOINC:94756-4' as loinc UNION    
+	select 'LOINC:94757-2' as loinc UNION    
+	select 'LOINC:94761-4' as loinc UNION    
+	select 'LOINC:94822-4' as loinc UNION    
+	select 'LOINC:94845-5' as loinc UNION    
+	select 'LOINC:95125-1' as loinc UNION    
+	select 'LOINC:95209-3' as loinc
+	
+
 ),
 -- Diagnosis ICD-10 codes from phenotype doc
 covid_icd10 as
