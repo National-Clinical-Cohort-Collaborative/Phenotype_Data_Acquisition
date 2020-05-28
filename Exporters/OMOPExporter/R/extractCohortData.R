@@ -1,5 +1,3 @@
-
-
 extractCohortData <- function(connectionDetails,
                               sqlFile,
                               fileName,
@@ -7,22 +5,40 @@ extractCohortData <- function(connectionDetails,
                               resultsDatabaseSchema,
                               outputFolder) {
 
-
-  sql <- SqlRender::loadRenderTranslateSql(sqlFilename = sqlFile,
-                                           packageName = "N3cOhdsi",
-                                           dbms = connectionDetails$dbms,
-                                           cdmDatabaseSchema = cdmDatabaseSchema,
-                                           cohortDatabaseSchema = resultsDatabaseSchema
-  )
   conn <- DatabaseConnector::connect(connectionDetails)
 
-  result <- DatabaseConnector::querySql(conn, sql)
+  result <- DatabaseConnector::querySql(conn, sqlFile)
 
-  write.table(result, file = paste0(outputFolder, fileName ), sep="|")
+  write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE)
 
   DatabaseConnector::disconnect(conn)
 }
 
+#break up the single SQL file into individual statements and output file names
+parse_sql <- function(sqlFile) {
+  sql <- ""
+  output_file_tag <- "OUTPUT_FILE:"
+  inrows <- unlist(strsplit(sqlFile, "\n"))
+  statements <- list()
+  outputs <- list()
+  statementnum <- 0
+
+  for (i in 1:length(inrows)) {
+    sql = paste(sql, inrows[i], sep = "\n")
+    if (regexpr("OUTPUT_FILE", inrows[i]) != -1) {
+      output_file <- sub("--OUTPUT_FILE: ", "", inrows[i])
+    }
+    if (regexpr(";", inrows[i]) != -1) {
+      statementnum <- statementnum + 1
+      statements[[statementnum]] = sql
+      outputs[[statementnum]] = output_file
+      sql <- ""
+    }
+  }
+
+  mapply(c, outputs, statements)
+
+}
 
 runExtraction  <- function(connectionDetails,
                            cdmDatabaseSchema,
@@ -37,145 +53,28 @@ runExtraction  <- function(connectionDetails,
   if (!file.exists(paste0(outputFolder,"DATAFILES")))
     dir.create(paste0(outputFolder,"DATAFILES"), recursive = TRUE)
 
-  # person
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_person.sql",
-                    fileName = "person.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
 
-  # obs period
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_observation_period.sql",
-                    fileName = "observation_period.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
+  src_sql <-  SqlRender::loadRenderTranslateSql(sqlFilename = "source_extract_scripts.sql",
+                                                packageName = "N3cOhdsi",
+                                                dbms = connectionDetails$dbms,
+                                                cdmDatabaseSchema = cdmDatabaseSchema,
+                                                cohortDatabaseSchema = resultsDatabaseSchema
+  )
 
-  # visit_occurrence
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_visit_occurrence.sql",
-                    fileName = "visit_occurrence.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
+  allSQL <- parse_sql(src_sql)
 
-  # condition_occurrence
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_condition_occurrence.sql",
-                    fileName = "condition_occurrence.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
+  #iterate through query list
+  for (i in seq(from = 1, to = length(allSQL), by = 2)) {
+    fileNm <- allSQL[i]
+    sql <- allSQL[i+1]
 
+    extractCohortData(connectionDetails,
+                      sqlFile = sql,
+                      fileName = fileNm,
+                      cdmDatabaseSchema,
+                      resultsDatabaseSchema,
+                      outputFolder = paste0(outputFolder, "DATAFILES/"))
 
-  # drug_exposure
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_drug_exposure.sql",
-                    fileName = "drug_exposure.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-
-  # procedure_occurrence
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_procedure_occurrence.sql",
-                    fileName = "procedure_occurrence.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-
-  # measurement
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_measurement.sql",
-                    fileName = "measurement.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-  # observation
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_observation.sql",
-                    fileName = "observation.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-
-  # location
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_location.sql",
-                    fileName = "location.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-  # care_site
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_care_site.sql",
-                    fileName = "care_site.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-
-  # provider
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_provider.sql",
-                    fileName = "provider.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-  # drug_era
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_drug_era.sql",
-                    fileName = "drug_era.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-
-  # dose_era
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_dose_era.sql",
-                    fileName = "dose_era.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-
-  # condition_era
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_condition_era.sql",
-                    fileName = "condition_era.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder = paste0(outputFolder, "DATAFILES/"))
-
-
-  # data_counts
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_data_counts.sql",
-                    fileName = "data_counts.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder)
-
-
-  # manifest
-  extractCohortData(connectionDetails,
-                    sqlFile = "extract_manifest.sql",
-                    fileName = "manifest.csv",
-                    cdmDatabaseSchema,
-                    resultsDatabaseSchema,
-                    outputFolder)
+  }
 
 }
-
-
-
-
