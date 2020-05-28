@@ -14,10 +14,9 @@ createCohort <- function(connectionDetails,
 
 
   sql <- SqlRender::render(sql = src_sql,
-                           cdm_database_schema = cdmDatabaseSchema,
-                           target_database_schema = resultsDatabaseSchema,
-                           cohortDatabaseSchema = resultsDatabaseSchema,
-                           vocabulary_database_schema = vocabularyDatabaseSchema)
+                           cdmDatabaseSchema = cdmDatabaseSchema,
+                           resultsDatabaseSchema = resultsDatabaseSchema,
+                           vocabularyDatabaseSchema = vocabularyDatabaseSchema)
 
   conn <- DatabaseConnector::connect(connectionDetails)
 
