@@ -141,13 +141,13 @@ if sql_fname != None:
     if db_conn == None:
         print("Invalid database type, use mssql or oracle")
         exit()
-    # put domain data in datafiles subdir of output directory
-    datafiles_dir = output_dir + os.path.sep + 'datafiles'
+    # put domain data in DATAFILES subdir of output directory
+    datafiles_dir = output_dir + os.path.sep + 'DATAFILES'
     # put files below in root output directory
     root_files = ('MANIFEST.CSV','DATA_COUNTS.CSV')
-    # test for datafiles subdir exists
+    # test for DATAFILES subdir exists
     if not os.path.exists(datafiles_dir):
-        print("ERROR: export path not found {}.  You may need to create a 'datafiles' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
+        print("ERROR: export path not found {}.  You may need to create a 'DATAFILES' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
         exit()
     exports = parse_sql(sql_fname)
     for exp in exports:
@@ -166,7 +166,7 @@ if sql_fname != None:
         db_export(db_conn, exp['sql'], csvwriter, arraysize)
 
 # ZIP #
-zip_prefix = config['site']['name'] + '_' + config['site']['cdm'] + '_' + config['site']['version'] + '_' + datetime.date.today().strftime("%Y_%m_%d")
+zip_prefix = config['site']['name'] + '_' + config['site']['cdm'] + '_' + datetime.date.today().strftime("%Y%m%d")
 zip_fname = zip_prefix + ".zip"
 
 if create_zip == True:
