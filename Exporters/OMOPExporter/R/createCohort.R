@@ -1,29 +1,30 @@
 
 
-
-
+# vocabularyDatabaseSchema is optional and defaults to cdmDatabaseSchema
 createCohort <- function(connectionDetails,
+                            sqlFilePath,
                             cdmDatabaseSchema,
                             resultsDatabaseSchema,
-                            vocabularyDatabaseSchema,
-                            targetCohortTable = "cohort",
-                            targetCohortId = 9999
-
+                            vocabularyDatabaseSchema = cdmDatabaseSchema
                             ) {
 
 
-  sql <- SqlRender::loadRenderTranslateSql("generate_cohort.sql",
-                                         "N3cOhdsi",
-                                         dbms = connectionDetails$dbms,
-                                         cdm_database_schema = cdmDatabaseSchema,
-                                         target_database_schema = resultsDatabaseSchema,
-                                         cohortDatabaseSchema = resultsDatabaseSchema,
-                                         vocabulary_database_schema = vocabularyDatabaseSchema,
-                                         target_cohort_table = targetCohortTable,
-                                         target_cohort_id = targetCohortId
-                                         )
+
+  src_sql <- SqlRender::readSql(sqlFilePath)
+
+
+  sql <- SqlRender::render(sql = src_sql,
+                           cdm_database_schema = cdmDatabaseSchema,
+                           target_database_schema = resultsDatabaseSchema,
+                           cohortDatabaseSchema = resultsDatabaseSchema,
+                           vocabulary_database_schema = vocabularyDatabaseSchema)
+
   conn <- DatabaseConnector::connect(connectionDetails)
 
 
   result <- DatabaseConnector::executeSql(conn, sql)
+
+
+  DatabaseConnector::disconnect(conn)
+
 }
