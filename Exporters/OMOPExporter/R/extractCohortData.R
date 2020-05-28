@@ -1,18 +1,3 @@
-extractCohortData <- function(connectionDetails,
-                              sqlFile,
-                              fileName,
-                              cdmDatabaseSchema,
-                              resultsDatabaseSchema,
-                              outputFolder) {
-
-  conn <- DatabaseConnector::connect(connectionDetails)
-
-  result <- DatabaseConnector::querySql(conn, sqlFile)
-
-  write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE)
-
-  DatabaseConnector::disconnect(conn)
-}
 
 #break up the single SQL file into individual statements and output file names
 parse_sql <- function(sqlFile) {
@@ -41,9 +26,11 @@ parse_sql <- function(sqlFile) {
 }
 
 runExtraction  <- function(connectionDetails,
+                           sqlFilePath,
                            cdmDatabaseSchema,
                            resultsDatabaseSchema,
-                           outputFolder = paste0(getwd(), "/output/"))
+                           outputFolder = paste0(getwd(), "/output/")
+                           )
 {
 
   # create output dir if it doesn't already exist
@@ -53,28 +40,63 @@ runExtraction  <- function(connectionDetails,
   if (!file.exists(paste0(outputFolder,"DATAFILES")))
     dir.create(paste0(outputFolder,"DATAFILES"), recursive = TRUE)
 
+  # load source sql file
+  src_sql <- SqlRender::readSql(sqlFilePath)
 
-  src_sql <-  SqlRender::loadRenderTranslateSql(sqlFilename = "source_extract_scripts.sql",
-                                                packageName = "N3cOhdsi",
-                                                dbms = connectionDetails$dbms,
-                                                cdmDatabaseSchema = cdmDatabaseSchema,
-                                                cohortDatabaseSchema = resultsDatabaseSchema
-  )
+  # replace parameters with values
+  src_sql <- SqlRender::render(sql = src_sql,
+                           cdmDatabaseSchema = cdmDatabaseSchema,
+                           resultsDatabaseSchema = resultsDatabaseSchema)
 
+
+  # split script into chunks (to produce separate output files)
   allSQL <- parse_sql(src_sql)
+
+
+  # establish database connection
+  conn <- DatabaseConnector::connect(connectionDetails)
 
   #iterate through query list
   for (i in seq(from = 1, to = length(allSQL), by = 2)) {
     fileNm <- allSQL[i]
+
+    # check for and remove return from file name
+    fileNm <- gsub(pattern = "\r", x = fileNm, replacement = "")
+
     sql <- allSQL[i+1]
 
-    extractCohortData(connectionDetails,
-                      sqlFile = sql,
-                      fileName = fileNm,
-                      cdmDatabaseSchema,
-                      resultsDatabaseSchema,
-                      outputFolder = paste0(outputFolder, "DATAFILES/"))
+    # TODO: replace this hacky approach to writing these two tables to the root output folder
+    output_path <- outputFolder
+    if(fileNm != "MANIFEST.csv" && fileNm != "DATA_COUNTS.csv"){
+      output_path <- paste0(outputFolder, "DATAFILES/")
+    }
+
+    executeChunk(conn = conn,
+                 sql = sql,
+                 fileName = fileNm,
+                 outputFolder = output_path)
 
   }
+
+
+
+  # Disconnect from database
+  DatabaseConnector::disconnect(conn)
+
+}
+
+
+executeChunk <- function(conn,
+                         sql,
+                         fileName,
+                         outputFolder){
+
+
+
+  result <- DatabaseConnector::querySql(conn, sql)
+
+  write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE)
+
+
 
 }
