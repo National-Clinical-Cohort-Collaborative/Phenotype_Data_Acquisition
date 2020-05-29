@@ -1,13 +1,3 @@
-install.packages("devtools")
-library(devtools)
-install_github("ohdsi/DatabaseConnector", ref = "v2.4.1")
-install_github("ohdsi/OhdsiSharing", ref = "v0.1.3")
-install.packages("SqlRender", ref = "v1.6.6")
-
-library(DatabaseConnector)
-library(SqlRender)
-library(OhdsiSharing)
-library(N3cOhdsi)
 
 # --- Local configuration ---
 
@@ -18,16 +8,12 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql serv
                                                           )
 cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. TMC_OMOP.dbo
 resultsDatabaseSchema <- "" # schema with write privileges
-
 outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be stored. default provided
-
-cdmName <- "OMOP"
+cdmName <- "OMOP" # source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
 siteAbbrev <- "TuftsMC" # unique site identifier
 
-
-phenotypeSqlPath <- "" # full path of phenotype sql file
-
-extractSqlPath <- ""  # full path of extract sql file
+phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts)
+extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts)
 
 
 # --- Execution ---
@@ -48,7 +34,6 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         )
 
 
-# Compress into single file
-OhdsiSharing::compressFolder(outputFolder, paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%m%d"),".zip") )
-
-
+# Compress output
+zip::zipr(zipfile = paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%m%d"),".zip"),
+          files = list.files(outputFolder, full.names = TRUE))
