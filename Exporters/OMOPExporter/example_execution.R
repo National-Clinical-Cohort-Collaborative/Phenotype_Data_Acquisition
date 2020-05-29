@@ -9,34 +9,46 @@ library(SqlRender)
 library(OhdsiSharing)
 library(N3cOhdsi)
 
-connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "redshift",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
+# --- Local configuration ---
+
+connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql server",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
                                                           server = "", # name of the server
                                                           user="", # username to access server
-                                                          password = "" #password for that user)
-cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. full_201911_omop_v5
-resultsDatabaseSchema <- "study_reference" # schema with write privileges
-vocabularyDatabaseSchema <- "" #schema where your Vocabulary tables are stored
-targetCohortTable <- "n3c_cohort" #name of your cohortTable
-outputFolder <-  paste0(getwd(), "/output/")
+                                                          password = "" #password for that user
+                                                          )
+cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. TMC_OMOP.dbo
+resultsDatabaseSchema <- "" # schema with write privileges
+
+outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be stored. default provided
+
+cdmName <- "OMOP"
+siteAbbrev <- "TuftsMC" # unique site identifier
+
+
+phenotypeSqlPath <- "" # full path of phenotype sql file
+
+extractSqlPath <- ""  # full path of extract sql file
+
+
+# --- Execution ---
 
 
 # Generate cohort
 N3cOhdsi::createCohort(connectionDetails = connectionDetails,
+                        sqlFilePath = phenotypeSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
-                        resultsDatabaseSchema = resultsDatabaseSchema,
-                        vocabularyDatabaseSchema = cdmDatabaseSchema,
-                        targetCohortTable = targetCohortTable
+                        resultsDatabaseSchema = resultsDatabaseSchema
                         )
 
 # Extract data to pipe delimited files
 N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
+                        sqlFilePath = extractSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
-                        resultsDatabaseSchema = resultsDatabaseSchema,
-                        outputFolder = outputFolder
+                        resultsDatabaseSchema = resultsDatabaseSchema
                         )
 
 
 # Compress into single file
-OhdsiSharing::compressFolder(outputFolder, paste0("YourInstitution_OMOP_SiteNumber_", Sys.Date(),".zip") )
+OhdsiSharing::compressFolder(outputFolder, paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%m%d"),".zip") )
 
 
