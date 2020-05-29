@@ -15,6 +15,7 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_cohort;
 -- 	Change Log:
 --		5/11/20 - Updated handling for B97.21
 --				- Added new codes for phenotype v1.4
+-- 		5/29/20 - Added new codes for phenotype v1.5
 ---------------------------------------------------------------------------------------------------------
 
 INSERT INTO :TNX_SCHEMA.n3c_cohort
@@ -54,8 +55,8 @@ FROM (
 				, 'UMLS:ICD10CM:J98.8'
 				, 'UMLS:ICD10CM:R43.0'
 				, 'UMLS:ICD10CM:R43.2'
-				, 'UMLS:ICD10CM:R07.1'		-- New in 1.4
-				, 'UMLS:ICD10CM:R68.83')	-- New in 1.4
+				, 'UMLS:ICD10CM:R07.1'
+				, 'UMLS:ICD10CM:R68.83')
 			-- special handling for B97.21 & B97.29
 			OR (mp.mt_code IN ('UMLS:ICD10CM:B97.21', 'UMLS:ICD10CM:B97.29') AND dx.date >= '2020-04-01')
 			-- Weak DX List - Code Ranges
@@ -152,8 +153,8 @@ FROM (
 			,'UMLS:LNC:94316-7'
 			,'UMLS:LNC:94500-6'
 			,'UMLS:LNC:94502-2'
-			,'UMLS:LNC:94503-0'		--new in 1.4
-			,'UMLS:LNC:94504-8'		--new in 1.4
+			,'UMLS:LNC:94503-0'
+			,'UMLS:LNC:94504-8'
 			,'UMLS:LNC:94505-5'
 			,'UMLS:LNC:94506-3'
 			,'UMLS:LNC:94507-1'
@@ -161,7 +162,7 @@ FROM (
 			,'UMLS:LNC:94509-7'
 			,'UMLS:LNC:94510-5'
 			,'UMLS:LNC:94511-3'
-			,'UMLS:LNC:94531-1'		--new in 1.4
+			,'UMLS:LNC:94531-1'
 			,'UMLS:LNC:94532-9'
 			,'UMLS:LNC:94533-7'
 			,'UMLS:LNC:94534-5'
@@ -183,19 +184,28 @@ FROM (
 			,'UMLS:LNC:94647-5'
 			,'UMLS:LNC:94660-8'
 			,'UMLS:LNC:94661-6'
-			,'UMLS:LNC:94702-0'		--new in 1.4
-			,'UMLS:LNC:94758-0'		--new in 1.4
-			,'UMLS:LNC:94759-8'		--new in 1.4
-			,'UMLS:LNC:94760-6'		--new in 1.4
-			,'UMLS:LNC:94762-2'		--new in 1.4
-			,'UMLS:LNC:94763-0'		--new in 1.4
-			,'UMLS:LNC:94764-8'		--new in 1.4
-			,'UMLS:LNC:94765-5'		--new in 1.4
-			,'UMLS:LNC:94766-3'		--new in 1.4
-			,'UMLS:LNC:94767-1'		--new in 1.4
-			,'UMLS:LNC:94768-9'		--new in 1.4
-			,'UMLS:LNC:94769-7'		--new in 1.4
-			,'UMLS:LNC:94819-0')	--new in 1.4
+			,'UMLS:LNC:94720-0'
+			,'UMLS:LNC:94745-7'		--new in 1.5
+			,'UMLS:LNC:94746-5'		--new in 1.5
+			,'UMLS:LNC:94756-4'		--new in 1.5
+			,'UMLS:LNC:94757-2'		--new in 1.5
+			,'UMLS:LNC:94758-0'
+			,'UMLS:LNC:94759-8'
+			,'UMLS:LNC:94760-6'
+			,'UMLS:LNC:94761-4'		--new in 1.5
+			,'UMLS:LNC:94762-2'
+			,'UMLS:LNC:94763-0'
+			,'UMLS:LNC:94764-8'
+			,'UMLS:LNC:94765-5'
+			,'UMLS:LNC:94766-3'
+			,'UMLS:LNC:94767-1'
+			,'UMLS:LNC:94768-9'
+			,'UMLS:LNC:94769-7'
+			,'UMLS:LNC:94819-0'
+			,'UMLS:LNC:94822-4'		--new in 1.5
+			,'UMLS:LNC:94845-5'		--new in 1.5
+			,'UMLS:LNC:95125-1'		--new in 1.5
+			,'UMLS:LNC:95209-3')	--new in 1.5
 		--OTHER LAB
 		OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
 		OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
