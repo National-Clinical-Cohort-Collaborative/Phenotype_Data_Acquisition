@@ -33,53 +33,75 @@ The OMOP Data Exporer is a `R` library designed to build the N3C phenotype and a
 - R version 3.5.0 or newer
 - On Windows: [RTools](http://cran.r-project.org/bin/windows/Rtools/)
 - [Java](http://java.com)
+- JAVA_HOME environment variable set to JDK path
+  ```r
+    # Check current value: 
+    Sys.getenv("JAVA_HOME")
+    # Set to new value
+    Sys.setenv(JAVA_HOME="~/yourjdkpath")
+  ```
 - Suggested: 25 GB of free disk space
 
-**Running the Exporter**
+**Installation**
+
+First, navigate the root of this repository to find the appropriate phenotype generation and data extraction scripts that match your common data model and sql dialect. Save these to a convenient location as the file paths are expected as parameters below. (TODO: elaborate on this step).
 
 To utilize the Exporter, in `R` use the following code to install the dependencies:
 ```r
-	install.packages("devtools")
-	library(devtools)
-	install_github("ohdsi/DatabaseConnector", ref = "v2.4.1")
-	install_github("ohdsi/OhdsiSharing", ref = "v0.1.3")
-	install.packages("SqlRender", ref = "v1.6.6")
-	
-	library("devtools")
-	install_github("National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/Exporters/OMOPExporter")
+install.packages("devtools")
+library(devtools)
 
-	library(DatabaseConnector)
-	library(SqlRender)
-	library(OhdsiSharing)
-	library(N3cOhdsi)
+install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
+               ,ref = "r-package-rework"
+               ,subdir = "Exporters/OMOPExporter"
+)
 
-	connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "redshift",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
+# Uncomment to test for missing packages
+# setdiff(c("rJava", "DatabaseConnector","SqlRender","zip","N3cOhdsi"), rownames(installed.packages()))
+
+# load package
+library(N3cOhdsi)
+
+```
+**Local configuration**
+
+```r
+connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql server",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
                                                           server = "", # name of the server
                                                           user="", # username to access server
-                                                          password = "" #password for that user)
-	cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. full_201911_omop_v5
-	resultsDatabaseSchema <- "study_reference" # schema with write privileges
-	vocabularyDatabaseSchema <- "" #schema where your Vocabulary tables are stored
-	targetCohortTable <- "n3c_cohort" #name of your cohortTable
-	outputFolder <-  paste0(getwd(), "/output/")
+                                                          password = "" #password for that user
+                                                          )
+cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. TMC_OMOP.dbo
+resultsDatabaseSchema <- "" # schema with write privileges
+outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be stored. default provided
+cdmName <- "OMOP" # source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
+siteAbbrev <- "TuftsMC" # unique site identifier
 
-	N3cOhdsi::createCohort(connectionDetails = connectionDetails,
+phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts)
+extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts)
+
+```
+**Execution**
+```r
+# Generate cohort
+N3cOhdsi::createCohort(connectionDetails = connectionDetails,
+                        sqlFilePath = phenotypeSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
-                        resultsDatabaseSchema = resultsDatabaseSchema,
-                        vocabularyDatabaseSchema = cdmDatabaseSchema,
-                        targetCohortTable = targetCohortTable
+                        resultsDatabaseSchema = resultsDatabaseSchema
                         )
 
-	# Extract data to pipe delimited files
-	N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
+# Extract data to pipe delimited files
+N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
+                        sqlFilePath = extractSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
-                        resultsDatabaseSchema = resultsDatabaseSchema,
-                        outputFolder = outputFolder
+                        resultsDatabaseSchema = resultsDatabaseSchema
                         )
 
 
-	# Compress into single file
-	OhdsiSharing::compressFolder(outputFolder, paste0("YourInstitution_OMOP_SiteNumber_", Sys.Date(),".zip") )
+# Compress output
+zip::zipr(zipfile = paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%m%d"),".zip"),
+          files = list.files(outputFolder, full.names = TRUE))
+
 
 ```
 
