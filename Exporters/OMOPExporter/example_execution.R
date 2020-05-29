@@ -1,4 +1,25 @@
 
+# --- Installation ---
+
+install.packages("devtools")
+library(devtools)
+
+# Uncomment to Verify JAVA_HOME is set to jdk path
+# Sys.getenv("JAVA_HOME")
+
+
+install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
+               ,ref = "r-package-rework"
+               ,subdir = "Exporters/OMOPExporter"
+)
+
+# Uncomment to test for missing packages
+# setdiff(c("rJava", "DatabaseConnector","SqlRender","zip","N3cOhdsi"), rownames(installed.packages()))
+
+# load package
+library(N3cOhdsi)
+
+
 # --- Local configuration ---
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql server",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
