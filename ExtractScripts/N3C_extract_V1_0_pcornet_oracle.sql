@@ -351,7 +351,7 @@ SELECT
    null as RAW_RX_FREQUENCY,
    null as RAW_RXNORM_CUI,
    null as RAW_RX_QUANTITY,
-   RAW_RX_NDC,
+   null as RAW_RX_NDC,
    null as RAW_RX_DOSE_ORDERED,
    null as RAW_RX_DOSE_ORDERED_UNIT,
    null as RAW_RX_ROUTE,
