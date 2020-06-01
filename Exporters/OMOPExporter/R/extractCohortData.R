@@ -95,7 +95,7 @@ executeChunk <- function(conn,
 
   result <- DatabaseConnector::querySql(conn, sql)
 
-  write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE)
+  write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE, na="")
 
 
 
