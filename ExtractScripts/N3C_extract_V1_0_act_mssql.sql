@@ -100,7 +100,7 @@ SELECT
     upload_id,
 FROM
     visit_dimension join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
-WHERE    start_date < '1/1/2018'
+WHERE    start_date >= '1/1/2018'
     
 --DATA_COUNTS TABLE
 --OUTPUT_FILE: DATA_COUNTS.csv
@@ -117,7 +117,7 @@ select
    'VISIT_DIMENSION' as TABLE_NAME,
    (select count(*) from VISIT_DIMENSION join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
 WHERE
-    start_date < '1/1/2018') as ROW_COUNT
+    start_date >= '1/1/2018') as ROW_COUNT
 
 UNION
    
