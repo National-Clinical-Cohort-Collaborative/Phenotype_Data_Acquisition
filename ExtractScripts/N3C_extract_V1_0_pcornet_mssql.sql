@@ -564,10 +564,12 @@ select
 --OUTPUT_FILE: MANIFEST.csv
 select
    'UNC' as SITE_ABBREV,
+   'University of North Carolina at Chapel Hill' as SITE_NAME,
    'Jane Doe' as CONTACT_NAME,
    'jane_doe@unc.edu' as CONTACT_EMAIL,
    'PCORNET' as CDM_NAME,
    '5.1' as CDM_VERSION,
+   null as VOCABULARY_VERSION, --leave null as this only applies to OMOP
    'Y' as N3C_PHENOTYPE_YN,
    '1.3' as N3C_PHENOTYPE_VERSION,
    CONVERT(VARCHAR(20), GETDATE(), 120) as RUN_DATE,
