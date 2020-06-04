@@ -427,10 +427,12 @@ select
 --OUTPUT_FILE: MANIFEST.csv
 select
    'OHDSI' as SITE_ABBREV,
+   ''    AS SITE_NAME,
    'Jane Doe' as CONTACT_NAME,
    'jane_doe@OHDSI.edu' as CONTACT_EMAIL,
    'OMOP' as CDM_NAME,
    '5.3.1' as CDM_VERSION,
+   ''    AS VOCABULARY_VERSION,
    'Y' as N3C_PHENOTYPE_YN,
    '1.3' as N3C_PHENOTYPE_VERSION,
    CONVERT(VARCHAR(20), GETDATE(), 120) as RUN_DATE,
