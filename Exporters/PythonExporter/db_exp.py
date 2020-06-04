@@ -44,7 +44,7 @@ def parse_sql(sql_fname):
             continue
         sql = sql + row
         if row.find(output_file_tag) >= 0:
-            output_file = row[ row.find(output_file_tag) + len(output_file_tag):].strip().upper()
+            output_file = row[ row.find(output_file_tag) + len(output_file_tag):].strip()
 
         if row.upper().find('DROP ') >= 0:
             drop = True
@@ -144,7 +144,7 @@ if sql_fname != None:
     # put domain data in DATAFILES subdir of output directory
     datafiles_dir = output_dir + os.path.sep + 'DATAFILES'
     # put files below in root output directory
-    root_files = ('MANIFEST.CSV','DATA_COUNTS.CSV')
+    root_files = ('MANIFEST.csv','DATA_COUNTS.csv')
     # test for DATAFILES subdir exists
     if not os.path.exists(datafiles_dir):
         print("ERROR: export path not found {}.  You may need to create a 'DATAFILES' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
