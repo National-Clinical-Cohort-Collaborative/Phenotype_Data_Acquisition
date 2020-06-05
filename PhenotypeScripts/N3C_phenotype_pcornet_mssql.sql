@@ -150,7 +150,7 @@ covid_lab as
     select distinct
         lab_result_cm.patid
     from
-	lab_result_cm
+	@cdmDatabaseSchema.lab_result_cm
     where
         lab_result_cm.result_date >= convert(DATETIME, '2020-01-01')
         and 
@@ -184,7 +184,7 @@ covid_diagnosis as
             diagnosis.dx_date,
             covid_dx_codes.dx_category as orig_dx_category
         from
-           diagnosis
+           @cdmDatabaseSchema.diagnosis
            join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
         where
             coalesce(dx_date,admit_date) >= convert(DATETIME, '2020-01-01')
@@ -258,7 +258,7 @@ covid_procedure as
     select distinct
         procedures.patid
     from
-		procedures
+		@cdmDatabaseSchema.procedures
 		join covid_proc_codes on procedures.px = covid_proc_codes.procedure_code
     where
         procedures.px_date >=  convert(DATETIME, '2020-01-01')
@@ -290,4 +290,4 @@ cohort as
 		left outer join covid_lab on covid_cohort.patid = covid_lab.patid
 
 )
-select * into n3c_cohort from cohort;
+select * into @resultsDatabaseSchema.n3c_cohort from cohort;
