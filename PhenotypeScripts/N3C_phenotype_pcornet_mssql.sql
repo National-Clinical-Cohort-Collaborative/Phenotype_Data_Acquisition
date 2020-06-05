@@ -4,7 +4,10 @@
 -- start date is set to '2020-01-01'
 
 -- modify covid_lab table expression to include your lab raw name
---drop table n3c_cohort;
+
+-- Clear previous execution
+IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- Drop temp table if it exists
+  DROP TABLE @resultsDatabaseSchema.n3c_cohort;
 
 -- Lab LOINC codes from phenotype doc
 with covid_loinc as
