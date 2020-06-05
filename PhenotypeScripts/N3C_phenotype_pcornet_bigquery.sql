@@ -9,7 +9,8 @@
 DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
 
 -- Lab LOINC codes from phenotype doc
-CREATE TABLE @resultsDatabaseSchema.n3c_cohort  AS WITH covid_loinc as
+CREATE TABLE aab1en92cohort
+ AS WITH covid_loinc as
 (
 	select '94307-6' as loinc union distinct select '94308-4' as loinc union distinct select '94309-2' as loinc union distinct select '94310-0' as loinc union distinct select '94311-8' as loinc union distinct select '94312-6' as loinc union distinct select '94313-4' as loinc union distinct select '94314-2' as loinc union distinct select '94315-9' as loinc union distinct select '94316-7' as loinc union distinct select '94500-6' as loinc union distinct select '94502-2' as loinc union distinct select '94505-5' as loinc union distinct select '94506-3' as loinc union distinct select '94507-1' as loinc union distinct select '94508-9' as loinc union distinct select '94509-7' as loinc union distinct select '94510-5' as loinc union distinct select '94511-3' as loinc union distinct select '94532-9' as loinc union distinct select '94533-7' as loinc union distinct select '94534-5' as loinc union distinct select '94547-7' as loinc union distinct select '94558-4' as loinc union distinct select '94559-2' as loinc union distinct select '94562-6' as loinc union distinct select '94563-4' as loinc union distinct select '94564-2' as loinc union distinct select '94565-9' as loinc union distinct select '94639-2' as loinc union distinct select '94640-0' as loinc union distinct select '94641-8' as loinc union distinct select '94642-6' as loinc union distinct select '94643-4' as loinc union distinct select '94644-2' as loinc union distinct select '94645-9' as loinc union distinct select '94646-7' as loinc union distinct select '94647-5' as loinc union distinct select '94660-8' as loinc union distinct select '94661-6' as loinc union distinct select '94306-8' as loinc union distinct select '94503-0' as loinc union distinct select '94504-8' as loinc union distinct select '94531-1' as loinc union distinct select '94720-0' as loinc union distinct select '94758-0' as loinc union distinct select '94759-8' as loinc union distinct select '94760-6' as loinc union distinct select '94762-2' as loinc union distinct select '94763-0' as loinc union distinct select '94764-8' as loinc union distinct select '94765-5' as loinc union distinct select '94766-3' as loinc union distinct select '94767-1' as loinc union distinct select '94768-9' as loinc union distinct select '94769-7' as loinc union distinct select '94819-0' as loinc union distinct select '94745-7' as loinc union distinct select '94746-5' as loinc union distinct select '94756-4' as loinc union distinct select '94757-2' as loinc union distinct select '94761-4' as loinc union distinct select '94822-4' as loinc union distinct select '94845-5' as loinc union distinct select '95125-1' as loinc union distinct select '95209-3' as loinc    
 ),
@@ -138,21 +139,28 @@ covid_cohort as
     union distinct select distinct patid from dx_weak
     union distinct select distinct patid from covid_procedure
     union distinct select distinct patid from covid_lab
-),
-cohort as
-(
-	select
-		covid_cohort.patid,
-        case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
-        case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
-        case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
-        case when covid_lab.patid is not null then 1 else 0 end as inc_lab
-	from
-		covid_cohort
-		left outer join dx_strong on covid_cohort.patid = dx_strong.patid
-		left outer join dx_weak on covid_cohort.patid = dx_weak.patid
-		left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
-		left outer join covid_lab on covid_cohort.patid = covid_lab.patid
-
 )
- SELECT *  FROM cohort;
+ 
+ SELECT covid_cohort.patid,
+	case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
+	case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
+	case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
+	case when covid_lab.patid is not null then 1 else 0 end as inc_lab
+ FROM covid_cohort
+	left outer join dx_strong on covid_cohort.patid = dx_strong.patid
+	left outer join dx_weak on covid_cohort.patid = dx_weak.patid
+	left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
+	left outer join covid_lab on covid_cohort.patid = covid_lab.patid
+;
+
+
+CREATE TABLE @resultsDatabaseSchema.n3c_cohort 
+ AS
+SELECT
+patid, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab
+
+FROM
+aab1en92cohort;
+
+DELETE FROM aab1en92cohort WHERE True;
+drop table aab1en92cohort;
