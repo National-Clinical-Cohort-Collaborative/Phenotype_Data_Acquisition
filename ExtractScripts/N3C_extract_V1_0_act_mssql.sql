@@ -100,7 +100,7 @@ SELECT
     upload_id,
 FROM
     visit_dimension join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
-WHERE    start_date < '1/1/2018'
+WHERE    start_date >= '1/1/2018';
     
 --DATA_COUNTS TABLE
 --OUTPUT_FILE: DATA_COUNTS.csv
@@ -117,7 +117,7 @@ select
    'VISIT_DIMENSION' as TABLE_NAME,
    (select count(*) from VISIT_DIMENSION join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
 WHERE
-    start_date < '1/1/2018') as ROW_COUNT
+    start_date >= '1/1/2018') as ROW_COUNT
 
 UNION
    
@@ -135,10 +135,12 @@ select
 --OUTPUT_FILE: MANIFEST.csv
 select
    'UNC' as SITE_ABBREV,
+   'University of North Carolina at Chapel Hill' as SITE_NAME,
    'Jane Doe' as CONTACT_NAME,
    'jane_doe@unc.edu' as CONTACT_EMAIL,
    'ACT' as CDM_NAME,
    '2.0.1' as CDM_VERSION,
+   null as VOCABULARY_VERSION, --leave null as this only applies to OMOP
    'Y' as N3C_PHENOTYPE_YN,
    '1.3' as N3C_PHENOTYPE_VERSION,
    CONVERT(VARCHAR(20), GETDATE(), 120) as RUN_DATE,
