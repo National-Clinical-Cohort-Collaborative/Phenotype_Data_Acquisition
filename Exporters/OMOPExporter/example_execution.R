@@ -1,16 +1,17 @@
 
 # --- Installation ---
 
-install.packages("devtools")
-library(devtools)
+install.packages("remotes")
+library(remotes)
 
 # Uncomment to Verify JAVA_HOME is set to jdk path
 # Sys.getenv("JAVA_HOME")
 
 
-install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
+remotes::install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
                ,ref = "r-package-rework"
                ,subdir = "Exporters/OMOPExporter"
+               ,INSTALL_opts = "--no-multiarch"
 )
 
 # Uncomment to test for missing packages
@@ -28,13 +29,13 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql serv
                                                           password = "" #password for that user
                                                           )
 cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. TMC_OMOP.dbo
-resultsDatabaseSchema <- "" # schema with write privileges
+resultsDatabaseSchema <- "" # schema with write privileges -- e.g. OHDSI.dbo
 outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be stored. default provided
 cdmName <- "OMOP" # source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
 siteAbbrev <- "TuftsMC" # unique site identifier
 
-phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts)
-extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts)
+phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts/your_file.sql)
+extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/your_file.sql)
 
 
 # --- Execution ---
