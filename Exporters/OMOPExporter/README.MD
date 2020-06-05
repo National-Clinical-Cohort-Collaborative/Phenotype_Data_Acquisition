@@ -48,12 +48,16 @@ First, navigate the root of this repository to find the appropriate phenotype ge
 
 To utilize the Exporter, in `R` use the following code to install the dependencies:
 ```r
-install.packages("devtools")
-library(devtools)
+install.packages("remotes")
+library(remotes)
 
-install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
+# Uncomment to Verify JAVA_HOME is set to jdk path
+# Sys.getenv("JAVA_HOME")
+
+remotes::install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
                ,ref = "r-package-rework"
                ,subdir = "Exporters/OMOPExporter"
+               ,INSTALL_opts = "--no-multiarch"
 )
 
 # Uncomment to test for missing packages
