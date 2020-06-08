@@ -16,6 +16,7 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_cohort;
 --		5/11/20 - Updated handling for B97.21
 --				- Added new codes for phenotype v1.4
 -- 		5/29/20 - Added new codes for phenotype v1.5
+--		6/08/20 - Added new codes for phenotype v1.6
 ---------------------------------------------------------------------------------------------------------
 
 INSERT INTO :TNX_SCHEMA.n3c_cohort
@@ -185,14 +186,14 @@ FROM (
 			,'UMLS:LNC:94660-8'
 			,'UMLS:LNC:94661-6'
 			,'UMLS:LNC:94720-0'
-			,'UMLS:LNC:94745-7'		--new in 1.5
-			,'UMLS:LNC:94746-5'		--new in 1.5
-			,'UMLS:LNC:94756-4'		--new in 1.5
-			,'UMLS:LNC:94757-2'		--new in 1.5
+			,'UMLS:LNC:94745-7'
+			,'UMLS:LNC:94746-5'
+			,'UMLS:LNC:94756-4'
+			,'UMLS:LNC:94757-2'
 			,'UMLS:LNC:94758-0'
 			,'UMLS:LNC:94759-8'
 			,'UMLS:LNC:94760-6'
-			,'UMLS:LNC:94761-4'		--new in 1.5
+			,'UMLS:LNC:94761-4'
 			,'UMLS:LNC:94762-2'
 			,'UMLS:LNC:94763-0'
 			,'UMLS:LNC:94764-8'
@@ -202,10 +203,14 @@ FROM (
 			,'UMLS:LNC:94768-9'
 			,'UMLS:LNC:94769-7'
 			,'UMLS:LNC:94819-0'
-			,'UMLS:LNC:94822-4'		--new in 1.5
-			,'UMLS:LNC:94845-5'		--new in 1.5
-			,'UMLS:LNC:95125-1'		--new in 1.5
-			,'UMLS:LNC:95209-3')	--new in 1.5
+			,'UMLS:LNC:94822-4'
+			,'UMLS:LNC:94845-5'
+			,'UMLS:LNC:95125-1'
+			,'UMLS:LNC:95209-3'
+			,'UMLS:LNC:95406-5'		--new in 1.6
+			,'UMLS:LNC:95409-9'		--new in 1.6
+			,'UMLS:LNC:95410-7'		--new in 1.6
+			,'UMLS:LNC:95411-5')	--new in 1.6
 		--OTHER LAB
 		OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
 		OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
