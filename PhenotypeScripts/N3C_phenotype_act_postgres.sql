@@ -276,6 +276,6 @@ n3c_cohort as
 )
 
 INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
-SELECT patient_num, inc_dx_strong, inc_fx_weak, inc_procedure, inc_lab
+SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab
 from n3c_cohort
 ;
