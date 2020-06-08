@@ -7,14 +7,21 @@
 
 -- Clear previous execution
 DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
+  
+  
+-- Create dest table
+CREATE TABLE @resultsDatabaseSchema.n3c_cohort  (patient_num			INT  NOT NULL,
+	inc_dx_strong		INT  NOT NULL,
+	inc_dx_weak			INT  NOT NULL,
+	inc_procedure		INT  NOT NULL,
+	inc_lab				INT  NOT NULL
+)
+DISTSTYLE ALL;
+  
 
 -- Lab LOINC codes from phenotype doc
-CREATE TABLE #cohort
- DISTSTYLE ALL
-AS
-WITH
-covid_loinc 
-AS
+INSERT INTO @resultsDatabaseSchema.n3c_cohort 
+ WITH covid_loinc as
 (
 	select '94307-6' as loinc UNION
 	select '94308-4' as loinc UNION
@@ -280,33 +287,24 @@ covid_cohort as
     select distinct patid from covid_procedure
     UNION
     select distinct patid from covid_lab
-)
+),
+cohort as
+(
  
-
-SELECT
-covid_cohort.patid,
+select
+	covid_cohort.patid,
 	case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
 	case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
 	case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
 	case when covid_lab.patid is not null then 1 else 0 end as inc_lab
-
-FROM
-covid_cohort
+from
+	covid_cohort
 	left outer join dx_strong on covid_cohort.patid = dx_strong.patid
 	left outer join dx_weak on covid_cohort.patid = dx_weak.patid
 	left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
 	left outer join covid_lab on covid_cohort.patid = covid_lab.patid
-;
+)
 
 
-CREATE TABLE @resultsDatabaseSchema.n3c_cohort 
- DISTSTYLE ALL
-AS
-SELECT
-patid, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab
-
-FROM
-#cohort;
-
-TRUNCATE TABLE #cohort;
-DROP TABLE #cohort;
+ SELECT patid, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab
+FROM cohort;
