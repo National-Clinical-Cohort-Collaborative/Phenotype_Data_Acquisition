@@ -9,6 +9,18 @@
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
 IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL          -- Drop table if it exists
   DROP TABLE @resultsDatabaseSchema.n3c_cohort;
+  
+  
+  
+-- Create dest table
+CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
+	patient_num			INT  NOT NULL,
+	inc_dx_strong		INT  NOT NULL,
+	inc_dx_weak			INT  NOT NULL,
+	inc_procedure		INT  NOT NULL,
+	inc_lab				INT  NOT NULL
+);
+
 
 
 -- Lab LOINC codes from phenotype doc
@@ -265,6 +277,8 @@ n3c_cohort as
 		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
 
 )
-select * into 
-@resultsDatabaseSchema.n3c_cohort 
+
+INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
+SELECT patient_num, inc_dx_strong, inc_fx_weak, inc_procedure, inc_lab
 from n3c_cohort
+;

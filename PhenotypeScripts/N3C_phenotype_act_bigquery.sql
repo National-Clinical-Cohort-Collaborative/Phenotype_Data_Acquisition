@@ -8,10 +8,23 @@
 
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
 DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
+  
+  
+  
+-- Create dest table
+create table @resultsDatabaseSchema.n3c_cohort (
+	patient_num			INT64  not null,
+	inc_dx_strong		INT64  not null,
+	inc_dx_weak			INT64  not null,
+	inc_procedure		INT64  not null,
+	inc_lab				INT64  not null
+);
+
 
 
 -- Lab LOINC codes from phenotype doc
-with covid_loinc as
+INSERT INTO @resultsDatabaseSchema.n3c_cohort 
+ WITH covid_loinc as
 (
 	select 'LOINC:94307-6' as loinc union distinct select 'LOINC:94308-4' as loinc union distinct select 'LOINC:94309-2' as loinc union distinct select 'LOINC:94310-0' as loinc union distinct select 'LOINC:94311-8' as loinc union distinct select 'LOINC:94312-6' as loinc union distinct select 'LOINC:94313-4' as loinc union distinct select 'LOINC:94314-2' as loinc union distinct select 'LOINC:94315-9' as loinc union distinct select 'LOINC:94316-7' as loinc union distinct select 'LOINC:94500-6' as loinc union distinct select 'LOINC:94502-2' as loinc union distinct select 'LOINC:94505-5' as loinc union distinct select 'LOINC:94506-3' as loinc union distinct select 'LOINC:94507-1' as loinc union distinct select 'LOINC:94508-9' as loinc union distinct select 'LOINC:94509-7' as loinc union distinct select 'LOINC:94510-5' as loinc union distinct select 'LOINC:94511-3' as loinc union distinct select 'LOINC:94532-9' as loinc union distinct select 'LOINC:94533-7' as loinc union distinct select 'LOINC:94534-5' as loinc union distinct select 'LOINC:94547-7' as loinc union distinct select 'LOINC:94558-4' as loinc union distinct select 'LOINC:94559-2' as loinc union distinct select 'LOINC:94562-6' as loinc union distinct select 'LOINC:94563-4' as loinc union distinct select 'LOINC:94564-2' as loinc union distinct select 'LOINC:94565-9' as loinc union distinct select 'LOINC:94639-2' as loinc union distinct select 'LOINC:94640-0' as loinc union distinct select 'LOINC:94641-8' as loinc union distinct select 'LOINC:94642-6' as loinc union distinct select 'LOINC:94643-4' as loinc union distinct select 'LOINC:94644-2' as loinc union distinct select 'LOINC:94645-9' as loinc union distinct select 'LOINC:94646-7' as loinc union distinct select 'LOINC:94647-5' as loinc union distinct select 'LOINC:94660-8' as loinc union distinct select 'LOINC:94661-6' as loinc union distinct select 'UMLS:C1611271' as loinc union distinct select 'UMLS:C1335447' as loinc union distinct select 'UMLS:C1334932' as loinc union distinct select 'UMLS:C1334932' as loinc union distinct select 'UMLS:C1335447' as loinc union distinct select 'LOINC:94720-0' as loinc union distinct select 'LOINC:94758-0' as loinc union distinct select 'LOINC:94759-8' as loinc union distinct select 'LOINC:94760-6' as loinc union distinct select 'LOINC:94762-2' as loinc union distinct select 'LOINC:94763-0' as loinc union distinct select 'LOINC:94764-8' as loinc union distinct select 'LOINC:94765-5' as loinc union distinct select 'LOINC:94766-3' as loinc union distinct select 'LOINC:94767-1' as loinc union distinct select 'LOINC:94768-9' as loinc union distinct select 'LOINC:94769-7' as loinc union distinct select 'LOINC:94819-0' as loinc union distinct select 'LOINC:94745-7' as loinc union distinct select 'LOINC:94746-5' as loinc union distinct select 'LOINC:94756-4' as loinc union distinct select 'LOINC:94757-2' as loinc union distinct select 'LOINC:94761-4' as loinc union distinct select 'LOINC:94822-4' as loinc union distinct select 'LOINC:94845-5' as loinc union distinct select 'LOINC:95125-1' as loinc union distinct select 'LOINC:95209-3' as loinc
 	
@@ -155,6 +168,7 @@ n3c_cohort as
 		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
 
 )
-select * into 
-@resultsDatabaseSchema.n3c_cohort 
+
+ SELECT patient_num, inc_dx_strong, inc_fx_weak, inc_procedure, inc_lab
 from n3c_cohort
+;

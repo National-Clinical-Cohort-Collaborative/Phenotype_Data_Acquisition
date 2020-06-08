@@ -8,10 +8,23 @@
 
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
 DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
+  
+  
+  
+-- Create dest table
+CREATE TABLE @resultsDatabaseSchema.n3c_cohort  (patient_num			INT  NOT NULL,
+	inc_dx_strong		INT  NOT NULL,
+	inc_dx_weak			INT  NOT NULL,
+	inc_procedure		INT  NOT NULL,
+	inc_lab				INT  NOT NULL
+)
+DISTSTYLE ALL;
+
 
 
 -- Lab LOINC codes from phenotype doc
-with covid_loinc as
+INSERT INTO @resultsDatabaseSchema.n3c_cohort 
+ WITH covid_loinc as
 (
 	select 'LOINC:94307-6' as loinc UNION
 	select 'LOINC:94308-4' as loinc UNION
@@ -264,6 +277,7 @@ n3c_cohort as
 		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
 
 )
-select * into 
-@resultsDatabaseSchema.n3c_cohort 
+
+ SELECT patient_num, inc_dx_strong, inc_fx_weak, inc_procedure, inc_lab
 from n3c_cohort
+;
