@@ -97,7 +97,7 @@ select
     download_date,
     import_date,
     sourcesystem_cd,
-    upload_id,
+    upload_id
 from
     @cdmDatabaseSchema.visit_dimension join @resultsDatabaseSchema.n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
 where    start_date >= '1/1/2018';
@@ -123,7 +123,8 @@ union distinct select
 
 union distinct select 
    'CONCEPT_DIMENSION' as table_name,
-   (select count(*) from @cdmDatabaseSchema.concept_dimension) as row_count);
+   (select count(*) from @cdmDatabaseSchema.concept_dimension) as row_count
+ ) x;
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
