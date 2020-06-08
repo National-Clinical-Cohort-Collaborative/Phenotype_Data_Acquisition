@@ -6,7 +6,10 @@
 --05.15.2020 Emily Pfaff converted to SQL Server
 --05.27.2020 Michele Morris added 1.5 loincs
 
-drop table n3c_cohort;
+--DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
+IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL          -- Drop table if it exists
+  DROP TABLE @resultsDatabaseSchema.n3c_cohort;
+
 
 -- Lab LOINC codes from phenotype doc
 with covid_loinc as
@@ -125,7 +128,7 @@ covid_lab as
     select
         distinct observation_fact.patient_num
     from
-        observation_fact
+        @cdmDatabaseSchema.observation_fact
     where
         observation_fact.start_date >= convert(DATETIME, '2020-01-01')
         and 
@@ -155,7 +158,7 @@ covid_diagnosis as
             observation_fact.start_date,
             covid_icd10.dx_category as orig_dx_category
         from
-            observation_fact
+            @cdmDatabaseSchema.observation_fact
             join covid_icd10 on observation_fact.concept_cd like covid_icd10.icd10_code
         where
              observation_fact.start_date >= convert(DATETIME, '2020-01-01')
@@ -230,7 +233,7 @@ covid_procedure as
     select
         distinct observation_fact.patient_num
     from
-        observation_fact
+        @cdmDatabaseSchema.observation_fact
     where
         observation_fact.start_date >=  convert(DATETIME, '2020-01-01')
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
@@ -262,4 +265,6 @@ n3c_cohort as
 		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
 
 )
-select * into dbo.n3c_cohort from n3c_cohort
+select * into 
+@resultsDatabaseSchema.n3c_cohort 
+from n3c_cohort
