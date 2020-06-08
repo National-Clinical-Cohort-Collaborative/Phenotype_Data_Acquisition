@@ -130,7 +130,7 @@ covid_lab as
     from
         @cdmDatabaseSchema.observation_fact
     where
-        observation_fact.start_date >= convert(DATETIME, '2020-01-01')
+        observation_fact.start_date >= CAST('2020-01-01' as datetime)
         and 
         (
             observation_fact.concept_cd in (select loinc from covid_loinc)
@@ -145,8 +145,8 @@ covid_diagnosis as
       start_date as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < convert(DATETIME, '2020-04-01')  then '1_strong_positive'
-			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= convert(DATETIME, '2020-04-01') then '2_weak_positive'
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < CAST('2020-04-01' as datetime)  then '1_strong_positive'
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= CAST('2020-04-01' as datetime) then '2_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     from
@@ -161,7 +161,7 @@ covid_diagnosis as
             @cdmDatabaseSchema.observation_fact
             join covid_icd10 on observation_fact.concept_cd like covid_icd10.icd10_code
         where
-             observation_fact.start_date >= convert(DATETIME, '2020-01-01')
+             observation_fact.start_date >= CAST('2020-01-01' as datetime)
     ) dxq
 ),
 -- patients with strong positive DX included
@@ -235,7 +235,7 @@ covid_procedure as
     from
         @cdmDatabaseSchema.observation_fact
     where
-        observation_fact.start_date >=  convert(DATETIME, '2020-01-01')
+        observation_fact.start_date >=  CAST('2020-01-01' as datetime)
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
 
 ),

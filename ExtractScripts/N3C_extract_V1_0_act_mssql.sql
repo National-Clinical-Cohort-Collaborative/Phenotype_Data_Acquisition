@@ -22,7 +22,7 @@ SELECT
     sourcesystem_cd,
     upload_id
 FROM
-    concept_dimension;
+    @cdmDatabaseSchema.concept_dimension;
 
 --select all facts - concept_cd determines domain/value    
 --OBSERVATION_FACT TABLE
@@ -48,7 +48,7 @@ SELECT
     sourcesystem_cd,
     upload_id
 FROM
-    observation_fact join n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
+    @cdmDatabaseSchema.observation_fact join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
 WHERE
     start_date >= '1/1/2018';
     
@@ -58,7 +58,7 @@ WHERE
 --OUTPUT_FILE: PATIENT_DIMENSION.csv
 SELECT
     patient_dimension.patient_num,
-    LEFT(CONVERT(VARCHAR(20), BIRTH_DATE, 120),7) as birth_date,
+    LEFT(CAST(BIRTH_DATE as varchar(20)),7) as birth_date,
     death_date,
     race_cd,
     sex_cd,
@@ -76,7 +76,7 @@ SELECT
     sourcesystem_cd,
     upload_id
 FROM
-     patient_dimension join n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num ;
+     @cdmDatabaseSchema.patient_dimension join @resultsDatabaseSchema.n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num ;
 
     
     
@@ -99,7 +99,7 @@ SELECT
     sourcesystem_cd,
     upload_id,
 FROM
-    visit_dimension join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
+    @cdmDatabaseSchema.visit_dimension join @resultsDatabaseSchema.n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
 WHERE    start_date >= '1/1/2018';
     
 --DATA_COUNTS TABLE
@@ -107,7 +107,7 @@ WHERE    start_date >= '1/1/2018';
 select * from 
 (select 
    'OBSERVATION_FACT' as TABLE_NAME, 
-   (select count(*) from OBSERVATION_FACT join n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
+   (select count(*) from @cdmDatabaseSchema.OBSERVATION_FACT join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
 WHERE
     start_date >= '1/1/2018') as ROW_COUNT
 
@@ -115,7 +115,7 @@ UNION
    
 select 
    'VISIT_DIMENSION' as TABLE_NAME,
-   (select count(*) from VISIT_DIMENSION join n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
+   (select count(*) from @cdmDatabaseSchema.VISIT_DIMENSION join @resultsDatabaseSchema.n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
 WHERE
     start_date >= '1/1/2018') as ROW_COUNT
 
@@ -123,13 +123,13 @@ UNION
    
 select 
    'PATIENT_DIMENSION' as TABLE_NAME,
-   (select count(*) from PATIENT_DIMENSION join n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num) as ROW_COUNT
+   (select count(*) from @cdmDatabaseSchema.PATIENT_DIMENSION join @resultsDatabaseSchema.n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num) as ROW_COUNT
 
 UNION
    
 select 
    'CONCEPT_DIMENSION' as TABLE_NAME,
-   (select count(*) from CONCEPT_DIMENSION) as ROW_COUNT);
+   (select count(*) from @cdmDatabaseSchema.CONCEPT_DIMENSION) as ROW_COUNT);
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
@@ -143,6 +143,6 @@ select
    null as VOCABULARY_VERSION, --leave null as this only applies to OMOP
    'Y' as N3C_PHENOTYPE_YN,
    '1.3' as N3C_PHENOTYPE_VERSION,
-   CONVERT(VARCHAR(20), GETDATE(), 120) as RUN_DATE,
-   CONVERT(VARCHAR(20), GETDATE() -2, 120) as UPDATE_DATE,		--change integer based on your site's data latency
-   CONVERT(VARCHAR(20), GETDATE() +3, 120) as NEXT_SUBMISSION_DATE;					--change integer based on your site's load frequency
+   CAST(GETDATE() as date) as RUN_DATE,
+   CAST( DATEADD(day, -2, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
+   CAST( DATEADD(day, 3, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
