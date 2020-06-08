@@ -37,9 +37,9 @@ SELECT
    CONVERT(VARCHAR(20), DISCHARGE_DATE, 120) as DISCHARGE_DATE,
    DISCHARGE_TIME,
    PROVIDERID,
-   FACILITY_LOCATION,
+   null as FACILITY_LOCATION,
    ENC_TYPE,
-   FACILITYID,
+   null as FACILITYID,
    DISCHARGE_DISPOSITION,
    DISCHARGE_STATUS,
    DRG,
@@ -351,7 +351,7 @@ SELECT
    null as RAW_RX_FREQUENCY,
    null as RAW_RXNORM_CUI,
    null as RAW_RX_QUANTITY,
-   RAW_RX_NDC,
+   null as RAW_RX_NDC,
    null as RAW_RX_DOSE_ORDERED,
    null as RAW_RX_DOSE_ORDERED_UNIT,
    null as RAW_RX_ROUTE,
@@ -564,10 +564,12 @@ select
 --OUTPUT_FILE: MANIFEST.csv
 select
    'UNC' as SITE_ABBREV,
+   'University of North Carolina at Chapel Hill' as SITE_NAME,
    'Jane Doe' as CONTACT_NAME,
    'jane_doe@unc.edu' as CONTACT_EMAIL,
    'PCORNET' as CDM_NAME,
    '5.1' as CDM_VERSION,
+   null as VOCABULARY_VERSION, --leave null as this only applies to OMOP
    'Y' as N3C_PHENOTYPE_YN,
    '1.3' as N3C_PHENOTYPE_VERSION,
    CONVERT(VARCHAR(20), GETDATE(), 120) as RUN_DATE,
