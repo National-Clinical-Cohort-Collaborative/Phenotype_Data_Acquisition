@@ -55,7 +55,7 @@ library(remotes)
 # Sys.getenv("JAVA_HOME")
 
 remotes::install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
-               ,ref = "r-package-rework"
+               ,ref = "master"
                ,subdir = "Exporters/OMOPExporter"
                ,INSTALL_opts = "--no-multiarch"
 )
