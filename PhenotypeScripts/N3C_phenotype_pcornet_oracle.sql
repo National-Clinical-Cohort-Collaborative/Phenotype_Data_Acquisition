@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, PCORnet CDM, Oracle
---N3C phenotype V1.5
+--N3C phenotype V1.6
 
 -- start date is set to '2020-01-01'
 
@@ -78,9 +78,12 @@ with covid_loinc as
 	select '94822-4' as loinc from dual UNION    
 	select '94845-5' as loinc from dual UNION    
 	select '95125-1' as loinc from dual UNION    
-	select '95209-3' as loinc from dual
-    
-    
+	select '95209-3' as loinc from dual UNION
+	-- new for v1.6
+	select '95406-5' as loinc from dual UNION
+	select '95409-9' as loinc from dual UNION
+	select '95410-7' as loinc from dual UNION
+	select '95411-5' as loinc from dual
     
 ),
 -- Diagnosis ICD-10/SNOMED codes from phenotype doc
