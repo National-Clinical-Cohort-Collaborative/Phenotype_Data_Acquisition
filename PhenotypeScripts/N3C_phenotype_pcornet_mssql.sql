@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, PCORnet CDM, MS SqlServer
---N3C phenotype V1.5
+--N3C phenotype V1.6
 
 -- start date is set to '2020-01-01'
 
@@ -75,7 +75,12 @@ with covid_loinc as
 	select '94822-4' as loinc UNION    
 	select '94845-5' as loinc UNION    
 	select '95125-1' as loinc UNION    
-	select '95209-3' as loinc    
+	select '95209-3' as loinc UNION
+	-- new for v1.6
+	select '95406-5' as loinc UNION
+	select '95409-9' as loinc UNION
+	select '95410-7' as loinc UNION
+	select '95411-5' as loinc	
 ),
 -- Diagnosis ICD-10/SNOMED codes from phenotype doc
 covid_dx_codes as
