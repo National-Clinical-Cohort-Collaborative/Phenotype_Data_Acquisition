@@ -25,14 +25,32 @@
 
 **/
 
+--DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD
+BEGIN
+  EXECUTE IMMEDIATE 'TRUNCATE TABLE @resultsDatabaseSchema.n3c_cohort';
+  EXECUTE IMMEDIATE 'DROP TABLE @resultsDatabaseSchema.n3c_cohort';
+EXCEPTION
+  WHEN OTHERS THEN
+    IF SQLCODE != -942 THEN
+      RAISE;
+    END IF;
+END;
 
-CREATE TABLE bpbcd08fCodesets (
+-- Create dest table
+CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
+	person_id			INT  NOT NULL,
+	start_date			date  NOT NULL,
+	end_date			date  NOT NULL
+);
+
+
+CREATE TABLE yvy9ozvnCodesets (
   codeset_id int NOT NULL,
   concept_id NUMBER(19) NOT NULL
 )
 ;
 
-INSERT INTO bpbcd08fCodesets (codeset_id, concept_id)
+INSERT INTO yvy9ozvnCodesets (codeset_id, concept_id)
 SELECT 0 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabularyDatabaseSchema.CONCEPT     WHERE concept_id in (706179,706166,706174,723459,706181,706177,706176,706180,706178,706167,706157,706155,706161,706175,706156,706154,706168,706163,706170,706158,706169,706160,706173,706172,706171,706165,706159)
    UNION  select c.concept_id
   FROM @vocabularyDatabaseSchema.CONCEPT c
@@ -42,7 +60,7 @@ SELECT 0 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SE
 
  ) I
  ) C ;
-INSERT INTO bpbcd08fCodesets (codeset_id, concept_id)
+INSERT INTO yvy9ozvnCodesets (codeset_id, concept_id)
 SELECT 1 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabularyDatabaseSchema.CONCEPT     WHERE concept_id in (2212793,700360,40218805,40218804)
    UNION  select c.concept_id
   FROM @vocabularyDatabaseSchema.CONCEPT c
@@ -52,7 +70,7 @@ SELECT 1 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SE
 
  ) I
  ) C ;
-INSERT INTO bpbcd08fCodesets (codeset_id, concept_id)
+INSERT INTO yvy9ozvnCodesets (codeset_id, concept_id)
 SELECT 2 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabularyDatabaseSchema.CONCEPT     WHERE concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326)
    UNION  select c.concept_id
   FROM @vocabularyDatabaseSchema.CONCEPT c
@@ -62,7 +80,7 @@ SELECT 2 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SE
 
  ) I
  ) C ;
-INSERT INTO bpbcd08fCodesets (codeset_id, concept_id)
+INSERT INTO yvy9ozvnCodesets (codeset_id, concept_id)
 SELECT 3 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabularyDatabaseSchema.CONCEPT     WHERE concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060)
    UNION  select c.concept_id
   FROM @vocabularyDatabaseSchema.CONCEPT c
@@ -74,7 +92,7 @@ SELECT 3 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SE
  ) C ;
 
 
-CREATE TABLE bpbcd08fqualified_events
+CREATE TABLE yvy9ozvnqualified_events
 
 AS
 WITH primary_events (event_id, person_id, start_date, end_date, op_start_date, op_end_date, visit_occurrence_id)  AS (SELECT P.ordinal as event_id, P.person_id, P.start_date, P.end_date, op_start_date, op_end_date, cast(P.visit_occurrence_id as NUMBER(19)) as visit_occurrence_id
@@ -86,7 +104,7 @@ FROM (SELECT E.person_id, E.start_date, E.end_date,
        C.measurement_date as sort_date
 FROM (SELECT m.*
   FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN bpbcd08fCodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+JOIN yvy9ozvnCodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
  ) C
 
     WHERE C.measurement_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -99,7 +117,7 @@ SELECT C.person_id, C.procedure_occurrence_id  event_id, C.procedure_date  start
        C.procedure_date as sort_date
 FROM (SELECT po.*
   FROM @cdmDatabaseSchema.PROCEDURE_OCCURRENCE po
-JOIN bpbcd08fCodesets codesets on ((po.procedure_concept_id = codesets.concept_id and codesets.codeset_id = 1))
+JOIN yvy9ozvnCodesets codesets on ((po.procedure_concept_id = codesets.concept_id and codesets.codeset_id = 1))
  ) C
 
    WHERE C.procedure_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -112,7 +130,7 @@ SELECT C.person_id, C.condition_occurrence_id  event_id, C.condition_start_date 
        C.condition_start_date as sort_date
 FROM (SELECT co.*
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN bpbcd08fCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  JOIN yvy9ozvnCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
  ) C
 
    WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -124,7 +142,7 @@ select PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_
        C.condition_start_date as sort_date
 FROM (SELECT co.*
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN bpbcd08fCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN yvy9ozvnCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
   WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -139,7 +157,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.*
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN bpbcd08fCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN yvy9ozvnCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
   WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -156,7 +174,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.*
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN bpbcd08fCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN yvy9ozvnCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
   WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -171,7 +189,7 @@ INNER JOIN
        C.condition_start_date as sort_date
 FROM (SELECT co.*
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN bpbcd08fCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN yvy9ozvnCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
 
@@ -210,18 +228,18 @@ FROM
 
 --- Inclusion Rule Inserts
 
-create table bpbcd08finclusion_events (inclusion_rule_id NUMBER(19),
+create table yvy9ozvninclusion_events (inclusion_rule_id NUMBER(19),
 	person_id NUMBER(19),
 	event_id NUMBER(19)
 );
 
-CREATE TABLE bpbcd08fincluded_events
+CREATE TABLE yvy9ozvnincluded_events
 
 AS
 WITH cteIncludedEvents(event_id, person_id, start_date, end_date, op_start_date, op_end_date, ordinal)  AS (SELECT event_id, person_id, start_date, end_date, op_start_date, op_end_date, row_number() over (partition by person_id order by start_date ASC) as ordinal
   FROM (SELECT Q.event_id, Q.person_id, Q.start_date, Q.end_date, Q.op_start_date, Q.op_end_date, SUM(coalesce(POWER(cast(2 as NUMBER(19)), I.inclusion_rule_id), 0)) as inclusion_rule_mask
-    FROM bpbcd08fqualified_events Q
-    LEFT JOIN bpbcd08finclusion_events I on I.person_id = Q.person_id and I.event_id = Q.event_id
+    FROM yvy9ozvnqualified_events Q
+    LEFT JOIN yvy9ozvninclusion_events I on I.person_id = Q.person_id and I.event_id = Q.event_id
     GROUP BY Q.event_id, Q.person_id, Q.start_date, Q.end_date, Q.op_start_date, Q.op_end_date
    ) MG -- matching groups
 
@@ -237,15 +255,15 @@ cteIncludedEvents Results
 
 
 -- generate cohort periods into #final_cohort
-CREATE TABLE bpbcd08fcohort_rows
+CREATE TABLE yvy9ozvncohort_rows
 
 AS
-WITH cohort_ends (event_id, person_id, end_date)  AS (SELECT event_id, person_id, op_end_date as end_date FROM bpbcd08fincluded_events
+WITH cohort_ends (event_id, person_id, end_date)  AS (SELECT event_id, person_id, op_end_date as end_date FROM yvy9ozvnincluded_events
  ),
 first_ends (person_id, start_date, end_date) as
 (SELECT F.person_id, F.start_date, F.end_date
 	FROM (SELECT I.event_id, I.person_id, I.start_date, E.end_date, row_number() over (partition by I.person_id, I.event_id order by E.end_date) as ordinal
-	  FROM bpbcd08fincluded_events I
+	  FROM yvy9ozvnincluded_events I
 	  join cohort_ends E on I.event_id = E.event_id and I.person_id = E.person_id and E.end_date >= I.start_date
 	 ) F
 	  WHERE F.ordinal = 1
@@ -256,10 +274,8 @@ person_id, start_date, end_date
 FROM
 first_ends ;
 
-CREATE TABLE bpbcd08ffinal_cohort
-
-AS
-WITH cteEndDates (person_id, end_date)  AS (SELECT person_id
+INSERT INTO @resultsDatabaseSchema.n3c_cohort
+ WITH cteEndDates (person_id, end_date)  AS (SELECT person_id
 		, (event_date + NUMTODSINTERVAL(-1 * 0, 'day'))  as end_date
 	FROM (SELECT person_id
 			, event_date
@@ -270,7 +286,7 @@ WITH cteEndDates (person_id, end_date)  AS (SELECT person_id
 				, start_date AS event_date
 				, -1 AS event_type
 				, ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY start_date) AS start_ordinal
-			FROM bpbcd08fcohort_rows
+			FROM yvy9ozvncohort_rows
 
 			  UNION ALL
 
@@ -280,7 +296,7 @@ WITH cteEndDates (person_id, end_date)  AS (SELECT person_id
 				, (end_date + NUMTODSINTERVAL(0, 'day'))  end_date
 				, 1 AS event_type
 				, NULL
-			FROM bpbcd08fcohort_rows
+			FROM yvy9ozvncohort_rows
 		 ) RAWDATA
 	 ) e
 	  WHERE (2 * e.start_ordinal) - e.overall_ord = 0
@@ -289,56 +305,33 @@ cteEnds (person_id, start_date, end_date) AS
 (SELECT c.person_id
 		, c.start_date
 		, MIN(e.end_date) AS end_date
-	FROM bpbcd08fcohort_rows c
+	FROM yvy9ozvncohort_rows c
 	JOIN cteEndDates e ON c.person_id = e.person_id AND e.end_date >= c.start_date
 	GROUP BY c.person_id, c.start_date
- )
- SELECT
-person_id, min(start_date) as start_date, end_date
-
-FROM
-cteEnds
+ ),
+final_cohort (person_id, start_date, end_date) AS 
+(SELECT person_id, min(start_date) as start_date, end_date
+FROM cteEnds
 group by person_id, end_date
- ;
+ )
 
 --# BEGIN N3C_COHORT table to be retained
 
---DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD
-BEGIN
-  EXECUTE IMMEDIATE 'TRUNCATE TABLE @resultsDatabaseSchema.n3c_cohort';
-  EXECUTE IMMEDIATE 'DROP TABLE @resultsDatabaseSchema.n3c_cohort';
-EXCEPTION
-  WHEN OTHERS THEN
-    IF SQLCODE != -942 THEN
-      RAISE;
-    END IF;
-END;
-
-
-
 --SELECT person_id, event_date, event_type
-CREATE TABLE @resultsDatabaseSchema.n3c_cohort
- AS
-SELECT
-DISTINCT person_id, start_date, end_date
+ SELECT DISTINCT person_id, start_date, end_date 
+FROM final_cohort ;
 
-FROM
-bpbcd08ffinal_cohort ;
+TRUNCATE TABLE yvy9ozvncohort_rows;
+DROP TABLE yvy9ozvncohort_rows;
 
-TRUNCATE TABLE bpbcd08fcohort_rows;
-DROP TABLE bpbcd08fcohort_rows;
+TRUNCATE TABLE yvy9ozvninclusion_events;
+DROP TABLE yvy9ozvninclusion_events;
 
-TRUNCATE TABLE bpbcd08ffinal_cohort;
-DROP TABLE bpbcd08ffinal_cohort;
+TRUNCATE TABLE yvy9ozvnqualified_events;
+DROP TABLE yvy9ozvnqualified_events;
 
-TRUNCATE TABLE bpbcd08finclusion_events;
-DROP TABLE bpbcd08finclusion_events;
+TRUNCATE TABLE yvy9ozvnincluded_events;
+DROP TABLE yvy9ozvnincluded_events;
 
-TRUNCATE TABLE bpbcd08fqualified_events;
-DROP TABLE bpbcd08fqualified_events;
-
-TRUNCATE TABLE bpbcd08fincluded_events;
-DROP TABLE bpbcd08fincluded_events;
-
-TRUNCATE TABLE bpbcd08fCodesets;
-DROP TABLE bpbcd08fCodesets;
+TRUNCATE TABLE yvy9ozvnCodesets;
+DROP TABLE yvy9ozvnCodesets;

@@ -25,6 +25,17 @@
 
 **/
 
+--DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD
+IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- Drop temp table if it exists
+  DROP TABLE @resultsDatabaseSchema.n3c_cohort;
+
+-- Create dest table
+CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
+	person_id			INT  NOT NULL,
+	start_date			date  NOT NULL,
+	end_date			date  NOT NULL
+);
+
 
 CREATE TABLE #Codesets (
   codeset_id int NOT NULL,
@@ -339,31 +350,23 @@ cteEnds (person_id, start_date, end_date) AS
 	FROM #cohort_rows c
 	JOIN cteEndDates e ON c.person_id = e.person_id AND e.end_date >= c.start_date
 	GROUP BY c.person_id, c.start_date
-)
+),
+final_cohort (person_id, start_date, end_date) AS 
+(
 select person_id, min(start_date) as start_date, end_date
-into #final_cohort
 from cteEnds
 group by person_id, end_date
-;
+)
 
 --# BEGIN N3C_COHORT table to be retained
 
---DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD
-IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- Drop temp table if it exists
-  DROP TABLE @resultsDatabaseSchema.n3c_cohort;
-
-
-
 --SELECT person_id, event_date, event_type
-SELECT DISTINCT person_id, start_date, end_date
-INTO @resultsDatabaseSchema.n3c_cohort
-FROM #final_cohort;
+INSERT INTO @resultsDatabaseSchema.n3c_cohort
+SELECT DISTINCT person_id, start_date, end_date 
+FROM final_cohort;
 
 TRUNCATE TABLE #cohort_rows;
 DROP TABLE #cohort_rows;
-
-TRUNCATE TABLE #final_cohort;
-DROP TABLE #final_cohort;
 
 TRUNCATE TABLE #inclusion_events;
 DROP TABLE #inclusion_events;

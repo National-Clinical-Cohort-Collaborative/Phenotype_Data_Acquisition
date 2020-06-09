@@ -7,8 +7,7 @@
 --05.27.2020 Michele Morris added 1.5 loincs
 
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
-IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL          -- Drop table if it exists
-  DROP TABLE @resultsDatabaseSchema.n3c_cohort;
+DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
   
   
   
@@ -24,9 +23,7 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 
 
 -- Lab LOINC codes from phenotype doc
-with covid_loinc as
-(
-	select 'LOINC:94307-6' as loinc UNION
+WITH covid_loinc  AS (SELECT  CAST('LOINC:94307-6' as TEXT) as loinc UNION
 	select 'LOINC:94308-4' as loinc UNION
 	select 'LOINC:94309-2' as loinc UNION
 	select 'LOINC:94310-0' as loinc UNION
@@ -142,7 +139,7 @@ covid_lab as
     from
         @cdmDatabaseSchema.observation_fact
     where
-        observation_fact.start_date >= CAST('2020-01-01' as datetime)
+        observation_fact.start_date >= CAST('2020-01-01' as TIMESTAMP)
         and 
         (
             observation_fact.concept_cd in (select loinc from covid_loinc)
@@ -157,8 +154,8 @@ covid_diagnosis as
       start_date as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < CAST('2020-04-01' as datetime)  then '1_strong_positive'
-			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= CAST('2020-04-01' as datetime) then '2_weak_positive'
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < CAST('2020-04-01' as TIMESTAMP)  then '1_strong_positive'
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= CAST('2020-04-01' as TIMESTAMP) then '2_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     from
@@ -173,7 +170,7 @@ covid_diagnosis as
             @cdmDatabaseSchema.observation_fact
             join covid_icd10 on observation_fact.concept_cd like covid_icd10.icd10_code
         where
-             observation_fact.start_date >= CAST('2020-01-01' as datetime)
+             observation_fact.start_date >= CAST('2020-01-01' as TIMESTAMP)
     ) dxq
 ),
 -- patients with strong positive DX included
@@ -247,7 +244,7 @@ covid_procedure as
     from
         @cdmDatabaseSchema.observation_fact
     where
-        observation_fact.start_date >=  CAST('2020-01-01' as datetime)
+        observation_fact.start_date >=  CAST('2020-01-01' as TIMESTAMP)
         and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
 
 ),

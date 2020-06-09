@@ -6,8 +6,7 @@
 -- modify covid_lab table expression to include your lab raw name
 
 -- Clear previous execution
-IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- Drop temp table if it exists
-  DROP TABLE @resultsDatabaseSchema.n3c_cohort;
+DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
   
   
 -- Create dest table
@@ -21,9 +20,7 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
   
 
 -- Lab LOINC codes from phenotype doc
-with covid_loinc as
-(
-	select '94307-6' as loinc UNION
+WITH covid_loinc  AS (SELECT  CAST('94307-6' as TEXT) as loinc UNION
 	select '94308-4' as loinc UNION
 	select '94309-2' as loinc UNION
 	select '94310-0' as loinc UNION
@@ -171,7 +168,7 @@ covid_lab as
     from
 	@cdmDatabaseSchema.lab_result_cm
     where
-        lab_result_cm.result_date >= CAST('2020-01-01' as datetime)
+        lab_result_cm.result_date >= CAST('2020-01-01' as TIMESTAMP)
         and 
         (
             lab_result_cm.lab_loinc in (select loinc from covid_loinc)
@@ -189,8 +186,8 @@ covid_diagnosis as
         coalesce(dx_date,admit_date) as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < CAST('2020-04-01' as datetime)  then 'dx_strong_positive'
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= CAST('2020-04-01' as datetime) then 'dx_weak_positive'
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < CAST('2020-04-01' as TIMESTAMP)  then 'dx_strong_positive'
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= CAST('2020-04-01' as TIMESTAMP) then 'dx_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     from
@@ -206,7 +203,7 @@ covid_diagnosis as
            @cdmDatabaseSchema.diagnosis
            join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
         where
-            coalesce(dx_date,admit_date) >= CAST('2020-01-01' as datetime)
+            coalesce(dx_date,admit_date) >= CAST('2020-01-01' as TIMESTAMP)
     ) dxq
 ),
 -- patients with strong positive DX included
@@ -280,7 +277,7 @@ covid_procedure as
 		@cdmDatabaseSchema.procedures
 		join covid_proc_codes on procedures.px = covid_proc_codes.procedure_code
     where
-        procedures.px_date >=  CAST('2020-01-01' as datetime)
+        procedures.px_date >=  CAST('2020-01-01' as TIMESTAMP)
 
 ),
 covid_cohort as
