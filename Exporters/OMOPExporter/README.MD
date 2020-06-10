@@ -81,8 +81,8 @@ outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be s
 cdmName <- "OMOP" # source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
 siteAbbrev <- "TuftsMC" # unique site identifier
 
-phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts)
-extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts)
+phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts/N3C_phenotype_x_y.sql)
+extractSqlPath   <- "" # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/N3C_extract_x_y.sql)
 
 ```
 **Execution**
