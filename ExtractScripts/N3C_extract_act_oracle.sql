@@ -1,7 +1,7 @@
 --ACT/i2b2 extraction code for N3C
 --ACT Ontology Version 2.0.1 and optionally ACT_COVID V3
 --Written by Michele Morris, UPitt
---Code written for MS SQL Server
+--Code written for Oracle
 --This extract includes only i2b2 fact relevant tables and the concept dimension table for mapping concept codes
 --Assumptions: 
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
