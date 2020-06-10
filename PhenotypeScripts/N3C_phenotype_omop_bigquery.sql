@@ -51,7 +51,7 @@ select 0 as codeset_id, c.concept_id from (select distinct i.concept_id from
 union distinct select c.concept_id
   from @vocabularyDatabaseSchema.concept c
   join @vocabularyDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in 9,706166,706174,723459,706181,706177,706176,706180,706178,706167,706157,706155,706161,706175,706156,706154,706168,706163,706170,706158,706169,706160,706173,706172,706171,706165,706159)
+  and ca.ancestor_concept_id in (706179,706166,706174,723459,706181,706177,706176,706180,706178,706167,706157,706155,706161,706175,706156,706154,706168,706163,706170,706158,706169,706160,706173,706172,706171,706165,706159)
   and c.invalid_reason is null
 
 ) i
