@@ -12,7 +12,7 @@ IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- 
   
 -- Create dest table
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
-	patient_num			INT  NOT NULL,
+	patid			INT  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
 	inc_procedure		INT  NOT NULL,
