@@ -422,7 +422,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -436,7 +437,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -450,7 +452,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -464,7 +467,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -478,7 +482,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -492,7 +497,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -506,7 +512,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -520,7 +527,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -534,7 +542,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -548,7 +557,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -562,7 +572,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -576,7 +587,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -590,7 +602,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           },
           {
             "concept": {
@@ -604,7 +617,8 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            }
+            },
+            "includeDescendants": true
           }
         ]
       }
