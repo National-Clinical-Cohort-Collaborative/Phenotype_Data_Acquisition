@@ -44,7 +44,7 @@ The OMOP Data Exporer is a `R` library designed to build the N3C phenotype and a
 
 **Installation**
 
-First, navigate the root of this repository to find the appropriate phenotype generation and data extraction scripts that match your common data model and sql dialect. Save these to a convenient location as the file paths are expected as parameters below. (TODO: elaborate on this step).
+First, navigate the root of this repository to find the appropriate [phenotype generation](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/PhenotypeScripts) and [data extraction](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/ExtractScripts) scripts that match your common data model and sql dialect. Save these to a convenient location as the file paths are expected as parameters below. 
 
 To utilize the Exporter, in `R` use the following code to install the dependencies:
 ```r
