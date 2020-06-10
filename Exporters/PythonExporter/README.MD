@@ -45,7 +45,7 @@ You can (optionally) use our Python Data Exporter to run the N3C data extract sc
 
 
 ```
-python db_exp.py --config config.ini --database oracle phenotype N3C_phenotype_V1_0_act_oracle.sql --sql N3C_extract_V1_0_act_oracle.sql --output_dir E:\N3C --zip --sftp
+python db_exp.py --config config.ini --database oracle --phenotype N3C_phenotype_V1_0_act_oracle.sql --sql N3C_extract_V1_0_act_oracle.sql --output_dir E:\N3C --zip --sftp
 ```
 
 **Script Command Line Options**
