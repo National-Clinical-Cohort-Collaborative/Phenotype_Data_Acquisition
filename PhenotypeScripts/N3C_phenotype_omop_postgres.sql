@@ -4,12 +4,14 @@
 # Version 2 - updated possible positive cases (typo in name of concept set name) and added additional NIH VSAC codeset_id
 # NOTE: as of V2, OMOP vocabularies have released an update to include new LOINC codes but the load of these concept_ids into atlas-covid19 has not been completed, when this is done we will include these into the concept_set generated
 # Version 3 - consolidated to single cohort definition and added N3C COHORT table + labeling statements
+# Version 4 - reconfiguration using SQLRender
+# Version 5 - updating LOINC concept sets
 
 # Instructions:
 # Cohorts were assembled using OHDSI Atlas (atlas-covid19.ohdsi.org)
-# This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/947
+# This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/1015
 # If desiredd to evaluate feasibility of each cohort, individual cohorts are available:
-# 1- “Lab-confirmed positive cases�? (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
+# 1- â€œLab-confirmed positive casesâ€? (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
 # 2- "Lab-confirmed negative cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/656)
 # 3- "Suspected positive cases"	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
 # 4- "Possible positive cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/658)
