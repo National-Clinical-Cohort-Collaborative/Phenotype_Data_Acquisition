@@ -4,12 +4,14 @@
 # Version 2 - updated possible positive cases (typo in name of concept set name) and added additional NIH VSAC codeset_id
 # NOTE: as of V2, OMOP vocabularies have released an update to include new LOINC codes but the load of these concept_ids into atlas-covid19 has not been completed, when this is done we will include these into the concept_set generated
 # Version 3 - consolidated to single cohort definition and added N3C COHORT table + labeling statements
+# Version 4 - reconfiguration using SQLRender
+# Version 5 - updating LOINC concept sets
 
 # Instructions:
 # Cohorts were assembled using OHDSI Atlas (atlas-covid19.ohdsi.org)
-# This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/947
+# This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/1015
 # If desiredd to evaluate feasibility of each cohort, individual cohorts are available:
-# 1- “Lab-confirmed positive cases�? (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
+# 1- â€œLab-confirmed positive casesâ€? (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
 # 2- "Lab-confirmed negative cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/656)
 # 3- "Suspected positive cases"	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
 # 4- "Possible positive cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/658)
@@ -49,7 +51,7 @@ select 0 as codeset_id, c.concept_id from (select distinct i.concept_id from
 union distinct select c.concept_id
   from @vocabularyDatabaseSchema.concept c
   join @vocabularyDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (706179,706166,706174,723459,706181,706177,706176,706180,706178,706167,706157,706155,706161,706175,706156,706154,706168,706163,706170,706158,706169,706160,706173,706172,706171,706165,706159)
+  and ca.ancestor_concept_id in 9,706166,706174,723459,706181,706177,706176,706180,706178,706167,706157,706155,706161,706175,706156,706154,706168,706163,706170,706158,706169,706160,706173,706172,706171,706165,706159)
   and c.invalid_reason is null
 
 ) i
