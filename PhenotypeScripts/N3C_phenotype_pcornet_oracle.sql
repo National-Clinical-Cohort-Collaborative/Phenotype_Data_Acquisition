@@ -19,7 +19,7 @@ END;
   
 -- Create dest table
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
-	patient_num			INT  NOT NULL,
+	patient_num			VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
 	inc_procedure		INT  NOT NULL,
@@ -45,7 +45,7 @@ covid_lab as
 (SELECT distinct
         lab_result_cm.patid
     FROM @cdmDatabaseSchema.lab_result_cm
-      WHERE lab_result_cm.result_date >= CAST('2020-01-01' as TIMESTAMP)
+      WHERE lab_result_cm.result_date >= CAST('01-JAN-2020' as TIMESTAMP)
         and 
         (
             lab_result_cm.lab_loinc in (SELECT loinc FROM covid_loinc )
@@ -61,8 +61,8 @@ covid_diagnosis as
         coalesce(dx_date,admit_date) as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < CAST('2020-04-01' as TIMESTAMP)  then 'dx_strong_positive'
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= CAST('2020-04-01' as TIMESTAMP) then 'dx_weak_positive'
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < CAST('01-APR-2020' as TIMESTAMP)  then 'dx_strong_positive'
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= CAST('01-APR-2020' as TIMESTAMP) then 'dx_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     FROM (SELECT diagnosis.patid,
@@ -73,7 +73,7 @@ covid_diagnosis as
             covid_dx_codes.dx_category as orig_dx_category
         FROM @cdmDatabaseSchema.diagnosis
            join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
-          WHERE coalesce(dx_date,admit_date) >= CAST('2020-01-01' as TIMESTAMP)
+          WHERE coalesce(dx_date,admit_date) >= CAST('01-JAN-2020' as TIMESTAMP)
      ) dxq
  ),
 -- patients with strong positive DX included
@@ -125,7 +125,7 @@ covid_procedure as
         procedures.patid
     FROM @cdmDatabaseSchema.procedures
 		join covid_proc_codes on procedures.px = covid_proc_codes.procedure_code
-      WHERE procedures.px_date >=  CAST('2020-01-01' as TIMESTAMP)
+      WHERE procedures.px_date >=  CAST('01-JAN-2020' as TIMESTAMP)
 
  ),
 covid_cohort as

@@ -45,7 +45,7 @@ SELECT encounter_num,
     sourcesystem_cd,
     upload_id
 FROM @cdmDatabaseSchema.observation_fact join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
-  WHERE start_date >= '1/1/2018' ;
+  WHERE start_date >= '01-JAN-2018' ;
     
     
 --select patient dimension the demographic facts including ethnicity are included in observation_fact table as well
@@ -91,17 +91,17 @@ SELECT visit_dimension.patient_num,
     sourcesystem_cd,
     upload_id
 FROM @cdmDatabaseSchema.visit_dimension join @resultsDatabaseSchema.n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
-  WHERE start_date >= '1/1/2018' ;
+  WHERE start_date >= '01-JAN-2018' ;
     
 --DATA_COUNTS TABLE
 --OUTPUT_FILE: DATA_COUNTS.csv
 SELECT * FROM (SELECT 'OBSERVATION_FACT' as TABLE_NAME, 
    (SELECT count(*) FROM @cdmDatabaseSchema.OBSERVATION_FACT join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
-  WHERE start_date >= '1/1/2018' ) as ROW_COUNT
+  WHERE start_date >= '01-JAN-2018' ) as ROW_COUNT
 
  FROM DUAL  UNION SELECT 'VISIT_DIMENSION'  TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.VISIT_DIMENSION join @resultsDatabaseSchema.n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
-  WHERE start_date >= '1/1/2018' ) as ROW_COUNT
+  WHERE start_date >= '01-JAN-2018' ) as ROW_COUNT
 
   FROM DUAL  UNION SELECT 'PATIENT_DIMENSION'  TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.PATIENT_DIMENSION join @resultsDatabaseSchema.n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num ) as ROW_COUNT
