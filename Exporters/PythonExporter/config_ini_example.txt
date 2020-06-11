@@ -17,14 +17,20 @@ pwd = xxxxx
 
 ; for zip file creation
 [site]
+; site abbreviation (example: UNC)
 name = xxxxx
+; cdm type (pcornet, omop, act)
 cdm = xxxxx
-; for version -  use underscore "_" instead of period "."
-version = xxxxx
 
 [sftp]
 host = xxxxx
 port = xxxxx
 user = xxxxx
 pwd = xxxxx
+; directory on sftp server (example: /files/UNC)
 remote_dir = xxxxx
+
+; for sql parameters
+[sql]
+results_database_schema = xxxxx
+cdm_database_schema = xxxxx
