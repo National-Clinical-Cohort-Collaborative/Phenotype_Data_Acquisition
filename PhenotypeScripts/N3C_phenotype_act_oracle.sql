@@ -21,7 +21,7 @@ END;
   
 -- Create dest table
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
-	patient_num			INT  NOT NULL,
+	patient_num			VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
 	inc_procedure		INT  NOT NULL,
@@ -49,7 +49,7 @@ covid_proc_codes as
 covid_lab as
 (SELECT distinct observation_fact.patient_num
     FROM @cdmDatabaseSchema.observation_fact
-      WHERE observation_fact.start_date >= CAST('2020-01-01' as TIMESTAMP)
+      WHERE observation_fact.start_date >= CAST('01-JAN-2020' as TIMESTAMP)
         and 
         (
             observation_fact.concept_cd in (SELECT loinc FROM covid_loinc )
@@ -62,8 +62,8 @@ covid_diagnosis as
       start_date as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < CAST('2020-04-01' as TIMESTAMP)  then '1_strong_positive'
-			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= CAST('2020-04-01' as TIMESTAMP) then '2_weak_positive'
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date < CAST('01-APR-2020' as TIMESTAMP)  then '1_strong_positive'
+			when dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= CAST('01-APR-2020' as TIMESTAMP) then '2_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     FROM (SELECT observation_fact.patient_num,
@@ -73,7 +73,7 @@ covid_diagnosis as
             covid_icd10.dx_category as orig_dx_category
         FROM @cdmDatabaseSchema.observation_fact
             join covid_icd10 on observation_fact.concept_cd like covid_icd10.icd10_code
-          WHERE observation_fact.start_date >= CAST('2020-01-01' as TIMESTAMP)
+          WHERE observation_fact.start_date >= CAST('01-JAN-2020' as TIMESTAMP)
      ) dxq
  ),
 -- patients with strong positive DX included
@@ -124,7 +124,7 @@ dx_weak as
 covid_procedure as
 (SELECT distinct observation_fact.patient_num
     FROM @cdmDatabaseSchema.observation_fact
-      WHERE observation_fact.start_date >=  CAST('2020-01-01' as TIMESTAMP)
+      WHERE observation_fact.start_date >=  CAST('01-JAN-2020' as TIMESTAMP)
         and observation_fact.concept_cd in (SELECT procedure_code FROM covid_proc_codes )
 
  ),

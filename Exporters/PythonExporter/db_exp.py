@@ -29,49 +29,59 @@ def oracle_connect(config):
     conn = cx_Oracle.connect(user, pwd, dsn_tns)
     return(conn)
 
-def parse_sql(sql_fname):
+def parse_sql(sql_fname,sql_params):
     exports = []
     sql = ""
     output_file_tag = "OUTPUT_FILE:"
     output_file = None
-    drop = False
 
     with open(sql_fname,"r") as inf:
         inrows = inf.readlines()
 
+    block = False
     for row in inrows:
         if (row.strip().startswith('--') == True) and (row.find(output_file_tag) < 0):
             continue
+        # replace sql params
+        for param in sql_params:
+            row = row.replace(param['tag'], param['value'])
+
+        if row.strip().upper().startswith('BEGIN'):
+            block = True;
+
         sql = sql + row
         if row.find(output_file_tag) >= 0:
             output_file = row[ row.find(output_file_tag) + len(output_file_tag):].strip()
 
-        if row.upper().find('DROP ') >= 0:
-            drop = True
-        if row.find(';') >= 0:
-            sql = sql.split(';')[0]
-            if output_file != None:
-                exports.append({"output_file": output_file, "sql":sql, "drop":drop })
-            else:
-                exports.append({"sql":sql, "drop": drop })
-            sql = ""
-            drop = False
+        if block == True:
+            if row.strip().upper().startswith('END;'):
+                if output_file != None:
+                    exports.append({"output_file": output_file, "sql":sql })
+                else:
+                    exports.append({"sql":sql })
+                sql = ""
+                block = False
+
+        else:
+            if row.find(';') >= 0:
+                sql = sql.split(';')[0]
+                if output_file != None:
+                    exports.append({"output_file": output_file, "sql":sql })
+                else:
+                    exports.append({"sql":sql })
+                sql = ""
 
     return(exports)
 
-def create_phenotype(conn, phenotype_fname):
+def create_phenotype(conn, phenotype_fname, sql_params):
     cursor=conn.cursor()
-    sql_arr = parse_sql(phenotype_fname)
+    sql_arr = parse_sql(phenotype_fname, sql_params)
 
+    #print and return
     for sql in sql_arr:
-        try:
-            cursor.execute(sql['sql'])
-        except Exception as e:
-            if sql['drop'] == True:
-                print("Error dropping table. Continuing with script\n")
-                print(str(e))
-            else:
-                raise e
+        print(sql['sql'])
+        cursor.execute(sql['sql'])
+        conn.commit()
 
 def db_export(conn, sql, csvwriter, arraysize):
     cursor=conn.cursor()
@@ -115,6 +125,13 @@ sftp_zip = args.sftp
 config = configparser.ConfigParser()
 config.read(config_fname)
 
+# sql params
+sql_params = [
+    {'tag': '@resultsDatabaseSchema', 'value': config['sql']['results_database_schema']},
+    {'tag': '@cdmDatabaseSchema', 'value': config['sql']['cdm_database_schema']},
+    {'tag': '@vocabularyDatabaseSchema', 'value': config['sql']['cdm_database_schema']}
+]
+
 db_conn = None
 if database == 'oracle':
     import cx_Oracle
@@ -133,7 +150,7 @@ if phenotype_fname != None:
         print("Invalid database type, use mssql or oracle")
         exit()
     print("Creating phenotype")
-    create_phenotype(db_conn, phenotype_fname)
+    create_phenotype(db_conn, phenotype_fname, sql_params)
 
 # EXPORT #
 if sql_fname != None:
@@ -149,7 +166,7 @@ if sql_fname != None:
     if not os.path.exists(datafiles_dir):
         print("ERROR: export path not found {}.  You may need to create a 'DATAFILES' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
         exit()
-    exports = parse_sql(sql_fname)
+    exports = parse_sql(sql_fname,sql_params)
     for exp in exports:
         if 'output_file' in exp:
             output_file = exp['output_file']

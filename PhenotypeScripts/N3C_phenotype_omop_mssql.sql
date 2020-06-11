@@ -33,7 +33,7 @@ IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- 
 
 -- Create dest table
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
-	person_id			INT  NOT NULL,
+	person_id			varchar(50)  NOT NULL,
 	start_date			date  NOT NULL,
 	end_date			date  NOT NULL
 );

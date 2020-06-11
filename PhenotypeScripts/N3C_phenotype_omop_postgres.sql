@@ -11,7 +11,7 @@
 # Cohorts were assembled using OHDSI Atlas (atlas-covid19.ohdsi.org)
 # This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/1015
 # If desiredd to evaluate feasibility of each cohort, individual cohorts are available:
-# 1- â€œLab-confirmed positive casesâ€? (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
+# 1- “Lab-confirmed positive cases�? (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
 # 2- "Lab-confirmed negative cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/656)
 # 3- "Suspected positive cases"	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
 # 4- "Possible positive cases" (http://atlas-covid19.ohdsi.org/#/cohortdefinition/658)
@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
 
 -- Create dest table
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
-	person_id			INT  NOT NULL,
+	person_id			varchar(50)  NOT NULL,
 	start_date			date  NOT NULL,
 	end_date			date  NOT NULL
 );
@@ -47,6 +47,7 @@ INSERT INTO Codesets (codeset_id, concept_id)
 SELECT 0 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
 (
   select concept_id from @vocabularyDatabaseSchema.CONCEPT where concept_id in (706179,706166,706174,723459,706181,706177,706176,706180,706178,706167,706157,706155,706161,706175,706156,706154,706168,706163,706170,706158,706169,706160,706173,706172,706171,706165,706159,586523,586526,715272,586515,586516,586517,586518,586520,586519,586521,586522,715262,715261,715260)
+
 UNION  select c.concept_id
   from @vocabularyDatabaseSchema.CONCEPT c
   join @vocabularyDatabaseSchema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
