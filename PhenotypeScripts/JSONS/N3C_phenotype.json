@@ -2650,7 +2650,11 @@
             "DemographicCriteriaList": [],
             "Groups": []
           },
-          "CodesetId": 2
+          "CodesetId": 2,
+          "OccurrenceStartDate": {
+            "Value": "2020-04-01",
+            "Op": "gte"
+          }
         }
       }
     ],
