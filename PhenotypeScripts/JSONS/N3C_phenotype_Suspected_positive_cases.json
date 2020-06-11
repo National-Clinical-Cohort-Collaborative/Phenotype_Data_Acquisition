@@ -1,140 +1,6 @@
 {
   "ConceptSets": [
     {
-      "id": 1,
-      "name": "CD2H Strong Positive",
-      "expression": {
-        "items": [
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "840539006",
-              "CONCEPT_ID": 37311061,
-              "CONCEPT_NAME": "Disease caused by 2019-nCoV",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "SNOMED"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Context-dependent",
-              "CONCEPT_CODE": "840544004",
-              "CONCEPT_ID": 37311060,
-              "CONCEPT_NAME": "Suspected disease caused by 2019-nCoV",
-              "DOMAIN_ID": "Observation",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "SNOMED"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "OMOP4873906",
-              "CONCEPT_ID": 756023,
-              "CONCEPT_NAME": "Acute bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "OMOP Extension"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "OMOP4873909",
-              "CONCEPT_ID": 756031,
-              "CONCEPT_NAME": "Bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "OMOP Extension"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "OMOP4873907",
-              "CONCEPT_ID": 756039,
-              "CONCEPT_NAME": "Respiratory infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "OMOP Extension"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "OMOP4873911",
-              "CONCEPT_ID": 756044,
-              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "OMOP Extension"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "OMOP4873910",
-              "CONCEPT_ID": 756061,
-              "CONCEPT_NAME": "Asymptomatic infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "OMOP Extension"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "OMOP4873908",
-              "CONCEPT_ID": 756081,
-              "CONCEPT_NAME": "Infection of lower respiratory tract caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "OMOP Extension"
-            }
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Clinical Finding",
-              "CONCEPT_CODE": "1240551000000105",
-              "CONCEPT_ID": 37310285,
-              "CONCEPT_NAME": "Pneumonia caused by 2019 novel coronavirus",
-              "DOMAIN_ID": "Condition",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "SNOMED"
-            }
-          }
-        ]
-      }
-    },
-    {
       "id": 2,
       "name": "CD2H HCPCS/CPT Codes",
       "expression": {
@@ -809,6 +675,322 @@
           }
         ]
       }
+    },
+    {
+      "id": 4,
+      "name": "CD2H Strong Positive Prior to 04-01-2020",
+      "expression": {
+        "items": [
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873906",
+              "CONCEPT_ID": 756023,
+              "CONCEPT_NAME": "Acute bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873911",
+              "CONCEPT_ID": 756044,
+              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873910",
+              "CONCEPT_ID": 756061,
+              "CONCEPT_NAME": "Asymptomatic infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873909",
+              "CONCEPT_ID": 756031,
+              "CONCEPT_NAME": "Bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "840539006",
+              "CONCEPT_ID": 37311061,
+              "CONCEPT_NAME": "Disease caused by 2019-nCoV",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "27619001",
+              "CONCEPT_ID": 4100065,
+              "CONCEPT_NAME": "Disease due to Coronaviridae",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873908",
+              "CONCEPT_ID": 756081,
+              "CONCEPT_NAME": "Infection of lower respiratory tract caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "1240551000000105",
+              "CONCEPT_ID": 37310285,
+              "CONCEPT_NAME": "Pneumonia caused by 2019 novel coronavirus",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873907",
+              "CONCEPT_ID": 756039,
+              "CONCEPT_NAME": "Respiratory infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "398447004",
+              "CONCEPT_ID": 320651,
+              "CONCEPT_NAME": "Severe acute respiratory syndrome",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Context-dependent",
+              "CONCEPT_CODE": "840544004",
+              "CONCEPT_ID": 37311060,
+              "CONCEPT_NAME": "Suspected disease caused by 2019-nCoV",
+              "DOMAIN_ID": "Observation",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "name": "CD2H Strong Positive After 04-01-2020",
+      "expression": {
+        "items": [
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873906",
+              "CONCEPT_ID": 756023,
+              "CONCEPT_NAME": "Acute bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873911",
+              "CONCEPT_ID": 756044,
+              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873910",
+              "CONCEPT_ID": 756061,
+              "CONCEPT_NAME": "Asymptomatic infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873909",
+              "CONCEPT_ID": 756031,
+              "CONCEPT_NAME": "Bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "840539006",
+              "CONCEPT_ID": 37311061,
+              "CONCEPT_NAME": "Disease caused by 2019-nCoV",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873908",
+              "CONCEPT_ID": 756081,
+              "CONCEPT_NAME": "Infection of lower respiratory tract caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "1240551000000105",
+              "CONCEPT_ID": 37310285,
+              "CONCEPT_NAME": "Pneumonia caused by 2019 novel coronavirus",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Clinical Finding",
+              "CONCEPT_CODE": "OMOP4873907",
+              "CONCEPT_ID": 756039,
+              "CONCEPT_NAME": "Respiratory infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "DOMAIN_ID": "Condition",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "OMOP Extension"
+            },
+            "includeDescendants": true
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Context-dependent",
+              "CONCEPT_CODE": "840544004",
+              "CONCEPT_ID": 37311060,
+              "CONCEPT_NAME": "Suspected disease caused by 2019-nCoV",
+              "DOMAIN_ID": "Observation",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            "includeDescendants": true
+          }
+        ]
+      }
     }
   ],
   "PrimaryCriteria": {
@@ -821,9 +1003,164 @@
               {
                 "Criteria": {
                   "ConditionOccurrence": {
-                    "CodesetId": 1,
+                    "CodesetId": 4,
                     "OccurrenceStartDate": {
                       "Value": "2020-01-01",
+                      "Extent": "2020-03-31",
+                      "Op": "bt"
+                    }
+                  }
+                },
+                "StartWindow": {
+                  "Start": {
+                    "Coeff": -1
+                  },
+                  "End": {
+                    "Coeff": 1
+                  },
+                  "UseEventEnd": false
+                },
+                "Occurrence": {
+                  "Type": 2,
+                  "Count": 1
+                }
+              },
+              {
+                "Criteria": {
+                  "Measurement": {
+                    "CodesetId": 3,
+                    "OccurrenceStartDate": {
+                      "Value": "2020-01-01",
+                      "Op": "gte"
+                    },
+                    "ValueAsConcept": [
+                      {
+                        "CONCEPT_CODE": "LA10109-9",
+                        "CONCEPT_ID": 45880847,
+                        "CONCEPT_NAME": "Unclear or unknown",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA10607-2",
+                        "CONCEPT_ID": 45880480,
+                        "CONCEPT_NAME": "Unknown/No answer",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA11107-2",
+                        "CONCEPT_ID": 45885232,
+                        "CONCEPT_NAME": "Unknown or uncertain",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA13420-7",
+                        "CONCEPT_ID": 45885242,
+                        "CONCEPT_NAME": "Unknown/Indeterminate",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA14433-9",
+                        "CONCEPT_ID": 45876576,
+                        "CONCEPT_NAME": "Unknown (missing)",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA14513-8",
+                        "CONCEPT_ID": 45882283,
+                        "CONCEPT_NAME": "Other or unknown",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA19526-5",
+                        "CONCEPT_ID": 45878545,
+                        "CONCEPT_NAME": "Other/Unknown",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      }
+                    ]
+                  }
+                },
+                "StartWindow": {
+                  "Start": {
+                    "Coeff": -1
+                  },
+                  "End": {
+                    "Coeff": 1
+                  },
+                  "UseEventEnd": false
+                },
+                "Occurrence": {
+                  "Type": 2,
+                  "Count": 1
+                }
+              },
+              {
+                "Criteria": {
+                  "ProcedureOccurrence": {
+                    "CodesetId": 2,
+                    "OccurrenceStartDate": {
+                      "Value": "2020-01-01",
+                      "Op": "gte"
+                    }
+                  }
+                },
+                "StartWindow": {
+                  "Start": {
+                    "Coeff": -1
+                  },
+                  "End": {
+                    "Coeff": 1
+                  },
+                  "UseEventEnd": false
+                },
+                "Occurrence": {
+                  "Type": 2,
+                  "Count": 1
+                }
+              }
+            ],
+            "DemographicCriteriaList": [],
+            "Groups": []
+          },
+          "CodesetId": 4,
+          "OccurrenceStartDate": {
+            "Value": "2020-01-01",
+            "Extent": "2020-03-31",
+            "Op": "bt"
+          }
+        }
+      },
+      {
+        "ConditionOccurrence": {
+          "CorrelatedCriteria": {
+            "Type": "ANY",
+            "CriteriaList": [
+              {
+                "Criteria": {
+                  "ConditionOccurrence": {
+                    "CodesetId": 5,
+                    "OccurrenceStartDate": {
+                      "Value": "2020-04-01",
                       "Op": "gte"
                     }
                   }
@@ -959,8 +1296,9 @@
             "DemographicCriteriaList": [],
             "Groups": []
           },
+          "CodesetId": 5,
           "OccurrenceStartDate": {
-            "Value": "2020-01-01",
+            "Value": "2020-04-01",
             "Op": "gte"
           }
         }
@@ -981,6 +1319,7 @@
       {
         "Criteria": {
           "Measurement": {
+            "CodesetId": 3,
             "OccurrenceStartDate": {
               "Value": "2020-01-01",
               "Op": "gte"
@@ -1078,6 +1417,7 @@
       {
         "Criteria": {
           "Measurement": {
+            "CodesetId": 3,
             "OccurrenceStartDate": {
               "Value": "2020-01-01",
               "Op": "gte"
