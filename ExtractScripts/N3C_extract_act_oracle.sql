@@ -19,8 +19,40 @@
 
 --N3C_VOCAB_MAP TABLE
 --OUTPUT_FILE: N3C_VOCAB_MAP.CSV
-drop table n3c_vocab_map;
-create table n3c_vocab_map as
+select 'DEM|HISP:' local_prefix, 'Ethnicity' omop_vocab from dual 
+union
+select 'DEM|RACE:' local_prefix, 'Race' omop_vocab from dual 
+union
+select 'DEM|SEX:' local_prefix, 'Gender' omop_vocab from dual 
+union
+select 'RXNORM:' local_prefix, 'RXNORM' omop_vocab from dual 
+union
+select 'NDC:' local_prefix, 'NDC' omop_vocab from dual 
+union
+select 'NUI:' local_prefix, 'NDFRT' omop_vocab from dual 
+union
+select 'ICD10CM:' local_prefix, 'ICD10CM' omop_vocab from dual 
+union
+select 'ICD9CM:' local_prefix, 'ICD9CM' omop_vocab from dual 
+union
+select 'ICD10PCS:' local_prefix, 'ICD10PCS' omop_vocab from dual 
+union
+select 'ICD9PROC:' local_prefix, 'ICD9PROC' omop_vocab from dual 
+union
+select 'LOINC:' local_prefix, 'LOINC' omop_vocab from dual 
+union
+select 'CPT4:' local_prefix, 'CPT4' omop_vocab from dual 
+union
+select 'HCPCS:' local_prefix, 'HCPCS' omop_vocab from dual 
+order by omop_vocab;
+
+
+
+--Create non-standard code to standard code map
+--ACT_STANDARD2LOCAL_CODE_MAP TABLE
+--OUTPUT_FILE: ACT_STANDARD2LOCAL_CODE_MAP.csv
+with N3C_VOCAB_MAP AS 
+(
 select 'DEM|HISP:%' local_prefix, 'Ethnicity' omop_vocab from dual 
 union
 select 'DEM|RACE:%' local_prefix, 'Race' omop_vocab from dual 
@@ -46,13 +78,9 @@ union
 select 'CPT4:%' local_prefix, 'CPT4' omop_vocab from dual 
 union
 select 'HCPCS:%' local_prefix, 'HCPCS' omop_vocab from dual 
-order by omop_vocab;
-commit;
-
-
-
---Create non-standard code to standard code map
-with n3c_concept_dimension as 
+order by omop_vocab
+ ),
+n3c_concept_dimension as 
 (
     select * from @cdmDatabaseSchema.concept_dimension
 ),
@@ -270,7 +298,7 @@ select * from px_nonstandard_codes_mapped
 union
 select * from dem_nonstandard_codes_mapped;
 
-commit;
+
 
 
 --This is no longer needed - just commenting out now
