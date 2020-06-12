@@ -60,6 +60,21 @@ python db_exp.py --config config.ini --database oracle --phenotype N3C_phenotype
 *   --zip
 *   --sftp
 
+**What will my output look like?**
+
+Once you run the exporter, your files will be output in the following directory structure:
+
+**_Parent Directory_**
+
+![Screenshot of Example Parent Directory](https://imgur.com/68YwCGU.png)
+
+
+**_Sub-Directory_**
+
+![Screenshot of Example Sub-Directory](https://imgur.com/ubrdNwA.png)
+
+(These are OMOP files--if you use PCORnet or ACT, your exported tables will have different names/quantity, but will be in the same directly structure.) Note that these files are .csv files, but are actually pipe delimited rather than comma delimited. The exporter will take care of delimiters, formatting, headers, and everything else you need to be compliant with our formatting.
+
 **Bug Reports/Enhancement Requests/Contributions**
 
 We would love to hear from you about this script, as we hope to continue to improve and enhance it. We also welcome contributions, if there’s a cool feature you’ve added locally. Please feel free to open an issue or create a pull request as needed!
