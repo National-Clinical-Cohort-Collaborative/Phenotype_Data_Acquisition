@@ -126,7 +126,7 @@ Once you run the exporter, your files will be output in the following directory 
 
 ![Screenshot of Example Sub-Directory](https://imgur.com/ubrdNwA.png)
 
-Note that these files are .csv files, but are actually pipe delimited rather than comma delimited. The exporter will take care of deliminters, formatting, headers, and everything else you need to be compliant with our formatting.
+Note that these files are .csv files, but are actually pipe delimited rather than comma delimited. The exporter will take care of delimiters, formatting, headers, and everything else you need to be compliant with our formatting.
 
 **Bug Reports/Enhancement Requests/Contributions**
 
