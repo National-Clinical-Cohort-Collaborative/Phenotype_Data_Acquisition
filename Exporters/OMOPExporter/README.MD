@@ -121,7 +121,6 @@ Once you run the exporter, your files will be output in the following directory 
 
 ![Screenshot of Example Parent Directory](https://imgur.com/68YwCGU.png)
 
-
 **_Sub-Directory_**
 
 ![Screenshot of Example Sub-Directory](https://imgur.com/ubrdNwA.png)
