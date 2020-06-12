@@ -113,6 +113,20 @@ Note: if you cannot call out to the internet from R, you may download the [TAR h
 
 When you download this, you'll need to `Upload` the package into your RStudio environment (if in the cloud) or simply find the file pathway (if local RStudio). Once uploaded, you will need to open the `N3cOhdsi.Rprog` and the `Build` tab will show up in the upper right windows (next to Environment, History, Connections, Build). Proceed to `Install and Restart` to build the `N3cOhdsi` library. You may access the file `example_execution.R` to retrieve the code referenced above.
 
+**What will my output look like?**
+
+Once you run the exporter, your files will be output in the following directory structure:
+
+**_Parent Directory_**
+
+![Screenshot of Example Parent Directory](https://imgur.com/68YwCGU.png)
+
+
+**_Sub-Directory_**
+
+![Screenshot of Example Sub-Directory](https://imgur.com/ubrdNwA.png)
+
+Note that these files are .csv files, but are actually pipe delimited rather than comma delimited. The exporter will take care of deliminters, formatting, headers, and everything else you need to be compliant with our formatting.
 
 **Bug Reports/Enhancement Requests/Contributions**
 
