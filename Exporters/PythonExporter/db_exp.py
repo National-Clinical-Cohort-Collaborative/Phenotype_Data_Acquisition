@@ -3,8 +3,6 @@ import configparser
 import os
 import argparse
 import datetime
-import time
-import zipfile
 import shutil
 
 def mssql_connect(config):
@@ -101,6 +99,30 @@ def db_export(conn, sql, csvwriter, arraysize):
     outf.close()
     cursor.close()
 
+def test_env(db_type:str):
+    import subprocess
+    import sys
+
+    install_tests = {'lib': {'result': None, 'failures': None}}
+
+    reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
+    installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
+    db_req_packages = {'oracle': ['cx-Oracle'], 'mssql': ['pyodbc']} # DB Specific Packages
+    required_packages = ['pyodbc'] # Packages required regardless of DB Type
+    try:
+        _req_pkgs = required_packages + db_req_packages[db_type]
+        for package in _req_pkgs:
+            if package not in installed_packages:
+                print('Library Not Found : {0}'.format(package))
+                install_tests['lib']['result'] = False
+                install_tests['lib']['failures'].push(package)
+            install_tests['lib']['result'] = True if install_tests['lib']['result'] is None \
+                else install_tests['lib']['result']
+    except KeyError:
+        print("Invalid database type, use mssql or oracle")
+    finally:
+        return install_tests['lib']['result']
+
 # get command line args
 clparse = argparse.ArgumentParser(description='Export from DB using formatted SQL file, optionally create n3c_cohort table')
 clparse.add_argument('--sql', required=False, default=None, help='name of the file that contains the export sql, must meet format spec, including ";" and OUTPUT_FILE:')
@@ -116,7 +138,7 @@ args = clparse.parse_args()
 output_dir = args.output_dir
 sql_fname = args.sql
 config_fname = args.config
-database = args.database
+database = args.database.lower()
 arraysize = int(args.arraysize)
 phenotype_fname = args.phenotype
 create_zip = args.zip
@@ -124,6 +146,10 @@ sftp_zip = args.sftp
 
 config = configparser.ConfigParser()
 config.read(config_fname)
+
+if not test_env(database):
+    print('Failed Initialization Tests')
+    exit()
 
 # sql params
 sql_params = [
@@ -175,7 +201,7 @@ if sql_fname != None:
             exit()
         print( "processing output file: {}\n".format(output_file) )
         if output_file in root_files:
-            outfname = output_dir + os.path.sep + exp['output_file'] 
+            outfname = output_dir + os.path.sep + exp['output_file']
         else:
             outfname = datafiles_dir + os.path.sep + exp['output_file']
         outf = open(outfname, 'w', newline='')
@@ -206,4 +232,3 @@ if sftp_zip == True:
     sftp = paramiko.SFTPClient.from_transport(transport)
     sftp.chdir(config['sftp']['remote_dir'])
     sftp.put(zip_fname,zip_fname)
-
