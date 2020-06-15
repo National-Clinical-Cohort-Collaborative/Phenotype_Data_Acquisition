@@ -52,7 +52,8 @@ N3cOhdsi::createCohort(connectionDetails = connectionDetails,
 N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         sqlFilePath = extractSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
-                        resultsDatabaseSchema = resultsDatabaseSchema
+                        resultsDatabaseSchema = resultsDatabaseSchema,
+                        outputFolder = outputFolder
                         )
 
 
