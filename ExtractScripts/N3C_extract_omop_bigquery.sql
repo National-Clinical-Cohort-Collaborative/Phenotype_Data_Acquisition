@@ -1,11 +1,12 @@
 --OMOP v5.3.1 extraction code for N3C
 --Written by Kristin Kostka, OHDSI
 --Code written for MS SQL Server
---This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER,
+--This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH
 --Currently this script extracts the derived tables for DRUG_ERA, DOSE_ERA, CONDITION_ERA as well (could be modified we run these in Palantir instead)
 --Assumptions:
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
 --	2. You are extracting data with a lookback period to 1-1-2018
+--  3. You have existing tables for each of these extracted tables. If you do not, create a shell table so it can extract an empty table.
 
 -- To run, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
 
@@ -197,6 +198,21 @@ join @resultsDatabaseSchema.n3c_cohort n
   on o.person_id = n.person_id
 where o.observation_date >= '1/1/2018';
 
+--DEATH
+--OUTPUT_FILE: DEATH.csv
+select
+   n.person_id,
+    cast(death_date as date) as death_date,
+	cast(death_datetime as datetime) as death_datetime,
+	death_type_concept_id,
+	cause_concept_id,
+	null as cause_source_value,
+	cause_source_concept_id
+from @cdmDatabaseSchema.death d
+join @resultsDatabaseSchema.n3c_cohort n
+on d.person_id = n.person_id
+where o.death_date >= '1/1/2020';	
+
 --LOCATION
 --OUTPUT_FILE: LOCATION.csv
 select
@@ -364,6 +380,10 @@ union distinct select
 union distinct select
    'OBSERVATION' as table_name,
    (select count(*) from @cdmDatabaseSchema.observation o join @resultsDatabaseSchema.n3c_cohort n on o.person_id = n.person_id and observation_date >= '1/1/2018') as row_count
+
+union
+
+  (select count(*) from @cdmDatabaseSchema.death d join @resultsDatabaseSchema.n3c_cohort n on d.person_id = n.person_id and death_date >= '1/1/2020') as row_count
 
 union distinct select
    'LOCATION' as table_name,

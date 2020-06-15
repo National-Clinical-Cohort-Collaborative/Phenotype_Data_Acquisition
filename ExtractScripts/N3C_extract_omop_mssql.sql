@@ -1,11 +1,12 @@
 --OMOP v5.3.1 extraction code for N3C
 --Written by Kristin Kostka, OHDSI
 --Code written for MS SQL Server
---This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER,
+--This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH
 --Currently this script extracts the derived tables for DRUG_ERA, DOSE_ERA, CONDITION_ERA as well (could be modified we run these in Palantir instead)
 --Assumptions:
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
 --	2. You are extracting data with a lookback period to 1-1-2018
+--  3. You have existing tables for each of these extracted tables. If you do not, create a shell table so it can extract an empty table.
 
 -- To run, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
 
@@ -197,6 +198,21 @@ JOIN @resultsDatabaseSchema.N3C_COHORT n
   ON O.PERSON_ID = N.PERSON_ID
 WHERE o.OBSERVATION_DATE >= '1/1/2018';
 
+--DEATH
+--OUTPUT_FILE: DEATH.csv
+SELECT
+   n.PERSON_ID,
+    CAST(DEATH_DATE as date) as DEATH_DATE,
+	CAST(DEATH_DATETIME as datetime) as DEATH_DATETIME,
+	DEATH_TYPE_CONCEPT_ID,
+	CAUSE_CONCEPT_ID,
+	NULL as CAUSE_SOURCE_VALUE,
+	CAUSE_SOURCE_CONCEPT_ID
+FROM @cdmDatabaseSchema.DEATH d
+JOIN @resultsDatabaseSchema.N3C_COHORT n
+ON D.PERSON_ID = N.PERSON_ID
+WHERE o.DEATH_DATE >= '1/1/2020';	
+
 --LOCATION
 --OUTPUT_FILE: LOCATION.csv
 SELECT
@@ -383,6 +399,10 @@ UNION
 select
    'OBSERVATION' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.OBSERVATION o JOIN @resultsDatabaseSchema.N3C_COHORT n ON o.PERSON_ID = n.PERSON_ID AND OBSERVATION_DATE >= '1/1/2018') as ROW_COUNT
+
+UNION
+
+  (select count(*) from @cdmDatabaseSchema.DEATH d JOIN @resultsDatabaseSchema.N3C_COHORT n ON d.PERSON_ID = n.PERSON_ID AND DEATH_DATE >= '1/1/2020') as ROW_COUNT
 
 UNION
 
