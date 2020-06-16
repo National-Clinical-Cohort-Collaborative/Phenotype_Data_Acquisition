@@ -30,7 +30,7 @@ The OMOP Data Exporer is a `R` library designed to build the N3C phenotype and a
 
 - A database in [Common Data Model version 5](https://github.com/OHDSI/CommonDataModel) in one of these platforms: SQL Server, Oracle, PostgreSQL, IBM Netezza, Apache Impala, Amazon RedShift, Google BigQuery or Microsoft APS.
 - Incorporation of [OMOP Vocabulary release v20200331,v20200403, v20200428, v20200430, v20200512, v20200519](https://github.com/OHDSI/Vocabulary-v5.0/releases) in your local ETL. It is also suggested to follow [OHDSI Community Guidance for Mapping](https://github.com/OHDSI/Covid-19/wiki/Release)
-- R version 3.5.0 or newer
+- R version 3.5.0 or newer (version 4 or newer is highly recommended)
 - On Windows: [RTools](http://cran.r-project.org/bin/windows/Rtools/)
 - [Java](http://java.com)
 - JAVA_HOME environment variable set to JDK path
@@ -67,6 +67,8 @@ remotes::install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Da
 library(N3cOhdsi)
 
 ```
+**Troubleshooting note:** If you have an older version of R (prior to version 4), the installation may fail--the remotes package is not tolerant of warning messages, which often come up due to versioning issues. The best way to correct this is to update to the newest version of R. If you are not able to update R, you can force the installation to ignore the warning messages by setting an additional environment variable: R_REMOTES_NO_ERRORS_FROM_WARNINGS = true. 
+
 **Local configuration**
 
 ```r
