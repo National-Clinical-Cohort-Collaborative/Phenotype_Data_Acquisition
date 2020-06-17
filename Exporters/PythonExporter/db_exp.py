@@ -3,8 +3,6 @@ import configparser
 import os
 import argparse
 import datetime
-import time
-import zipfile
 import shutil
 
 def mssql_connect(config):
@@ -101,6 +99,27 @@ def db_export(conn, sql, csvwriter, arraysize):
     outf.close()
     cursor.close()
 
+def test_env(database=None, sftp=None):
+    import subprocess
+    import sys
+    db_req_packages = {'oracle': 'cx-Oracle', 'mssql': 'pyodbc'} # DB Specific Packages
+    reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
+    installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
+
+    err_mess = ''
+    if database != None: #test db packages
+        if database not in db_req_packages:
+            err_mess = err_mess + "Invalid database type, use mssql or oracle\n"
+        else:
+            if db_req_packages[database] not in installed_packages:
+                err_mess = err_mess + "Package not installed for database connection: {}\n".format(db_req_packages[database])
+
+    if sftp != None:
+        if 'paramiko' not in installed_packages:
+                err_mess = err_mess + "Package not installed for sftp: {}\n".format('paramiko')
+
+    return(err_mess)
+
 # get command line args
 clparse = argparse.ArgumentParser(description='Export from DB using formatted SQL file, optionally create n3c_cohort table')
 clparse.add_argument('--sql', required=False, default=None, help='name of the file that contains the export sql, must meet format spec, including ";" and OUTPUT_FILE:')
@@ -124,6 +143,12 @@ sftp_zip = args.sftp
 
 config = configparser.ConfigParser()
 config.read(config_fname)
+
+env_err = test_env(database, sftp_zip) 
+if env_err != '':
+    print('Failed Initialization Tests')
+    print(env_err)
+    exit()
 
 # sql params
 sql_params = [
@@ -175,7 +200,7 @@ if sql_fname != None:
             exit()
         print( "processing output file: {}\n".format(output_file) )
         if output_file in root_files:
-            outfname = output_dir + os.path.sep + exp['output_file'] 
+            outfname = output_dir + os.path.sep + exp['output_file']
         else:
             outfname = datafiles_dir + os.path.sep + exp['output_file']
         outf = open(outfname, 'w', newline='')
@@ -206,4 +231,3 @@ if sftp_zip == True:
     sftp = paramiko.SFTPClient.from_transport(transport)
     sftp.chdir(config['sftp']['remote_dir'])
     sftp.put(zip_fname,zip_fname)
-
