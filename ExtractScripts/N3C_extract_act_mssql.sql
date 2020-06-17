@@ -87,17 +87,17 @@ n3c_concept_dimension as
 med_standard_codes as
 (
 select concept_path, concept_cd, name_char from n3c_concept_dimension where concept_path like '\ACT\Medications\%'  and
-(concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'RXNORM' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'NDC' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'NDFRT' and rownum = 1))
+(concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'RXNORM')
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'NDC')
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'NDFRT'))
 
 ),
 med_nonstandard_codes as --local codes
 (
 select * from n3c_concept_dimension where concept_path like '\ACT\Medications\%'
-and (concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'RXNORM' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'NDC' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'NDFRT' and rownum = 1))
+and (concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'RXNORM')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'NDC')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'NDFRT'))
 
 ),
 med_nonstandard_parents as
@@ -128,16 +128,16 @@ dx_standard_codes as
 (
 select concept_path, concept_cd, name_char from n3c_concept_dimension
 where (concept_path like '\ACT\Diagnosis\%' or concept_path like '\Diagnoses\%') and
-(concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD10CM' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD9CM' and rownum = 1))
+(concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD10CM')
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD9CM'))
 
 ),
 dx_nonstandard_codes as --local codes
 (
 select * from n3c_concept_dimension
 where (concept_path like '\ACT\Diagnosis\%' or concept_path like '\Diagnoses\%') and
-(concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD10CM' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD9CM' and rownum = 1))
+(concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD10CM')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD9CM'))
 
 ),
 dx_nonstandard_parents as
@@ -169,14 +169,14 @@ lab_standard_codes as
 (
 select concept_path, concept_cd, name_char from n3c_concept_dimension
 where (concept_path like '\ACT\Labs\%' or concept_path like '\ACT\Lab\%') and
-(concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'LOINC' and rownum = 1))
+(concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'LOINC'))
 
 ),
 lab_nonstandard_codes as --local codes
 (
 select * from n3c_concept_dimension
 where (concept_path like '\ACT\Labs\%' or concept_path like '\ACT\Lab\%') and
-(concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'LOINC' and rownum = 1))
+(concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'LOINC'))
 
 ),
 lab_nonstandard_parents as
@@ -209,22 +209,22 @@ px_standard_codes as
 (
 select concept_path, concept_cd, name_char from n3c_concept_dimension
 where (concept_path like '\ACT\Procedures\%' or concept_path like '\Diagnoses\%') and
-    (concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD10PCS' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD9PROC' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'CPT4' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'HCPCS' and rownum = 1))
+    (concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD10PCS')
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD9PROC')
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'CPT4' )
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'HCPCS'))
 
 ),
 px_nonstandard_codes as --local codes
 (
 select * from n3c_concept_dimension
 where (concept_path like '\ACT\Procedures\%' or concept_path like '\Diagnoses\%') and
-    (concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD10PCS' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD9PROC' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'CPT4' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD10CM' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'ICD9CM' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'HCPCS' and rownum = 1))
+    (concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD10PCS')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD9PROC')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'CPT4')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD10CM')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'ICD9CM')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'HCPCS'))
 
 ),
 px_nonstandard_parents as
@@ -257,18 +257,18 @@ dem_standard_codes as
 (
 select concept_path, concept_cd, name_char from n3c_concept_dimension
 where concept_path like '\ACT\Demographics\%' and
-(concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'Race' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'Gender' and rownum = 1)
-     or concept_cd like (select local_prefix from n3c_vocab_map where omop_vocab = 'Ethnicity' and rownum = 1))
+(concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'Race')
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'Gender')
+     or concept_cd like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'Ethnicity'))
 
 ),
 dem_nonstandard_codes as --local codes
 (
 select * from n3c_concept_dimension
 where concept_path like '\ACT\Demographics\%' and
-    (concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'Race' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'Gender' and rownum = 1)
-     and concept_cd not like (select local_prefix from n3c_vocab_map where omop_vocab = 'Ethnicity' and rownum = 1))
+    (concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'Race')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'Gender')
+     and concept_cd not like (select top 1 local_prefix from n3c_vocab_map where omop_vocab = 'Ethnicity'))
 
 ),
 dem_nonstandard_parents as
