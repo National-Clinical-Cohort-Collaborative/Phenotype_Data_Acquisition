@@ -106,7 +106,10 @@ select
     concept_cd,
     name_char,
     concept_path,
-    trim('\' from reverse(substring(reverse(concept_path),1,charindex('\',reverse(concept_path),2)))) as path_element,
+    substring(concept_path,
+			      len(concept_path) - charindex('\',reverse(concept_path),2)+2,
+			      charindex('\',reverse(concept_path),2)-2
+		) as path_element,
     substring(concept_path,1,len(concept_path)-charindex('\',reverse(concept_path),2)+1) as parent
 from med_nonstandard_codes
 
@@ -115,7 +118,7 @@ med_nonstandard_codes_mapped as
 (
 select
     s.concept_cd as act_standard_code,
-    p.concept_cd as as local_concept_cd,
+    p.concept_cd as local_concept_cd,
     p.name_char,
     p.parent as parent_concept_path,
     s.concept_path as concept_path,
@@ -146,7 +149,10 @@ select
     concept_cd,
     name_char,
     substring(concept_path,1,len(concept_path)-charindex('\',reverse(concept_path),2)+1) as parent,
-    trim('\' from reverse(substring(reverse(concept_path),1,charindex('\',reverse(concept_path),2)))) as path_element,
+    substring(concept_path,
+			      len(concept_path) - charindex('\',reverse(concept_path),2)+2,
+			      charindex('\',reverse(concept_path),2)-2
+		) as path_element,
     concept_path
 from dx_nonstandard_codes
 
@@ -185,7 +191,10 @@ select
     concept_cd,
     name_char,
     substring(concept_path,1,len(concept_path)-charindex('\',reverse(concept_path),2)+1) as parent,
-    trim('\' from reverse(substring(reverse(concept_path),1,charindex('\',reverse(concept_path),2)))) as path_element,
+    substring(concept_path,
+			      len(concept_path) - charindex('\',reverse(concept_path),2)+2,
+			      charindex('\',reverse(concept_path),2)-2
+		) as path_element,
     concept_path
 from lab_nonstandard_codes
 
@@ -233,7 +242,10 @@ select
     concept_cd,
     name_char,
     substring(concept_path,1,len(concept_path)-charindex('\',reverse(concept_path),2)+1) as parent,
-    trim('\' from reverse(substring(reverse(concept_path),1,charindex('\',reverse(concept_path),2)))) as path_element,
+    substring(concept_path,
+			      len(concept_path) - charindex('\',reverse(concept_path),2)+2,
+			      charindex('\',reverse(concept_path),2)-2
+		) as path_element,
     concept_path
 from px_nonstandard_codes
 
@@ -277,7 +289,10 @@ select
     concept_cd,
     name_char,
     substring(concept_path,1,len(concept_path)-charindex('\',reverse(concept_path),2)+1) as parent,
-    trim('\' from reverse(substring(reverse(concept_path),1,charindex('\',reverse(concept_path),2)))) as path_element,
+    substring(concept_path,
+			      len(concept_path) - charindex('\',reverse(concept_path),2)+2,
+			      charindex('\',reverse(concept_path),2)-2
+		) as path_element,
     concept_path
 from dem_nonstandard_codes
 
@@ -305,21 +320,6 @@ union
 select * from dem_nonstandard_codes_mapped;
 
 
-
-
---This is no longer needed - just commenting out now
---CONCEPT_DIMENSION TABLE
---OUTPUT_FILE: CONCEPT_DIMENSION.CSV
---SELECT concept_path,
---    concept_cd,
---    name_char,
---    update_date,
---    download_date,
---    import_date,
---    sourcesystem_cd,
---    upload_id
---FROM concept_dimension ;
-
 --OBSERVATION_FACT TABLE
 --OUTPUT_FILE: OBSERVATION_FACT.CSV
 --Extract OBSERVATION_FACTS represented in the ACT Ontology
@@ -327,7 +327,7 @@ select * from dem_nonstandard_codes_mapped;
 --select all facts - concept_cd when mapped to OMOP determines domain/value
 with all_act_prefixes as
 (
-    select distinct substring(concept_cd,1, charindex(':',concept_cd,1) as term_prefix
+    select distinct substring(concept_cd,1, charindex(':',concept_cd,1)) as term_prefix
     from @cdmDatabaseSchema.concept_dimension
     where
     concept_path like '\ACT\Demographics\%'
@@ -364,7 +364,7 @@ select
 from @cdmDatabaseSchema.observation_fact
     join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num
   WHERE start_date >= '01/01/2018' and
-     substring(concept_cd,1, charindex(':',concept_cd,1) in
+     substring(concept_cd,1, charindex(':',concept_cd,1)) in
     (
         select term_prefix from all_act_prefixes
     );
