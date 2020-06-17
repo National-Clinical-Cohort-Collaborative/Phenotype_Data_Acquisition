@@ -46,9 +46,10 @@ runExtraction  <- function(connectionDetails,
 
   # replace parameters with values
   src_sql <- SqlRender::render(sql = src_sql,
-                           cdmDatabaseSchema = cdmDatabaseSchema,
-                           resultsDatabaseSchema = resultsDatabaseSchema,
-                           ...)
+                               warnOnMissingParameters = FALSE,
+                               cdmDatabaseSchema = cdmDatabaseSchema,
+                               resultsDatabaseSchema = resultsDatabaseSchema,
+                               ...)
 
 
   # split script into chunks (to produce separate output files)
