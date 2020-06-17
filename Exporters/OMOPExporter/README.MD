@@ -101,7 +101,18 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         sqlFilePath = extractSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
                         resultsDatabaseSchema = resultsDatabaseSchema,
-                        outputFolder = outputFolder
+                        outputFolder = outputFolder,
+                        siteAbbrev = siteAbbrev,
+                        siteName = siteName,
+                        contactName = contactName,
+                        contactEmail = contactEmail,
+                        cdmName = cdmName,
+                        cdmVersion = cdmVersion,
+                        vocabularyVersion = vocabularyVersion,
+                        n3cPhenotypeYN = n3cPhenotypeYN,
+                        n3cPhenotypeVersion = n3cPhenotypeVersion,
+                        dataLatencyNumDays = dataLatencyNumDays,
+                        daysBetweenSubmissions = daysBetweenSubmissions
                         )
 
 
