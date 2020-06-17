@@ -99,29 +99,26 @@ def db_export(conn, sql, csvwriter, arraysize):
     outf.close()
     cursor.close()
 
-def test_env(db_type:str):
+def test_env(database=None, sftp=None):
     import subprocess
     import sys
-
-    install_tests = {'lib': {'result': None, 'failures': None}}
-
+    db_req_packages = {'oracle': 'cx-Oracle', 'mssql': 'pyodbc'} # DB Specific Packages
     reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
     installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
-    db_req_packages = {'oracle': ['cx-Oracle'], 'mssql': ['pyodbc']} # DB Specific Packages
-    required_packages = ['pyodbc'] # Packages required regardless of DB Type
-    try:
-        _req_pkgs = required_packages + db_req_packages[db_type]
-        for package in _req_pkgs:
-            if package not in installed_packages:
-                print('Library Not Found : {0}'.format(package))
-                install_tests['lib']['result'] = False
-                install_tests['lib']['failures'].push(package)
-            install_tests['lib']['result'] = True if install_tests['lib']['result'] is None \
-                else install_tests['lib']['result']
-    except KeyError:
-        print("Invalid database type, use mssql or oracle")
-    finally:
-        return install_tests['lib']['result']
+
+    err_mess = ''
+    if database != None: #test db packages
+        if database not in db_req_packages:
+            err_mess = err_mess + "Invalid database type, use mssql or oracle\n"
+        else:
+            if db_req_packages[database] not in installed_packages:
+                err_mess = err_mess + "Package not installed for database connection: {}\n".format(db_req_packages[database])
+
+    if sftp != None:
+        if 'paramiko' not in installed_packages:
+                err_mess = err_mess + "Package not installed for sftp: {}\n".format('paramiko')
+
+    return(err_mess)
 
 # get command line args
 clparse = argparse.ArgumentParser(description='Export from DB using formatted SQL file, optionally create n3c_cohort table')
@@ -138,7 +135,7 @@ args = clparse.parse_args()
 output_dir = args.output_dir
 sql_fname = args.sql
 config_fname = args.config
-database = args.database.lower()
+database = args.database
 arraysize = int(args.arraysize)
 phenotype_fname = args.phenotype
 create_zip = args.zip
@@ -147,8 +144,10 @@ sftp_zip = args.sftp
 config = configparser.ConfigParser()
 config.read(config_fname)
 
-if not test_env(database):
+env_err = test_env(database, sftp_zip) 
+if env_err != '':
     print('Failed Initialization Tests')
+    print(env_err)
     exit()
 
 # sql params
