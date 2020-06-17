@@ -115,7 +115,7 @@ med_nonstandard_codes_mapped as
 (
 select
     s.concept_cd as act_standard_code,
-    p.concept_cd as as local_concept_cd,
+    p.concept_cd as local_concept_cd,
     p.name_char,
     p.parent as parent_concept_path,
     s.concept_path as concept_path,
@@ -327,7 +327,7 @@ select * from dem_nonstandard_codes_mapped;
 --select all facts - concept_cd when mapped to OMOP determines domain/value
 with all_act_prefixes as
 (
-    select distinct substring(concept_cd,1, charindex(':',concept_cd,1) as term_prefix
+    select distinct substring(concept_cd,1, charindex(':',concept_cd,1)) as term_prefix
     from @cdmDatabaseSchema.concept_dimension
     where
     concept_path like '\ACT\Demographics\%'
@@ -364,7 +364,7 @@ select
 from @cdmDatabaseSchema.observation_fact
     join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num
   WHERE start_date >= '01/01/2018' and
-     substring(concept_cd,1, charindex(':',concept_cd,1) in
+     substring(concept_cd,1, charindex(':',concept_cd,1)) in
     (
         select term_prefix from all_act_prefixes
     );
