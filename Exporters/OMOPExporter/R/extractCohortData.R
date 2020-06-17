@@ -29,7 +29,8 @@ runExtraction  <- function(connectionDetails,
                            sqlFilePath,
                            cdmDatabaseSchema,
                            resultsDatabaseSchema,
-                           outputFolder = paste0(getwd(), "/output/")
+                           outputFolder = paste0(getwd(), "/output/"),
+                           ...
                            )
 {
 
@@ -46,7 +47,8 @@ runExtraction  <- function(connectionDetails,
   # replace parameters with values
   src_sql <- SqlRender::render(sql = src_sql,
                            cdmDatabaseSchema = cdmDatabaseSchema,
-                           resultsDatabaseSchema = resultsDatabaseSchema)
+                           resultsDatabaseSchema = resultsDatabaseSchema,
+                           ...)
 
 
   # split script into chunks (to produce separate output files)
