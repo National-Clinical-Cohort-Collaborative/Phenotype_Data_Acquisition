@@ -17,6 +17,23 @@
 -- Sites that use adapter mapping will need to create a concept_dimension table that links your adapter_mapping 'table'
 -- to concept_dimension where the shrine path becomes the concept_path
 
+--MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
+--OUTPUT_FILE: MANIFEST.csv
+select
+   '@siteAbbrev' as SITE_ABBREV,
+   '@siteName'    AS SITE_NAME,
+   '@contactName' as CONTACT_NAME,
+   '@contactEmail' as CONTACT_EMAIL,
+   '@cdmName' as CDM_NAME,
+   '@cdmVersion' as CDM_VERSION,
+   null AS VOCABULARY_VERSION, -- hardwired null for pcornet
+   '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
+   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   CAST(GETDATE() as date) as RUN_DATE,
+   CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
+   CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
+
+
 --N3C_VOCAB_MAP TABLE
 --OUTPUT_FILE: N3C_VOCAB_MAP.CSV
 select 'DEM|HISP:' as local_prefix, 'Ethnicity' as omop_vocab
@@ -447,19 +464,3 @@ select
    'CONCEPT_DIMENSION' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.CONCEPT_DIMENSION) as ROW_COUNT
  ) x;
-
---MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
---OUTPUT_FILE: MANIFEST.csv
-select
-   'UNC' as SITE_ABBREV,
-   'University of North Carolina at Chapel Hill' as SITE_NAME,
-   'Jane Doe' as CONTACT_NAME,
-   'jane_doe@unc.edu' as CONTACT_EMAIL,
-   'ACT' as CDM_NAME,
-   '2.0.1' as CDM_VERSION,
-   null as VOCABULARY_VERSION, --leave null as this only applies to OMOP
-   'Y' as N3C_PHENOTYPE_YN,
-   '1.3' as N3C_PHENOTYPE_VERSION,
-   CAST(GETDATE() as date) as RUN_DATE,
-   CAST( DATEADD(day, -2, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( DATEADD(day, 3, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
