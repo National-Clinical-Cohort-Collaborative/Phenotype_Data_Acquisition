@@ -10,6 +10,22 @@
 
 -- To run, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
 
+--MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
+--OUTPUT_FILE: MANIFEST.csv
+select
+   '@siteAbbrev' as SITE_ABBREV,
+   '@siteName'    AS SITE_NAME,
+   '@contactName' as CONTACT_NAME,
+   '@contactEmail' as CONTACT_EMAIL,
+   '@cdmName' as CDM_NAME,
+   '@cdmVersion' as CDM_VERSION,
+   '@vocabularyVersion'    AS VOCABULARY_VERSION,
+   '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
+   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   CAST(GETDATE() as date) as RUN_DATE,
+   CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
+   CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
+
 --PERSON
 --OUTPUT_FILE: PERSON.csv
 SELECT
@@ -211,7 +227,7 @@ SELECT
 FROM @cdmDatabaseSchema.DEATH d
 JOIN @resultsDatabaseSchema.N3C_COHORT n
 ON D.PERSON_ID = N.PERSON_ID
-WHERE o.DEATH_DATE >= DATEFROMPARTS(2020,01,01);
+WHERE d.DEATH_DATE >= DATEFROMPARTS(2020,01,01);
 
 --LOCATION
 --OUTPUT_FILE: LOCATION.csv
@@ -402,6 +418,8 @@ select
 
 UNION
 
+SELECT
+   'DEATH' as TABLE_NAME,
   (select count(*) from @cdmDatabaseSchema.DEATH d JOIN @resultsDatabaseSchema.N3C_COHORT n ON d.PERSON_ID = n.PERSON_ID AND DEATH_DATE >= DATEFROMPARTS(2020,01,01)) as ROW_COUNT
 
 UNION
@@ -442,19 +460,3 @@ select
    'CONDITION_ERA' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.CONDITION_ERA JOIN @resultsDatabaseSchema.N3C_COHORT ON CONDITION_ERA.PERSON_ID = N3C_COHORT.PERSON_ID AND CONDITION_ERA_START_DATE >= DATEFROMPARTS(2018,01,01)) as ROW_COUNT
 ) s;
-
---MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
---OUTPUT_FILE: MANIFEST.csv
-select
-   'OHDSI' as SITE_ABBREV,
-   ''    AS SITE_NAME,
-   'Jane Doe' as CONTACT_NAME,
-   'jane_doe@OHDSI.edu' as CONTACT_EMAIL,
-   'OMOP' as CDM_NAME,
-   '5.3.1' as CDM_VERSION,
-   ''    AS VOCABULARY_VERSION,
-   'Y' as N3C_PHENOTYPE_YN,
-   '1.3' as N3C_PHENOTYPE_VERSION,
-   CAST(GETDATE() as date) as RUN_DATE,
-   CAST( DATEADD(day, -2, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( DATEADD(day, 3, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
