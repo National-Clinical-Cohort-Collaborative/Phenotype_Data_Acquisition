@@ -505,3 +505,4 @@ FROM @cdmDatabaseSchema.VITAL JOIN @resultsDatabaseSchema.N3C_COHORT ON VITAL.PA
    'VITAL'  TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.VITAL JOIN @resultsDatabaseSchema.N3C_COHORT ON VITAL.PATID = N3C_COHORT.PATID AND MEASURE_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ) as ROW_COUNT
   FROM DUAL );
+

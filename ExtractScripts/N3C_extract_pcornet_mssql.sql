@@ -571,6 +571,7 @@ select
 
 UNION
 
+
 select
    'VITAL' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.VITAL JOIN @resultsDatabaseSchema.N3C_COHORT ON VITAL.PATID = N3C_COHORT.PATID AND MEASURE_DATE >= DATEFROMPARTS(2018,01,01)) as ROW_COUNT
