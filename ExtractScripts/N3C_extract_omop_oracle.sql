@@ -10,6 +10,21 @@
 
 -- To run, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
 
+--MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
+--OUTPUT_FILE: MANIFEST.csv
+SELECT '@siteAbbrev' as SITE_ABBREV,
+   '@siteName'    AS SITE_NAME,
+   '@contactName' as CONTACT_NAME,
+   '@contactEmail' as CONTACT_EMAIL,
+   '@cdmName' as CDM_NAME,
+   '@cdmVersion' as CDM_VERSION,
+   '@vocabularyVersion'    AS VOCABULARY_VERSION,
+   '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
+   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   CAST(SYSDATE as date) as RUN_DATE,
+   CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
+   CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE FROM DUAL;
+
 --PERSON
 --OUTPUT_FILE: PERSON.csv
 SELECT p.PERSON_ID,
@@ -202,7 +217,7 @@ SELECT n.PERSON_ID,
 FROM @cdmDatabaseSchema.DEATH d
 JOIN @resultsDatabaseSchema.N3C_COHORT n
 ON D.PERSON_ID = N.PERSON_ID
-  WHERE o.DEATH_DATE >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ;
+  WHERE d.DEATH_DATE >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ;
 
 --LOCATION
 --OUTPUT_FILE: LOCATION.csv
@@ -359,13 +374,10 @@ SELECT * FROM (SELECT 'PERSON' as TABLE_NAME,
   FROM DUAL  UNION SELECT 'OBSERVATION'  TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.OBSERVATION o JOIN @resultsDatabaseSchema.N3C_COHORT n ON o.PERSON_ID = n.PERSON_ID AND OBSERVATION_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ) as ROW_COUNT
 
-  FROM DUAL  UNION (SELECT count(*) FROM @cdmDatabaseSchema.DEATH d JOIN @resultsDatabaseSchema.N3C_COHORT n ON d.PERSON_ID = n.PERSON_ID AND DEATH_DATE >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') )  ROW_COUNT
+  FROM DUAL  UNION SELECT 'DEATH'  TABLE_NAME,
+  (SELECT count(*) FROM @cdmDatabaseSchema.DEATH d JOIN @resultsDatabaseSchema.N3C_COHORT n ON d.PERSON_ID = n.PERSON_ID AND DEATH_DATE >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ) as ROW_COUNT
 
-UNION
-
---OMOP does not have PERSON_ID for Location, Care Site and Provider tables so we need to determine the applicability of this check
---We could re-engineer the cohort table to include the JOIN variables
-SELECT 'LOCATION' as TABLE_NAME,
+  FROM DUAL  UNION SELECT 'LOCATION'  TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.LOCATION ) as ROW_COUNT
 
   FROM DUAL  UNION SELECT 'CARE_SITE'  TABLE_NAME,
@@ -387,18 +399,3 @@ select
    'CONDITION_ERA'  TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.CONDITION_ERA JOIN @resultsDatabaseSchema.N3C_COHORT ON CONDITION_ERA.PERSON_ID = N3C_COHORT.PERSON_ID AND CONDITION_ERA_START_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ) as ROW_COUNT
   FROM DUAL ) s ;
-
---MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
---OUTPUT_FILE: MANIFEST.csv
-SELECT 'OHDSI' as SITE_ABBREV,
-   ''    AS SITE_NAME,
-   'Jane Doe' as CONTACT_NAME,
-   'jane_doe@OHDSI.edu' as CONTACT_EMAIL,
-   'OMOP' as CDM_NAME,
-   '5.3.1' as CDM_VERSION,
-   ''    AS VOCABULARY_VERSION,
-   'Y' as N3C_PHENOTYPE_YN,
-   '1.3' as N3C_PHENOTYPE_VERSION,
-   CAST(SYSDATE as date) as RUN_DATE,
-   CAST( (SYSDATE + NUMTODSINTERVAL(-2, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( (SYSDATE + NUMTODSINTERVAL(3, 'day')) as date) as NEXT_SUBMISSION_DATE FROM DUAL;

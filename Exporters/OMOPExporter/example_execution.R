@@ -23,6 +23,7 @@ library(N3cOhdsi)
 
 # --- Local configuration ---
 
+# -- run config
 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql server",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
                                                           server = "", # name of the server
                                                           user="", # username to access server
@@ -31,11 +32,27 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql serv
 cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. TMC_OMOP.dbo
 resultsDatabaseSchema <- "" # schema with write privileges -- e.g. OHDSI.dbo
 outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be stored. default provided
-cdmName <- "OMOP" # source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
-siteAbbrev <- "TuftsMC" # unique site identifier
-
 phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts/your_file.sql)
 extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/your_file.sql)
+
+
+# -- manifest config
+siteAbbrev <- "TuftsMC" #-- unique site identifier
+siteName   <- ""
+contactName <- ""
+contactEmail <- ""
+cdmName <- "OMOP" #-- source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
+cdmVersion <- "5.3.1"
+vocabularyVersion <- "" #-- will be null for non-OMOP sites, but needs to be passed at null
+n3cPhenotypeYN <- "Y"
+n3cPhenotypeVersion <- ""
+dataLatencyNumDays <- "2"  #-- this integer will be used to calculate UPDATE_DATE dynamically
+daysBetweenSubmissions <- "3"  #-- this integer will be used to calculate NEXT_SUBMISSION_DATE dynamically
+
+
+
+
+
 
 
 # --- Execution ---
@@ -53,7 +70,18 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         sqlFilePath = extractSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
                         resultsDatabaseSchema = resultsDatabaseSchema,
-                        outputFolder = outputFolder
+                        outputFolder = outputFolder,
+                        siteAbbrev = siteAbbrev,
+                        siteName = siteName,
+                        contactName = contactName,
+                        contactEmail = contactEmail,
+                        cdmName = cdmName,
+                        cdmVersion = cdmVersion,
+                        vocabularyVersion = vocabularyVersion,
+                        n3cPhenotypeYN = n3cPhenotypeYN,
+                        n3cPhenotypeVersion = n3cPhenotypeVersion,
+                        dataLatencyNumDays = dataLatencyNumDays,
+                        daysBetweenSubmissions = daysBetweenSubmissions
                         )
 
 
