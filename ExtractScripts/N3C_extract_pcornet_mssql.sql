@@ -562,17 +562,16 @@ select
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
-select
-   'UNC' as SITE_ABBREV,
-   'University of North Carolina at Chapel Hill' as SITE_NAME,
-   'Jane Doe' as CONTACT_NAME,
-   'jane_doe@unc.edu' as CONTACT_EMAIL,
-   'PCORNET' as CDM_NAME,
-   '5.1' as CDM_VERSION,
+SELECT '@siteAbbrev' as SITE_ABBREV,
+   '@siteName' as SITE_NAME,
+   '@contactName' as CONTACT_NAME,
+   '@contactEmail' as CONTACT_EMAIL,
+   '@cdmName' as CDM_NAME,
+   '@cdmVersion' as CDM_VERSION,
    null as VOCABULARY_VERSION, --leave null as this only applies to OMOP
-   'Y' as N3C_PHENOTYPE_YN,
-   '1.3' as N3C_PHENOTYPE_VERSION,
-   CAST(GETDATE() as datetime) as RUN_DATE,
-   CAST( DATEADD(day, -2, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( DATEADD(day, 3, GETDATE()) as date) as NEXT_SUBMISSION_DATE					--change integer based on your site's load frequency
+   '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
+   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   CAST(GETDATE() as datetime) as RUN_DATE
+   CAST( DATEADD(day, @dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
+   CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE
 ;
