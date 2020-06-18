@@ -31,6 +31,8 @@ You can (optionally) use our Python Data Exporter to run the N3C data extract sc
 
 *   Python 3.x
 *   Oracle or MS SqlServer
+*   If you are using MS SqlServer, you will need to have package pyodbc installed (pip install pyodbc)
+*   If you are using Oracle, you will need to have package cx_Oracle installed (pip install cx_Oracle) as well as the Oracle client libraries.  [More information about cx_Oracle installation](https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html)
 *   To use the sftp feature, you may need to install paramiko:  python -m pip install paramiko
 *   You should have already copied one of the [extract SQL files](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/ExtractScripts) and [phenotype SQL file](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/PhenotypeScripts) to a local directory.
 
@@ -45,7 +47,7 @@ You can (optionally) use our Python Data Exporter to run the N3C data extract sc
 
 
 ```
-python db_exp.py --config config.ini --database oracle --phenotype N3C_phenotype_V1_0_act_oracle.sql --sql N3C_extract_V1_0_act_oracle.sql --output_dir E:\N3C --zip --sftp
+python db_exp.py --config config.ini --database oracle --phenotype N3C_phenotype_V1_0_act_oracle.sql --extract N3C_extract_V1_0_act_oracle.sql --output_dir E:\N3C --zip --sftp
 ```
 
 **Script Command Line Options**
@@ -54,11 +56,12 @@ python db_exp.py --config config.ini --database oracle --phenotype N3C_phenotype
 *   --help
 *   --config (config file name)  See file "config_example.ini"
 *   --phenotype (phenotype SQL file name)
-*   --sql (extract SQL file name)
+*   --extract (extract SQL file name)
 *   --database (oracle or mssql)
 *   --output_dir (output directory for export)   Output directory must have a sub-directory "datafiles".
 *   --zip
 *   --sftp
+*   --debug
 
 **What will my output look like?**
 
