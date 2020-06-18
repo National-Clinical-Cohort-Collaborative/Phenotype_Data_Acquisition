@@ -29,16 +29,18 @@ def oracle_connect(config):
 
 def parse_sql(sql_fname,sql_params):
     exports = []
-    sql = ""
     output_file_tag = "OUTPUT_FILE:"
+    validation_tag = "VALIDATION_SCRIPT"
     output_file = None
 
     with open(sql_fname,"r") as inf:
         inrows = inf.readlines()
 
+    sql = ""
     block = False
+    validation = False
     for row in inrows:
-        if (row.strip().startswith('--') == True) and (row.find(output_file_tag) < 0):
+        if (row.strip().startswith('--') == True) and (row.find(output_file_tag) < 0) and (row.find(validation_tag) < 0):
             continue
         # replace sql params
         for param in sql_params:
@@ -50,41 +52,52 @@ def parse_sql(sql_fname,sql_params):
         sql = sql + row
         if row.find(output_file_tag) >= 0:
             output_file = row[ row.find(output_file_tag) + len(output_file_tag):].strip()
+        if row.find(validation_tag) >= 0:
+            validation = True
 
         if block == True:
             if row.strip().upper().startswith('END;'):
                 if output_file != None:
-                    exports.append({"output_file": output_file, "sql":sql })
+                    exports.append({"output_file": output_file, "sql":sql, "validation": validation })
                 else:
-                    exports.append({"sql":sql })
+                    exports.append({"sql":sql, "validation": validation  })
                 sql = ""
                 block = False
+                validation = False
 
         else:
             if row.find(';') >= 0:
                 sql = sql.split(';')[0]
                 if output_file != None:
-                    exports.append({"output_file": output_file, "sql":sql })
+                    exports.append({"output_file": output_file, "sql":sql, "validation": validation })
                 else:
-                    exports.append({"sql":sql })
+                    exports.append({"sql":sql, "validation": validation  })
                 sql = ""
+                validation = False
 
     return(exports)
 
-def create_phenotype(conn, phenotype_fname, sql_params):
+def create_phenotype(conn, phenotype_fname, sql_params, debug):
     cursor=conn.cursor()
     sql_arr = parse_sql(phenotype_fname, sql_params)
 
     #print and return
     for sql in sql_arr:
-        print(sql['sql'])
+        if debug == True:
+            print("Execute SQL -----------------------------")
+            print(sql['sql'])
+            print("-----------------------------------------")
         cursor.execute(sql['sql'])
         conn.commit()
 
-def db_export(conn, sql, csvwriter, arraysize):
+def db_export(conn, sql, csvwriter, arraysize, debug):
     cursor=conn.cursor()
     cursor.arraysize = arraysize
 
+    if debug == True:
+        print("Execute SQL -----------------------------")
+        print(sql)
+        print("-----------------------------------------")
     cursor.execute(sql);
     header = [column[0] for column in cursor.description]
     csvwriter.writerow(header)
@@ -96,7 +109,27 @@ def db_export(conn, sql, csvwriter, arraysize):
         for row in rows:
             csvwriter.writerow(row)
 
-    outf.close()
+    cursor.close()
+
+def db_export_validate(conn, sql, csvwriter, arraysize, debug):
+    cursor=conn.cursor()
+    cursor.arraysize = 100
+
+    if debug == True:
+        print("Execute SQL -----------------------------")
+        print(sql)
+        print("-----------------------------------------")
+    cursor.execute(sql);
+    header = [column[0] for column in cursor.description]
+    csvwriter.writerow(header)
+
+    rows = cursor.fetchmany()
+    if not rows:
+        return(True)
+    for row in rows:
+        csvwriter.writerow(row)
+        return(False)
+
     cursor.close()
 
 def test_env(database=None, sftp=None):
@@ -122,24 +155,26 @@ def test_env(database=None, sftp=None):
 
 # get command line args
 clparse = argparse.ArgumentParser(description='Export from DB using formatted SQL file, optionally create n3c_cohort table')
-clparse.add_argument('--sql', required=False, default=None, help='name of the file that contains the export sql, must meet format spec, including ";" and OUTPUT_FILE:')
-clparse.add_argument('--config', required=True, help='name of the configuration ini file')
-clparse.add_argument('--database', required=False, default=None, help='oracle or mssql')
-clparse.add_argument('--output_dir', default=".", help='csv files will be exported to this directory and this directory will be zipped if the zip option is set')
-clparse.add_argument('--arraysize', default="10000", help='cursor array size, must be integer. This is how many records are fetched at once from DB, if you run into memory issues reduce this number')
-clparse.add_argument('--phenotype', default=None, help='name of the file that contains the phenotype sql.  this will create the n3c_cohort table')
-clparse.add_argument('--zip', default=None, help='create zip of output data files, no argument required', action='store_true')
-clparse.add_argument('--sftp', default=None, help='sftp zip file, setup credentials and server in config file, no argument required', action='store_true')
+clparse.add_argument('--extract', required=False, default=None, help='specify the name of the file that contains the extract sql, must meet format spec, including ";" and OUTPUT_FILE:')
+clparse.add_argument('--config', required=True, help='specify the name of the configuration ini file, see file configuration_ini_example.txt')
+clparse.add_argument('--database', required=False, default=None, help='specify database, use values oracle or mssql')
+clparse.add_argument('--output_dir', default=".", help='specify the directory the csv files will be exported to.  This directory will be zipped if the zip option is set')
+clparse.add_argument('--arraysize', default="10000", help='specify the cursor array size, must be integer. The default is 10000.  This is how many records are fetched at once from DB, if you run into memory issues reduce this number')
+clparse.add_argument('--phenotype', default=None, help='specify the name of the file that contains the phenotype sql.  This will create the n3c_cohort table')
+clparse.add_argument('--zip', default=None, help='create zip of output data files', action='store_true')
+clparse.add_argument('--sftp', default=None, help='sftp zip file, setup credentials and server in config file', action='store_true')
+clparse.add_argument('--debug', default=None, help='debug mode, print sql as it is executed and other helpful information', action='store_true')
 args = clparse.parse_args()
 
 output_dir = args.output_dir
-sql_fname = args.sql
+sql_fname = args.extract
 config_fname = args.config
 database = args.database
 arraysize = int(args.arraysize)
 phenotype_fname = args.phenotype
 create_zip = args.zip
 sftp_zip = args.sftp
+debug = args.debug
 
 config = configparser.ConfigParser()
 config.read(config_fname)
@@ -150,11 +185,29 @@ if env_err != '':
     print(env_err)
     exit()
 
+valid_cdm_name = ['pcornet', 'omop', 'act']
+if config['site']['cdm_name'] not in valid_cdm_name:
+    print("Invalid cdm_name from config file")
+    print("must be one of the values below:")
+    print(valid_cdm_name)
+    exit()
+
 # sql params
 sql_params = [
-    {'tag': '@resultsDatabaseSchema', 'value': config['sql']['results_database_schema']},
-    {'tag': '@cdmDatabaseSchema', 'value': config['sql']['cdm_database_schema']},
-    {'tag': '@vocabularyDatabaseSchema', 'value': config['sql']['cdm_database_schema']}
+    {'tag': '@resultsDatabaseSchema', 'value': config['site']['results_database_schema']},
+    {'tag': '@cdmDatabaseSchema', 'value': config['site']['cdm_database_schema']},
+    {'tag': '@vocabularyDatabaseSchema', 'value': config['site']['cdm_database_schema']},
+    {'tag': '@siteAbbrev', 'value': config['site']['site_abbrev']},
+    {'tag': '@siteName', 'value': config['site']['site_name']},
+    {'tag': '@contactName', 'value': config['site']['contact_name']},
+    {'tag': '@contactEmail', 'value': config['site']['contact_email']},
+    {'tag': '@cdmName', 'value': config['site']['cdm_name']},
+    {'tag': '@cdmVersion', 'value': config['site']['cdm_version']},
+    {'tag': '@vocabularyVersion', 'value': config['site']['vocabulary_version']},
+    {'tag': '@n3cPhenotypeYN', 'value': config['site']['n3c_phenotype_yn']},
+    {'tag': '@n3cPhenotypeVersion', 'value': config['site']['n3c_phenotype_version']},
+    {'tag': '@dataLatencyNumDays', 'value': config['site']['data_latency_num_days']},
+    {'tag': '@daysBetweenSubmissions', 'value': config['site']['days_between_submissions']}
 ]
 
 db_conn = None
@@ -175,7 +228,7 @@ if phenotype_fname != None:
         print("Invalid database type, use mssql or oracle")
         exit()
     print("Creating phenotype")
-    create_phenotype(db_conn, phenotype_fname, sql_params)
+    create_phenotype(db_conn, phenotype_fname, sql_params, debug)
 
 # EXPORT #
 if sql_fname != None:
@@ -205,10 +258,21 @@ if sql_fname != None:
             outfname = datafiles_dir + os.path.sep + exp['output_file']
         outf = open(outfname, 'w', newline='')
         csvwriter = csv.writer(outf, delimiter='|', quotechar='"', quoting=csv.QUOTE_ALL)
-        db_export(db_conn, exp['sql'], csvwriter, arraysize)
+        if exp['validation'] == True:
+            val = db_export_validate(db_conn, exp['sql'], csvwriter, arraysize, debug)
+            if val == True:
+                print("Validation OK")
+            else:
+                print("Validation ERROR")
+                print("Stopping export")
+                print("See file {}".format(outfname))
+                exit()
+        else:
+            db_export(db_conn, exp['sql'], csvwriter, arraysize, debug)
+        outf.close()
 
 # ZIP #
-zip_prefix = config['site']['name'] + '_' + config['site']['cdm'] + '_' + datetime.date.today().strftime("%Y%m%d")
+zip_prefix = config['site']['site_abbrev'] + '_' + config['site']['cdm_name'].lower() + '_' + datetime.date.today().strftime("%Y%m%d")
 zip_fname = zip_prefix + ".zip"
 
 if create_zip == True:

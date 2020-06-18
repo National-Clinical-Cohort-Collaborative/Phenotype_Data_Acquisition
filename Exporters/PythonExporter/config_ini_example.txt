@@ -1,4 +1,5 @@
 ; do not use quotes for values
+; comments start with a semi-colon (;)
 
 ; database connections
 [mssql]
@@ -16,11 +17,23 @@ user = xxxxx
 pwd = xxxxx
 
 ; for zip file creation
+; and for sql parameters
 [site]
+results_database_schema = xxxxx
+cdm_database_schema = xxxxx
 ; site abbreviation (example: UNC)
-name = xxxxx
-; cdm type (pcornet, omop, act)
-cdm = xxxxx
+site_abbrev = xxxxx
+site_name = xxxxx
+contact_name = xxxxx
+contact_email = xxxxx
+; cdm name (pcornet, omop, act)
+cdm_name = xxxxx
+cdm_version = xxxxx
+vocabulary_version = xxxxx
+n3c_phenotype_yn = xxxxx
+n3c_phenotype_version = xxxxx
+data_latency_num_days = xxxxx
+days_between_submissions = xxxxx
 
 [sftp]
 host = xxxxx
@@ -29,8 +42,3 @@ user = xxxxx
 pwd = xxxxx
 ; directory on sftp server (example: /files/UNC)
 remote_dir = xxxxx
-
-; for sql parameters
-[sql]
-results_database_schema = xxxxx
-cdm_database_schema = xxxxx
