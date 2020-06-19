@@ -1,3 +1,3 @@
 **Which export method should I use?**
 
-![Exporters](https://imgur.com/LLyC2vZ.png)
+![Exporters](https://imgur.com/a/WWHBO5w.png)
