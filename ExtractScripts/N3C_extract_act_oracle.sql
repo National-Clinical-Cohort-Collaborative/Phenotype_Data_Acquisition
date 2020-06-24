@@ -52,7 +52,7 @@ SELECT '@siteAbbrev' as SITE_ABBREV,
 	(SELECT COUNT(*) FROM (SELECT vd.ENCOUNTER_NUM, COUNT(*) as COUNT_N
 			FROM @cdmDatabaseSchema.VISIT_DIMENSION vd 
 				JOIN @resultsDatabaseSchema.N3C_COHORT ON vd.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM 
-					AND vd.ADMIT_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') 
+					AND vd.START_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') 
 			GROUP BY ENCOUNTER_NUM 
 			HAVING COUNT(*) >= 2
 		 ) tbl
