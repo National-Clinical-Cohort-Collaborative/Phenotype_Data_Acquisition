@@ -32,7 +32,41 @@ select
    CAST(GETDATE() as date) as RUN_DATE,
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
-
+   
+-- ACT duplicate key validation script
+-- VALIDATION_SCRIPT
+-- OUTPUT_FILE: EXTRACT_VALIDATION.csv
+ SELECT * FROM (SELECT 'OBSERVATION_FACT' as TABLE_NAME, 
+	(SELECT COUNT(*) 
+		FROM (SELECT ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
+		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM, COUNT(*) as COUNT_N 
+			FROM @cdmDatabaseSchema.OBSERVATION_FACT ofct 
+				JOIN @resultsDatabaseSchema.N3C_COHORT ON ofct.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM 
+				    AND ofct.START_DATE >= CAST('2018-01-01' as datetime)
+			GROUP BY ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
+		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM 
+			HAVING COUNT(*) >= 2
+		 ) tbl
+  ) as DUP_COUNT
+	  UNION SELECT 'VISIT_DIMENSION'  TABLE_NAME,
+	(SELECT COUNT(*) FROM (SELECT vd.ENCOUNTER_NUM, COUNT(*) as COUNT_N
+			FROM @cdmDatabaseSchema.VISIT_DIMENSION vd 
+				JOIN @resultsDatabaseSchema.N3C_COHORT ON vd.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM 
+					AND vd.START_DATE >= CAST('2018-01-01' as datetime) 
+			GROUP BY ENCOUNTER_NUM 
+			HAVING COUNT(*) >= 2
+		 ) tbl
+	 ) as DUP_COUNT
+	  UNION SELECT 'PATIENT_DIMENSION'  TABLE_NAME,
+	 (SELECT COUNT(*) FROM (SELECT pd.PATIENT_NUM, COUNT(*) as COUNT_N 
+			FROM @cdmDatabaseSchema.PATIENT_DIMENSION pd 
+				JOIN @resultsDatabaseSchema.N3C_COHORT ON pd.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM  
+			GROUP BY pd.PATIENT_NUM 
+			HAVING COUNT(*) >= 2
+		 ) tbl
+	 ) as DUP_COUNT
+	) subq
+  WHERE dup_count > 0 ;
 
 --N3C_VOCAB_MAP TABLE
 --OUTPUT_FILE: N3C_VOCAB_MAP.CSV
