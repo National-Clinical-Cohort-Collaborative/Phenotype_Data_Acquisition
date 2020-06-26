@@ -10,6 +10,22 @@
 
 -- To run, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
 
+--MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
+--OUTPUT_FILE: MANIFEST.csv
+select
+   '@siteAbbrev' as site_abbrev,
+   '@siteName'    as site_name,
+   '@contactName' as contact_name,
+   '@contactEmail' as contact_email,
+   '@cdmName' as cdm_name,
+   '@cdmVersion' as cdm_version,
+   '@vocabularyVersion'    as vocabulary_version,
+   '@n3cPhenotypeYN' as n3c_phenotype_yn,
+   '@n3cPhenotypeVersion' as n3c_phenotype_version,
+   cast(CURRENT_DATE() as date) as run_date,
+   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval -@dataLatencyNumDays DAY) as date) as update_date,	--change integer based on your site's data latency
+   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval @daysBetweenSubmissions DAY) as date) as next_submission_date;
+
 --PERSON
 --OUTPUT_FILE: PERSON.csv
 select
@@ -211,7 +227,7 @@ select
 from @cdmDatabaseSchema.death d
 join @resultsDatabaseSchema.n3c_cohort n
 on d.person_id = n.person_id
-where o.death_date >= DATE(2020, 01, 01);
+where d.death_date >= DATE(2020, 01, 01);
 
 --LOCATION
 --OUTPUT_FILE: LOCATION.csv
@@ -381,8 +397,8 @@ union distinct select
    'OBSERVATION' as table_name,
    (select count(*) from @cdmDatabaseSchema.observation o join @resultsDatabaseSchema.n3c_cohort n on o.person_id = n.person_id and observation_date >= DATE(2018, 01, 01)) as row_count
 
-union
-
+union distinct select
+   'DEATH' as table_name,
   (select count(*) from @cdmDatabaseSchema.death d join @resultsDatabaseSchema.n3c_cohort n on d.person_id = n.person_id and death_date >= DATE(2020, 01, 01)) as row_count
 
 union distinct select
@@ -411,19 +427,3 @@ union distinct select
    'CONDITION_ERA' as table_name,
    (select count(*) from @cdmDatabaseSchema.condition_era join @resultsDatabaseSchema.n3c_cohort on condition_era.person_id = n3c_cohort.person_id and condition_era_start_date >= DATE(2018, 01, 01)) as row_count
 ) s;
-
---MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
---OUTPUT_FILE: MANIFEST.csv
-select
-   'OHDSI' as site_abbrev,
-   ''    as site_name,
-   'Jane Doe' as contact_name,
-   'jane_doe@OHDSI.edu' as contact_email,
-   'OMOP' as cdm_name,
-   '5.3.1' as cdm_version,
-   ''    as vocabulary_version,
-   'Y' as n3c_phenotype_yn,
-   '1.3' as n3c_phenotype_version,
-   cast(CURRENT_DATE() as date) as run_date,
-   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval -2 DAY) as date) as update_date,	--change integer based on your site's data latency
-   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval 3 DAY) as date) as next_submission_date;

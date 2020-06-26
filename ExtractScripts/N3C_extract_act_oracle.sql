@@ -17,6 +17,57 @@
 -- Sites that use adapter mapping will need to create a concept_dimension table that links your adapter_mapping 'table'
 -- to concept_dimension where the shrine path becomes the concept_path 
 
+
+--MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
+--OUTPUT_FILE: MANIFEST.csv
+SELECT '@siteAbbrev' as SITE_ABBREV,
+   '@siteName'    AS SITE_NAME,
+   '@contactName' as CONTACT_NAME,
+   '@contactEmail' as CONTACT_EMAIL,
+   'ACT' as CDM_NAME, ---- hardwired null for ACT
+   '@cdmVersion' as CDM_VERSION,
+   null AS VOCABULARY_VERSION, -- hardwired null for ACT
+   '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
+   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   CAST(SYSDATE as date) as RUN_DATE,
+   CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
+   CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE FROM DUAL;
+
+-- ACT duplicate key validation script
+-- VALIDATION_SCRIPT
+-- OUTPUT_FILE: EXTRACT_VALIDATION.csv
+ SELECT * FROM (SELECT 'OBSERVATION_FACT' as TABLE_NAME, 
+	(SELECT COUNT(*) 
+		FROM (SELECT ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
+		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM, COUNT(*) as COUNT_N 
+			FROM @cdmDatabaseSchema.OBSERVATION_FACT ofct 
+				JOIN @resultsDatabaseSchema.N3C_COHORT ON ofct.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM 
+				    AND ofct.START_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
+			GROUP BY ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
+		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM 
+			HAVING COUNT(*) >= 2
+		 ) tbl
+  ) as DUP_COUNT
+	  FROM DUAL  UNION SELECT 'VISIT_DIMENSION'  TABLE_NAME,
+	(SELECT COUNT(*) FROM (SELECT vd.ENCOUNTER_NUM, COUNT(*) as COUNT_N
+			FROM @cdmDatabaseSchema.VISIT_DIMENSION vd 
+				JOIN @resultsDatabaseSchema.N3C_COHORT ON vd.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM 
+					AND vd.START_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') 
+			GROUP BY ENCOUNTER_NUM 
+			HAVING COUNT(*) >= 2
+		 ) tbl
+	 ) as DUP_COUNT
+	   FROM DUAL  UNION SELECT 'PATIENT_DIMENSION'  TABLE_NAME,
+	 (SELECT COUNT(*) FROM (SELECT pd.PATIENT_NUM, COUNT(*) as COUNT_N 
+			FROM @cdmDatabaseSchema.PATIENT_DIMENSION pd 
+				JOIN @resultsDatabaseSchema.N3C_COHORT ON pd.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM  
+			GROUP BY pd.PATIENT_NUM 
+			HAVING COUNT(*) >= 2
+		 ) tbl
+	 ) as DUP_COUNT
+	  FROM DUAL) subq
+  WHERE dup_count > 0         
+          
 --N3C_VOCAB_MAP TABLE
 --OUTPUT_FILE: N3C_VOCAB_MAP.CSV
 select 'DEM|HISP:' local_prefix, 'Ethnicity' omop_vocab from dual 
@@ -298,9 +349,6 @@ select * from px_nonstandard_codes_mapped
 union
 select * from dem_nonstandard_codes_mapped;
 
-
-
-
 --This is no longer needed - just commenting out now
 --CONCEPT_DIMENSION TABLE
 --OUTPUT_FILE: CONCEPT_DIMENSION.CSV
@@ -427,19 +475,6 @@ SELECT * FROM (SELECT 'OBSERVATION_FACT' as TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.CONCEPT_DIMENSION ) as ROW_COUNT
    FROM DUAL ) x ;
 
---MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
---OUTPUT_FILE: MANIFEST.csv
-SELECT 'UNC' as SITE_ABBREV,
-   'University of North Carolina at Chapel Hill' as SITE_NAME,
-   'Jane Doe' as CONTACT_NAME,
-   'jane_doe@unc.edu' as CONTACT_EMAIL,
-   'ACT' as CDM_NAME,
-   '2.0.1' as CDM_VERSION,
-   null as VOCABULARY_VERSION, --leave null as this only applies to OMOP
-   'Y' as N3C_PHENOTYPE_YN,
-   '1.3' as N3C_PHENOTYPE_VERSION,
-   CAST(SYSDATE as date) as RUN_DATE,
-   CAST( (SYSDATE + NUMTODSINTERVAL(-2, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( (SYSDATE + NUMTODSINTERVAL(3, 'day')) as date) as NEXT_SUBMISSION_DATE FROM DUAL;
+
 
 

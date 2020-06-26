@@ -30,7 +30,7 @@ The OMOP Data Exporer is a `R` library designed to build the N3C phenotype and a
 
 - A database in [Common Data Model version 5](https://github.com/OHDSI/CommonDataModel) in one of these platforms: SQL Server, Oracle, PostgreSQL, IBM Netezza, Apache Impala, Amazon RedShift, Google BigQuery or Microsoft APS.
 - Incorporation of [OMOP Vocabulary release v20200331,v20200403, v20200428, v20200430, v20200512, v20200519](https://github.com/OHDSI/Vocabulary-v5.0/releases) in your local ETL. It is also suggested to follow [OHDSI Community Guidance for Mapping](https://github.com/OHDSI/Covid-19/wiki/Release)
-- R version 3.5.0 or newer
+- R version 3.5.0 or newer (version 4 or newer is highly recommended)
 - On Windows: [RTools](http://cran.r-project.org/bin/windows/Rtools/)
 - [Java](http://java.com)
 - JAVA_HOME environment variable set to JDK path
@@ -67,22 +67,35 @@ remotes::install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Da
 library(N3cOhdsi)
 
 ```
+**Troubleshooting note:** If you have an older version of R (prior to version 4), the installation may fail--the remotes package is not tolerant of warning messages, which often come up due to versioning issues. The best way to correct this is to update to the newest version of R. If you are not able to update R, you can force the installation to ignore the warning messages by setting an additional environment variable: R_REMOTES_NO_ERRORS_FROM_WARNINGS = true. 
+
 **Local configuration**
 
 ```r
+# -- run config
 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql server",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
                                                           server = "", # name of the server
                                                           user="", # username to access server
                                                           password = "" #password for that user
                                                           )
 cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. TMC_OMOP.dbo
-resultsDatabaseSchema <- "" # schema with write privileges
+resultsDatabaseSchema <- "" # schema with write privileges -- e.g. OHDSI.dbo
 outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be stored. default provided
-cdmName <- "OMOP" # source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
-siteAbbrev <- "TuftsMC" # unique site identifier
+phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts/your_file.sql)
+extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/your_file.sql)
 
-phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts/N3C_phenotype_x_y.sql)
-extractSqlPath   <- "" # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/N3C_extract_x_y.sql)
+# -- manifest config
+siteAbbrev <- "TuftsMC" #-- unique site identifier
+siteName   <- ""
+contactName <- ""
+contactEmail <- ""
+cdmName <- "OMOP" #-- source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
+cdmVersion <- "5.3.1"
+vocabularyVersion <- "" #-- will be null for non-OMOP sites, but needs to be passed at null
+n3cPhenotypeYN <- "Y"
+n3cPhenotypeVersion <- ""
+dataLatencyNumDays <- "2"  #-- this integer will be used to calculate UPDATE_DATE dynamically
+daysBetweenSubmissions <- "3"  #-- this integer will be used to calculate NEXT_SUBMISSION_DATE dynamically
 
 ```
 **Execution**
@@ -98,7 +111,19 @@ N3cOhdsi::createCohort(connectionDetails = connectionDetails,
 N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         sqlFilePath = extractSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
-                        resultsDatabaseSchema = resultsDatabaseSchema
+                        resultsDatabaseSchema = resultsDatabaseSchema,
+                        outputFolder = outputFolder,
+                        siteAbbrev = siteAbbrev,
+                        siteName = siteName,
+                        contactName = contactName,
+                        contactEmail = contactEmail,
+                        cdmName = cdmName,
+                        cdmVersion = cdmVersion,
+                        vocabularyVersion = vocabularyVersion,
+                        n3cPhenotypeYN = n3cPhenotypeYN,
+                        n3cPhenotypeVersion = n3cPhenotypeVersion,
+                        dataLatencyNumDays = dataLatencyNumDays,
+                        daysBetweenSubmissions = daysBetweenSubmissions
                         )
 
 
