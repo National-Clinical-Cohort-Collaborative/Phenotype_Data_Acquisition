@@ -71,9 +71,11 @@ library(N3cOhdsi)
 
 **Local configuration**
 
+Note: Please scroll to the bottom of this README to see examples of what the MANIFEST configuration should look like.
+
 ```r
 # -- run config
-connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql server",  # options: oracle, postgressql, redshift, sql server, pdw, netezza, bigquery, sqlite
+connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql server",  # options: oracle, postgresql, redshift, sql server, pdw, netezza, bigquery, sqlite
                                                           server = "", # name of the server
                                                           user="", # username to access server
                                                           password = "" #password for that user
@@ -151,6 +153,144 @@ Once you run the exporter, your files will be output in the following directory 
 ![Screenshot of Example Sub-Directory](https://imgur.com/ubrdNwA.png)
 
 Note that these files are .csv files, but are actually pipe delimited rather than comma delimited. The exporter will take care of delimiters, formatting, headers, and everything else you need to be compliant with our formatting.
+
+**Configuring the MANIFEST variables**
+
+See the table below for examples of what values are expected in the MANIFEST table. 
+
+<table>
+  <tr>
+   <td><strong>Field name</strong>
+   </td>
+   <td><strong>Definition</strong>
+   </td>
+   <td><strong>Sample value</strong>
+   </td>
+   <td><strong>Static or changing</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>SITE_ABBREV
+   </td>
+   <td>Unique abbreviation for your site; will be provided by N3C
+   </td>
+   <td>“Tufts”
+   </td>
+   <td>Static
+   </td>
+  </tr>
+  <tr>
+   <td>SITE_NAME
+   </td>
+   <td>Full name of your site
+   </td>
+   <td>“Tufts University”
+   </td>
+   <td>Static
+   </td>
+  </tr>
+  <tr>
+  <tr>
+   <td>CONTACT_NAME
+   </td>
+   <td>Full name of N3C technical contact at your site 
+   </td>
+   <td>“Jane Doe”
+   </td>
+   <td>Static
+   </td>
+  </tr>
+  <tr>
+   <td>CONTACT_EMAIL
+   </td>
+   <td>Email address of N3C technical contact at your site
+   </td>
+   <td>“jane_doe@tufts.edu”
+   </td>
+   <td>Static
+   </td>
+  </tr>
+  <tr>
+   <td>CDM_NAME
+   </td>
+   <td>Choose one: OMOP | PCORNET | ACT | TRINETX
+   </td>
+   <td>“OMOP”
+   </td>
+   <td>Static
+   </td>
+  </tr>
+  <tr>
+   <td>CDM_VERSION
+   </td>
+   <td>Numbered version of your chosen CDM
+   </td>
+   <td>“5.3.1”
+   </td>
+   <td>Static
+   </td>
+  </tr>
+  <tr>
+   <td>VOCABULARY_VERSION
+   </td>
+   <td>Only applies to OMOP, insert "N/A" for other models. Version of OMOP vocabulary in use for this data pull.
+   </td>
+   <td>"v5.0 19-MAY-20"
+   </td>
+   <td>Will change if you update your vocabulary tables at your site
+   </td>
+  </tr>
+  <tr>
+   <td>N3C_PHENOTYPE_YN
+   </td>
+   <td>Enter Y if you are using the N3C phenotype code to define your cohort; enter N if you are using a local definition
+   </td>
+   <td>“Y”
+   </td>
+   <td>Static
+   </td>
+  </tr>
+  <tr>
+   <td>N3C_PHENOTYPE_VERSION
+   </td>
+   <td>If using the N3C phenotype, which numbered version was used for this run? (Enter “NA” if not using the N3C phenotype)
+   </td>
+   <td>“1.6”
+   </td>
+   <td>Generally static but may need occasional updating
+   </td>
+  </tr>
+  <tr>
+   <td>RUN_DATE
+   </td>
+   <td>Date the current extract was run.
+   </td>
+   <td>“2020-05-05”
+   </td>
+   <td>Changing (use SYSDATE)
+   </td>
+  </tr>
+  <tr>
+   <td>UPDATE_DATE
+   </td>
+   <td>Date for which the data in this extract is current (i.e., the maximum date present in your dataset) 
+   </td>
+   <td>“2020-05-04”
+   </td>
+   <td>Changing (use SYSDATE - # days latency at your site)
+   </td>
+  </tr>
+  <tr>
+   <td>NEXT_SUBMISSION_DATE
+   </td>
+   <td>Date on which you will submit your next extract
+   </td>
+   <td>“2020-05-07”
+   </td>
+   <td>Changing (use SYSDATE + # days between submissions)
+   </td>
+  </tr>
+</table>
 
 **Bug Reports/Enhancement Requests/Contributions**
 
