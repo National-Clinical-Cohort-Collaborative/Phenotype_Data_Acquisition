@@ -70,7 +70,7 @@ runExtraction  <- function(connectionDetails,
 
     # TODO: replace this hacky approach to writing these two tables to the root output folder
     output_path <- outputFolder
-    if(fileNm != "MANIFEST.csv" && fileNm != "DATA_COUNTS.csv"){
+    if(fileNm != "MANIFEST.csv" && fileNm != "DATA_COUNTS.csv" && fileNm != "EXTRACT_VALIDATION.csv"){
       output_path <- paste0(outputFolder, "DATAFILES/")
     }
 

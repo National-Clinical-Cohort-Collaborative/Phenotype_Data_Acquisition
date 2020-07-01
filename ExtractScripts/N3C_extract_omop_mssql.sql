@@ -26,6 +26,155 @@ select
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
 
+
+
+
+
+--VALIDATION_SCRIPT
+--OUTPUT_FILE: EXTRACT_VALIDATION.csv
+SELECT
+	'PERSON' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.PERSON x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+GROUP BY x.person_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'OBSERVATION_PERIOD' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.OBSERVATION_PERIOD x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.observation_period_start_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.observation_period_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'VISIT_OCCURRENCE' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.VISIT_OCCURRENCE x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.visit_start_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.visit_occurrence_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'CONDITION_OCCURRENCE' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.condition_start_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.condition_occurrence_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'DRUG_EXPOSURE' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.DRUG_EXPOSURE x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.drug_exposure_start_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.drug_exposure_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'PROCEDURE_OCCURRENCE' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.PROCEDURE_OCCURRENCE x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.procedure_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.procedure_occurrence_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'MEASUREMENT' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.MEASUREMENT x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.measurement_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.measurement_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'OBSERVATION' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.OBSERVATION x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.observation_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.observation_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'LOCATION' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.LOCATION x
+GROUP BY x.location_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'CARE_SITE' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.CARE_SITE x
+GROUP BY x.care_site_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'PROVIDER' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.PROVIDER x
+GROUP BY x.provider_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'DRUG_ERA' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.DRUG_ERA x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.drug_era_start_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.drug_era_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'DOSE_ERA' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.DOSE_ERA x
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.dose_era_start_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.dose_era_id
+HAVING COUNT(*) > 1
+
+UNION
+SELECT
+	'CONDITION_ERA' TABLE_NAME
+	,COUNT(*) DUP_COUNT
+FROM @cdmDatabaseSchema.CONDITION_ERA x
+INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+ON x.person_id = n3c.person_id
+AND x.condition_era_start_date > DATEFROMPARTS(2018,01,01)
+GROUP BY x.condition_era_id
+HAVING COUNT(*) > 1;
+
 --PERSON
 --OUTPUT_FILE: PERSON.csv
 SELECT
