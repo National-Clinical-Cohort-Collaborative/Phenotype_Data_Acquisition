@@ -2,11 +2,12 @@
 
 # vocabularyDatabaseSchema is optional and defaults to cdmDatabaseSchema
 createCohort <- function(connectionDetails,
-                            sqlFilePath,
-                            cdmDatabaseSchema,
-                            resultsDatabaseSchema,
-                            vocabularyDatabaseSchema = cdmDatabaseSchema
-                            ) {
+                         sqlFilePath,
+                         cdmDatabaseSchema,
+                         resultsDatabaseSchema,
+                         vocabularyDatabaseSchema = cdmDatabaseSchema,
+                         ...
+                         ) {
 
 
 
@@ -17,7 +18,9 @@ createCohort <- function(connectionDetails,
                            warnOnMissingParameters = FALSE,
                            cdmDatabaseSchema = cdmDatabaseSchema,
                            resultsDatabaseSchema = resultsDatabaseSchema,
-                           vocabularyDatabaseSchema = vocabularyDatabaseSchema)
+                           vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                           ...
+                           )
 
   conn <- DatabaseConnector::connect(connectionDetails)
 
