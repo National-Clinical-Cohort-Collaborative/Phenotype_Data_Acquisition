@@ -31,6 +31,8 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sql serv
                                                           )
 cdmDatabaseSchema <- "" # schema for your CDM instance -- e.g. TMC_OMOP.dbo
 resultsDatabaseSchema <- "" # schema with write privileges -- e.g. OHDSI.dbo
+# tempDatabaseSchema <- "" # For Google BigQuery users only
+
 outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be stored. default provided
 phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts/your_file.sql)
 extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/your_file.sql)
@@ -63,6 +65,7 @@ N3cOhdsi::createCohort(connectionDetails = connectionDetails,
                         sqlFilePath = phenotypeSqlPath,
                         cdmDatabaseSchema = cdmDatabaseSchema,
                         resultsDatabaseSchema = resultsDatabaseSchema
+                      # ,tempDatabaseSchema = tempDatabaseSchema
                         )
 
 # Extract data to pipe delimited files

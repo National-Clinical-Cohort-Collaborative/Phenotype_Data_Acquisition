@@ -493,7 +493,10 @@ group by person_id, end_date
 
 --SELECT person_id, event_date, event_type
 INSERT INTO @resultsDatabaseSchema.n3c_cohort
-SELECT DISTINCT person_id, start_date, end_date
+SELECT DISTINCT
+    CAST(person_id as varchar(50)) as person_id
+    , start_date
+    , end_date
 FROM final_cohort;
 
 TRUNCATE TABLE #cohort_rows;
