@@ -36,7 +36,7 @@ SELECT
 	'PERSON' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.PERSON x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 GROUP BY x.person_id
 HAVING COUNT(*) > 1
@@ -46,7 +46,7 @@ SELECT
 	'OBSERVATION_PERIOD' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.OBSERVATION_PERIOD x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.observation_period_start_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.observation_period_id
@@ -57,7 +57,7 @@ SELECT
 	'VISIT_OCCURRENCE' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.VISIT_OCCURRENCE x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.visit_start_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.visit_occurrence_id
@@ -68,7 +68,7 @@ SELECT
 	'CONDITION_OCCURRENCE' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.condition_start_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.condition_occurrence_id
@@ -79,7 +79,7 @@ SELECT
 	'DRUG_EXPOSURE' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.DRUG_EXPOSURE x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.drug_exposure_start_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.drug_exposure_id
@@ -90,7 +90,7 @@ SELECT
 	'PROCEDURE_OCCURRENCE' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.PROCEDURE_OCCURRENCE x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.procedure_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.procedure_occurrence_id
@@ -101,7 +101,7 @@ SELECT
 	'MEASUREMENT' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.MEASUREMENT x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.measurement_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.measurement_id
@@ -112,7 +112,7 @@ SELECT
 	'OBSERVATION' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.OBSERVATION x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.observation_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.observation_id
@@ -147,7 +147,7 @@ SELECT
 	'DRUG_ERA' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.DRUG_ERA x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.drug_era_start_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.drug_era_id
@@ -169,7 +169,7 @@ SELECT
 	'CONDITION_ERA' TABLE_NAME
 	,COUNT(*) DUP_COUNT
 FROM @cdmDatabaseSchema.CONDITION_ERA x
-INNER JOIN OHDSI.dbo.N3C_COHORT n3c
+INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.condition_era_start_date > DATEFROMPARTS(2018,01,01)
 GROUP BY x.condition_era_id

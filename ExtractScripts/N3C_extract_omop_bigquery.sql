@@ -26,6 +26,128 @@ select
    cast( DATE_ADD(cast(CURRENT_DATE() as date), interval -@dataLatencyNumDays DAY) as date) as update_date,	--change integer based on your site's data latency
    cast( DATE_ADD(cast(CURRENT_DATE() as date), interval @daysBetweenSubmissions DAY) as date) as next_submission_date;
 
+
+
+
+
+--VALIDATION_SCRIPT
+--OUTPUT_FILE: EXTRACT_VALIDATION.csv
+  select 'PERSON' table_name
+	,count(*) dup_count
+  from @cdmDatabaseSchema.person x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+  group by  x.person_id
+ having count(*) > 1
+
+union distinct select 'OBSERVATION_PERIOD' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.observation_period x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.observation_period_start_date > DATE(2018, 01, 01)
+  group by  x.observation_period_id
+ having count(*) > 1
+
+union distinct select 'VISIT_OCCURRENCE' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.visit_occurrence x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.visit_start_date > DATE(2018, 01, 01)
+  group by  x.visit_occurrence_id
+ having count(*) > 1
+
+union distinct select 'CONDITION_OCCURRENCE' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.condition_occurrence x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.condition_start_date > DATE(2018, 01, 01)
+  group by  x.condition_occurrence_id
+ having count(*) > 1
+
+union distinct select 'DRUG_EXPOSURE' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.drug_exposure x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.drug_exposure_start_date > DATE(2018, 01, 01)
+  group by  x.drug_exposure_id
+ having count(*) > 1
+
+union distinct select 'PROCEDURE_OCCURRENCE' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.procedure_occurrence x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.procedure_date > DATE(2018, 01, 01)
+  group by  x.procedure_occurrence_id
+ having count(*) > 1
+
+union distinct select 'MEASUREMENT' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.measurement x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.measurement_date > DATE(2018, 01, 01)
+  group by  x.measurement_id
+ having count(*) > 1
+
+union distinct select 'OBSERVATION' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.observation x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.observation_date > DATE(2018, 01, 01)
+  group by  x.observation_id
+ having count(*) > 1
+
+union distinct select 'LOCATION' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.location x
+  group by  x.location_id
+ having count(*) > 1
+
+union distinct select 'CARE_SITE' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.care_site x
+  group by  x.care_site_id
+ having count(*) > 1
+
+union distinct select 'PROVIDER' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.provider x
+  group by  x.provider_id
+ having count(*) > 1
+
+union distinct select 'DRUG_ERA' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.drug_era x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.drug_era_start_date > DATE(2018, 01, 01)
+  group by  x.drug_era_id
+ having count(*) > 1
+
+union distinct select 'DOSE_ERA' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.dose_era x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.dose_era_start_date > DATE(2018, 01, 01)
+  group by  x.dose_era_id
+ having count(*) > 1
+
+union distinct select 'CONDITION_ERA' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.condition_era x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.condition_era_start_date > DATE(2018, 01, 01)
+  group by  x.condition_era_id
+ having count(*) > 1              ;
+
 --PERSON
 --OUTPUT_FILE: PERSON.csv
 select
