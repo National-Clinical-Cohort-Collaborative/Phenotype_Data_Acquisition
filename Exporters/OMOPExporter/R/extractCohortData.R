@@ -74,10 +74,15 @@ runExtraction  <- function(connectionDetails,
       output_path <- paste0(outputFolder, "DATAFILES/")
     }
 
-    executeChunk(conn = conn,
-                 sql = sql,
-                 fileName = fileNm,
-                 outputFolder = output_path)
+    num_result_rows <- executeChunk(conn = conn,
+                                   sql = sql,
+                                   fileName = fileNm,
+                                   outputFolder = output_path)
+
+    # throw error if dup PKs found
+    if(fileNm == 'EXTRACT_VALIDATION.csv' && num_result_rows > 0){
+      stop("Duplicate primary keys. See EXTRACT_VALIDATION.csv")
+    }
 
   }
 
@@ -100,6 +105,6 @@ executeChunk <- function(conn,
 
   write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE, na="")
 
-
+  return(nrow(result))
 
 }
