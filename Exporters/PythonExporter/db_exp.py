@@ -19,12 +19,26 @@ def mssql_connect(config):
 def oracle_connect(config):
     host = config['oracle']['host']
     port = config['oracle']['port']
-    sid = config['oracle']['sid']
+    if 'sid' in config['oracle']:
+        sid = config['oracle']['sid']
+    else:
+        sid = None
+    if 'service_name' in config['oracle']:
+        service_name = config['oracle']['service_name']
+    else:
+        service_name = None
     user = config['oracle']['user']
     pwd = config['oracle']['pwd']
 
-    dsn_tns = cx_Oracle.makedsn(host, port, sid)
+    if sid != None:
+        dsn_tns = cx_Oracle.makedsn(host, port, sid=sid)
+    elif service_name != None:
+        dsn_tns = cx_Oracle.makedsn(host, port, service_name=service_name)
+    else:
+        print("ERROR:  oracle sid and service_name not found in config file")
+        exit()
     conn = cx_Oracle.connect(user, pwd, dsn_tns)
+
     return(conn)
 
 def parse_sql(sql_fname,sql_params):

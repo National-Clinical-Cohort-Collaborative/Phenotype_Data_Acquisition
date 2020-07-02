@@ -12,7 +12,9 @@ pwd = xxxxx
 [oracle]
 host = xxxxx
 port = xxxxx
-sid = xxxxx
+; provide SID or Service Name
+sid = 
+service_name = 
 user = xxxxx
 pwd = xxxxx
 
