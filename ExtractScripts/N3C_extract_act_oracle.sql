@@ -66,7 +66,7 @@ SELECT '@siteAbbrev' as SITE_ABBREV,
 		 ) tbl
 	 ) as DUP_COUNT
 	  FROM DUAL) subq
-  WHERE dup_count > 0         
+  WHERE dup_count > 0;
           
 --N3C_VOCAB_MAP TABLE
 --OUTPUT_FILE: N3C_VOCAB_MAP.CSV
