@@ -190,7 +190,7 @@ SELECT * FROM (SELECT 'DEMOGRAPHIC' as TABLE_NAME,
 --DEMOGRAPHIC
 --OUTPUT_FILE: DEMOGRAPHIC.csv
 SELECT DEMOGRAPHIC.PATID,
-   SUBSTR(TO_CHAR(BIRTH_DATE ),0,7) as BIRTH_DATE, --purposely removing day from birth date
+   TO_CHAR(BIRTH_DATE, 'YYYY-MM') as BIRTH_DATE, --purposely removing day from birth date
    '00:00' as BIRTH_TIME, --purposely removing time from birth date
    SEX,
    SEXUAL_ORIENTATION,
