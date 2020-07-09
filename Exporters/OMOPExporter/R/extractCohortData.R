@@ -30,6 +30,7 @@ runExtraction  <- function(connectionDetails,
                            cdmDatabaseSchema,
                            resultsDatabaseSchema,
                            outputFolder = paste0(getwd(), "/output/"),
+                           useAndromeda = FALSE,
                            ...
                            )
 {
@@ -74,15 +75,28 @@ runExtraction  <- function(connectionDetails,
       output_path <- paste0(outputFolder, "DATAFILES/")
     }
 
-    num_result_rows <- executeChunk(conn = conn,
-                                   sql = sql,
-                                   fileName = fileNm,
-                                   outputFolder = output_path)
 
-    # throw error if dup PKs found
-    if(fileNm == 'EXTRACT_VALIDATION.csv' && num_result_rows > 0){
-      stop("Duplicate primary keys. See EXTRACT_VALIDATION.csv")
+    if(useAndromeda && fileNm != "EXTRACT_VALIDATION.csv"){
+
+      executeChunkAndromeda(conn = conn,
+                             sql = sql,
+                             fileName = fileNm,
+                             outputFolder = output_path)
+    }else{
+
+      num_result_rows <- executeChunk(conn = conn,
+                                      sql = sql,
+                                      fileName = fileNm,
+                                      outputFolder = output_path)
+
+      # throw error if dup PKs found
+      if(fileNm == 'EXTRACT_VALIDATION.csv' && num_result_rows > 0){
+        stop("Duplicate primary keys. See EXTRACT_VALIDATION.csv")
+      }
+
     }
+
+
 
   }
 
@@ -108,3 +122,25 @@ executeChunk <- function(conn,
   return(nrow(result))
 
 }
+
+
+
+executeChunkAndromeda <- function(conn,
+                                 sql,
+                                 fileName,
+                                 outputFolder){
+
+
+
+  andr <- Andromeda::andromeda()
+  DatabaseConnector::querySqlToAndromeda(connection = conn
+                                         ,sql = sql
+                                         ,andromeda = andr
+                                         ,andromedaTableName = "tmp")
+
+  write.table(andr$tmp, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE, na="")
+
+
+}
+
+

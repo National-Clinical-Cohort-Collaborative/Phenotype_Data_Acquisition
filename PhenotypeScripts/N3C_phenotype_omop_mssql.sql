@@ -33,7 +33,7 @@ IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- 
 
 -- Create dest table
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
-	person_id			varchar(50)  NOT NULL,
+	person_id			int  NOT NULL,
 	start_date			date  NOT NULL,
 	end_date			date  NOT NULL
 );
@@ -494,7 +494,7 @@ group by person_id, end_date
 --SELECT person_id, event_date, event_type
 INSERT INTO @resultsDatabaseSchema.n3c_cohort
 SELECT DISTINCT
-    CAST(person_id as varchar(50)) as person_id
+    person_id
     , start_date
     , end_date
 FROM final_cohort;

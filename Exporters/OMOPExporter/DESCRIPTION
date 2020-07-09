@@ -1,7 +1,7 @@
 Package: N3cOhdsi
 Type: Package
 Title: N3C Data Extraction Tool
-Version: 0.1.0
+Version: 0.2.0
 Author: Robert Miller
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
