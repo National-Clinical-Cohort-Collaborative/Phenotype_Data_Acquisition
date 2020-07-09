@@ -82,34 +82,9 @@ WITH covid_loinc  AS (SELECT 'LOINC:94307-6' as loinc  FROM DUAL  UNION SELECT '
 		       UNION SELECT 'LOINC:95410-7' AS LOINC FROM DUAL UNION SELECT 'LOINC:95411-5' AS LOINC FROM DUAL 
 	
 ),
--- Diagnosis ICD-10/SNOMED codes from phenotype doc
-covid_dx_codes as
-(SELECT 'ICD10CM:Z11.59' as dx_code,'asymptomatic' as dx_category  FROM DUAL  
-UNION SELECT 'ICD10CM:B97.21' as dx_code,	'dx_strong_positive' as dx_category  FROM DUAL  
-UNION SELECT 'ICD10CM:B97.29'  dx_code,	'dx_strong_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:U07.1'  dx_code,	'dx_strong_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:Z20.828'  dx_code,'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:B34.2'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:R50%'  dx_code,	'dx_weak_positive' as dx_category  FROM DUAL  
-UNION SELECT 'ICD10CM:R05%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:R06.0%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J12%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J18%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J20%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J40%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J21%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J96%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J22%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J06.9'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J98.8'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:J80%'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:R43.0'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:R43.2'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:R07.1'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  
-UNION SELECT 'ICD10CM:R68.83'  dx_code,	'dx_weak_positive' as dx_category   FROM DUAL  ),
 -- Diagnosis ICD-10 codes from phenotype doc
-covid_icd10 as
-(SELECT 'ICD10CM:B97.21' as icd10_code,	'1_strong_positive' as dx_category  FROM DUAL  UNION SELECT 'ICD10CM:B97.29'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:U07.1'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:Z20.828'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:B34.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R50%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R05%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R06.0%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J12%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J18%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J20%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J40%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J21%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J96%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J22%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J06.9'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J98.8'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J80%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.0'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R07.1'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL   UNION select 'ICD10CM:R68.83'  icd10_code,	'2_weak_positive' as dx_category 
+covid_dx_codes as
+(SELECT 'ICD10CM:Z11.59' as dx_code,'asymptomatic' as dx_category  FROM DUAL UNION SELECT 'ICD10CM:B97.21' as icd10_code,	'1_strong_positive' as dx_category  FROM DUAL  UNION SELECT 'ICD10CM:B97.29'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:U07.1'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:Z20.828'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:B34.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R50%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R05%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R06.0%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J12%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J18%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J20%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J40%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J21%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J96%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J22%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J06.9'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J98.8'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J80%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.0'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R07.1'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL   UNION select 'ICD10CM:R68.83'  icd10_code,	'2_weak_positive' as dx_category 
   FROM DUAL ),
 -- procedure codes from phenotype doc
 covid_proc_codes as
