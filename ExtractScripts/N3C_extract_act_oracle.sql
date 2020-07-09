@@ -416,7 +416,7 @@ from @cdmDatabaseSchema.observation_fact
 --PATIENT_DIMENSION TABLE
 --OUTPUT_FILE: PATIENT_DIMENSION.csv
 SELECT patient_dimension.patient_num,
-    SUBSTR(CAST(BIRTH_DATE as varchar(20)),0,7) as birth_date,
+    TO_CHAR(BIRTH_DATE, 'YYYY-MM') as birth_date,
     death_date,
     race_cd,
     sex_cd,
