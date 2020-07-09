@@ -31,7 +31,7 @@ Begin building cohort following OHDSI standard cohort definition process
 DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort;
 
 -- Create dest table
-CREATE TABLE @resultsDatabaseSchema.n3c_cohort  ( person_id varchar(50)  NOT NULL,
+CREATE TABLE @resultsDatabaseSchema.n3c_cohort  ( person_id int  NOT NULL,
 	start_date			date  NOT NULL,
 	end_date			date  NOT NULL
 )
@@ -519,7 +519,7 @@ group by person_id, end_date
 
 --SELECT person_id, event_date, event_type
  SELECT DISTINCT
-    CAST(person_id as varchar(50)) as person_id
+    person_id
     , start_date
     , end_date
 FROM final_cohort;
