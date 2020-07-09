@@ -391,13 +391,6 @@ SELECT
    NULL as LOCATION_SOURCE_VALUE
 FROM @cdmDatabaseSchema.LOCATION l
 JOIN (
-        SELECT DISTINCT cs.LOCATION_ID
-        FROM @cdmDatabaseSchema.VISIT_OCCURRENCE vo
-        JOIN @resultsDatabaseSchema.N3C_COHORT n
-          ON vo.person_id = n.person_id
-        JOIN @cdmDatabaseSchema.CARE_SITE cs
-          ON vo.care_site_id = cs.care_site_id
-        UNION
         SELECT DISTINCT p.LOCATION_ID
         FROM @cdmDatabaseSchema.PERSON p
         JOIN @resultsDatabaseSchema.N3C_COHORT n
@@ -412,7 +405,7 @@ SELECT
    cs.CARE_SITE_ID,
    CARE_SITE_NAME,
    PLACE_OF_SERVICE_CONCEPT_ID,
-   LOCATION_ID,
+   NULL as LOCATION_ID,
    NULL as CARE_SITE_SOURCE_VALUE,
    NULL as PLACE_OF_SERVICE_SOURCE_VALUE
 FROM @cdmDatabaseSchema.CARE_SITE cs
