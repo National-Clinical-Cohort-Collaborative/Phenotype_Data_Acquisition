@@ -8,6 +8,8 @@ database  = xxxxx
 port = xxxxx
 user = xxxxx
 pwd = xxxxx
+; you may need to change driver for your site, example: SQL Server Native Client 11.0
+driver = SQL Server
 
 [oracle]
 host = xxxxx

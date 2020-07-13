@@ -11,8 +11,12 @@ def mssql_connect(config):
     database = config['mssql']['database']
     user = config['mssql']['user']
     pwd = config['mssql']['pwd']
+    if 'driver' in config['mssql']:
+        driver = config['mssql']['driver']
+    else:
+        driver = 'SQL Server'
 
-    constr = 'DRIVER={SQL Server};SERVER='+host+';DATABASE='+database+';PORT='+port+';UID='+user+';PWD='+ pwd
+    constr = 'DRIVER={'+driver+'};SERVER='+host+';DATABASE='+database+';PORT='+port+';UID='+user+';PWD='+ pwd
     conn = pyodbc.connect(constr)
     return(conn)
 
