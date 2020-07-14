@@ -6,6 +6,17 @@
 --05.15.2020 Emily Pfaff converted to SQL Server
 --05.27.2020 Michele Morris added 1.5 loincs
 --06.16.2020 Michele Morris added 1.6 loincs
+--07.08.2020 Adapted Emily Pfaff's Phenotype 2.0 for ACT
+--Significant changes from V1:
+--Weak diagnoses no longer checked after May 1, 2020
+--Added asymptomatic test code (Z11.59) to diagnosis list
+--Added new temp table definition "dx_asymp" to capture asymptomatic test patients who got that code after April 1, 2020, 
+--  had a covid lab (regardless of result), and doesnt have a strong dx
+--Added new temp table covid_lab_pos to capture positive lab tests
+--Added new temp table covid_pos_list to capture a given site's definition of positive
+--Added a column to the n3c_cohort table to capture the exc_dx_asymp flag
+--Added a column to the final select statement to populate that field
+--Added a WHERE to the final select to exclude asymptomatic patients
 
 
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
@@ -18,23 +29,23 @@ EXCEPTION
       RAISE;
     END IF;
 END;
-  
-  
-  
--- Create dest table
+ 
+-- Create dest table -- cohort table 44,086 rows inserted. before 43,953 rows inserted no weak after may 1 remove asymptomatic negative test takers 21415
+
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 	patient_num			VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
 	inc_procedure		INT  NOT NULL,
-	inc_lab				INT  NOT NULL
+	inc_lab				INT  NOT NULL,
+	exc_dx_asymp        INT  NOT NULL
 );
 
 
 
 -- Lab LOINC codes from phenotype doc
 INSERT INTO @resultsDatabaseSchema.n3c_cohort 
- WITH covid_loinc  AS (SELECT 'LOINC:94307-6' as loinc  FROM DUAL  UNION SELECT 'LOINC:94308-4'  loinc   FROM DUAL  
+WITH covid_loinc  AS (SELECT 'LOINC:94307-6' as loinc  FROM DUAL  UNION SELECT 'LOINC:94308-4'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94309-2'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94310-0'  loinc   FROM DUAL  UNION SELECT 'LOINC:94311-8'  loinc FROM DUAL  
 		       UNION SELECT 'LOINC:94312-6'  loinc   FROM DUAL  UNION SELECT 'LOINC:94313-4'  loinc   FROM DUAL  
@@ -72,8 +83,8 @@ INSERT INTO @resultsDatabaseSchema.n3c_cohort
 	
 ),
 -- Diagnosis ICD-10 codes from phenotype doc
-covid_icd10 as
-(SELECT 'ICD10CM:B97.21' as icd10_code,	'1_strong_positive' as dx_category  FROM DUAL  UNION SELECT 'ICD10CM:B97.29'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:U07.1'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:Z20.828'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:B34.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R50%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R05%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R06.0%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J12%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J18%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J20%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J40%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J21%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J96%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J22%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J06.9'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J98.8'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J80%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.0'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R07.1'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL   UNION select 'ICD10CM:R68.83'  icd10_code,	'2_weak_positive' as dx_category 
+covid_dx_codes as
+(SELECT 'ICD10CM:Z11.59' as dx_code,'asymptomatic' as dx_category  FROM DUAL UNION SELECT 'ICD10CM:B97.21' as icd10_code,	'1_strong_positive' as dx_category  FROM DUAL  UNION SELECT 'ICD10CM:B97.29'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:U07.1'  icd10_code,	'1_strong_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:Z20.828'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:B34.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R50%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R05%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R06.0%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J12%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J18%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J20%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J40%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J21%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J96%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J22%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J06.9'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J98.8'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:J80%'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.0'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R43.2'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL  UNION SELECT 'ICD10CM:R07.1'  icd10_code,	'2_weak_positive' as dx_category   FROM DUAL   UNION select 'ICD10CM:R68.83'  icd10_code,	'2_weak_positive' as dx_category 
   FROM DUAL ),
 -- procedure codes from phenotype doc
 covid_proc_codes as
@@ -90,6 +101,21 @@ covid_lab as
             observation_fact.concept_cd in (SELECT loinc FROM covid_loinc )
         )
  ),
+--The ways that your site describes a positive COVID test
+covid_pos_list as (SELECT 'POSITIVE' as word FROM DUAL UNION SELECT 'DETECTED' as word from DUAL UNION SELECT 'ABNORMAL' as word from DUAL),
+
+--patients with positive covid lab test
+ covid_lab_pos as
+(SELECT 
+    distinct OBSERVATION_FACT.PATIENT_NUM
+    FROM @cdmDatabaseSchema.OBSERVATION_FACT JOIN covid_pos_list ON UPPER(OBSERVATION_FACT.TVAL_CHAR) = covid_pos_list.word
+      WHERE OBSERVATION_FACT.START_DATE >= CAST('01-JAN-2020' as TIMESTAMP)
+        and 
+        (
+            OBSERVATION_FACT.CONCEPT_CD in (SELECT loinc FROM covid_loinc )   
+        )
+ ),
+
 -- patients with covid related diagnosis since start_date
 -- if using i2b2 multi-fact table please substitute 'observation_fact' with appropriate fact view
 covid_diagnosis as
@@ -105,12 +131,16 @@ covid_diagnosis as
             observation_fact.encounter_num,
             observation_fact.concept_cd dx,
             observation_fact.start_date,
-            covid_icd10.dx_category as orig_dx_category
+            covid_dx_codes.dx_category as orig_dx_category
         FROM @cdmDatabaseSchema.observation_fact
-            join covid_icd10 on observation_fact.concept_cd like covid_icd10.icd10_code
+            join covid_dx_codes on observation_fact.concept_cd like covid_dx_codes.dx_code
+
+            --join covid_icd10 on observation_fact.concept_cd like covid_icd10.icd10_code
           WHERE observation_fact.start_date >= CAST('01-JAN-2020' as TIMESTAMP)
      ) dxq
  ),
+ 
+ 
 -- patients with strong positive DX included
 dx_strong as
 (SELECT distinct
@@ -127,7 +157,7 @@ dx_weak as
         FROM (SELECT distinct
                 patient_num, encounter_num, dx
             FROM covid_diagnosis
-              WHERE dx_category='2_weak_positive'
+              WHERE dx_category='2_weak_positive' and best_dx_date <= '01-MAY-2020'
          ) subq
         group by
             patient_num,
@@ -145,7 +175,7 @@ dx_weak as
         FROM (SELECT distinct
                 patient_num, best_dx_date, dx
             FROM covid_diagnosis
-              WHERE dx_category='2_weak_positive'
+              WHERE dx_category='2_weak_positive' and best_dx_date <= '01-MAY-2020'
          ) subq
         group by
             patient_num,
@@ -153,6 +183,21 @@ dx_weak as
         having
             count(*) >= 2
      ) dx_same_date
+ ),
+-- patients with asymptomatic DX 
+-- ensure they had a covid lab, and that the code was after April 1
+-- and make sure they are not in the strong positive set OR positive lab set, which overrules the asymptomatic
+-- these are patients who will be EXCLUDED, not INCLUDED
+dx_asymp as
+(SELECT distinct
+        cda.patient_num
+    FROM 
+        covid_diagnosis cda 
+        JOIN covid_lab on cda.patient_num = covid_lab.patient_num and cda.dx_category='asymptomatic' and cda.best_dx_date >= '01-APR-2020'
+        LEFT JOIN covid_diagnosis cds ON cda.patient_num = cds.patient_num AND cds.dx_category='dx_strong_positive'
+        LEFT JOIN covid_lab_pos cpl ON cda.patient_num = cpl.patient_num
+     WHERE     
+        cds.patient_num is null AND cpl.patient_num is null
  ),
 -- patients with a covid related procedure since start_date
 -- if using i2b2 multi-fact table please substitute obseravation_fact with appropriate fact view
@@ -171,21 +216,26 @@ covid_cohort as
     SELECT distinct patient_num FROM covid_procedure
       UNION
     select distinct patient_num FROM covid_lab
+    UNION
+    select distinct patient_num FROM dx_asymp
  ),
 n3c_cohort as
 (SELECT covid_cohort.patient_num,
         case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
         case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
         case when covid_procedure.patient_num is not null then 1 else 0 end as inc_procedure,
-        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab
+        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab,
+        case when dx_asymp.patient_num is not null then 1 else 0 end as exc_dx_asymp
+
 	FROM covid_cohort
 		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
 		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
 		left outer join covid_procedure on covid_cohort.patient_num = covid_procedure.patient_num
 		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
-
+        left outer join dx_asymp on covid_cohort.patient_num = dx_asymp.patient_num
  )
 
- SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab
+SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab, exc_dx_asymp
 FROM n3c_cohort
+where exc_dx_asymp = 0
  ;
