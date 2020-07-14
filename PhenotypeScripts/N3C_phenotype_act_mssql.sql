@@ -7,6 +7,7 @@
 --05.27.2020 Michele Morris added 1.5 loincs
 --07.08.2020 Adapted Emily Pfaff's Phenotype 2.0 for ACT
 --Significant changes from V1:
+--THE PHENOTYPE NEEDS TO KNOW HOW YOU CODE COVID POSITIVE CASES
 --Weak diagnoses no longer checked after May 1, 2020
 --Added asymptomatic test code (Z11.59) to diagnosis list
 --Added new temp table definition "dx_asymp" to capture asymptomatic test patients who got that code after April 1, 2020, 
@@ -16,13 +17,14 @@
 --Added a column to the n3c_cohort table to capture the exc_dx_asymp flag
 --Added a column to the final select statement to populate that field
 --Added a WHERE to the final select to exclude asymptomatic patients
+--Code assumes that COVID Labs are coded per the ACT Guidance https://github.com/shyamvis/ACT-COVID-Ontology/blob/master/ontology/ExampleStepsForMappingLabs.md
+
 
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
 IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL          -- Drop table if it exists
   DROP TABLE @resultsDatabaseSchema.n3c_cohort;
   
-  
-  
+   
 -- Create dest table
 CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 	patient_num			VARCHAR(50)  NOT NULL,
@@ -34,7 +36,9 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 );
 
 
-
+-- This script assumes you have coded your COVID Positive lab values per the ACT guidance 
+--https://github.com/shyamvis/ACT-COVID-Ontology/blob/master/ontology/ExampleStepsForMappingLabs.md
+--
 -- Lab LOINC codes from phenotype doc
 with covid_loinc as
 (
@@ -165,20 +169,16 @@ covid_lab as
         )
 ),
 
---The ways that your site describes a positive COVID test
---Replace @POSITIVE, @DETECTED, @ABNORMAL with strings that represent positive in your database
-covid_pos_list as (SELECT @POSITIVE as word UNION SELECT @DETECTED as word UNION SELECT @'ABNORMAL' as word ),
 
 --patients with positive covid lab test
  covid_lab_pos as
 (SELECT 
     distinct OBSERVATION_FACT.PATIENT_NUM
-    FROM @cdmDatabaseSchema.OBSERVATION_FACT JOIN covid_pos_list ON UPPER(OBSERVATION_FACT.TVAL_CHAR) = UPPER(covid_pos_list.word)
-      WHERE OBSERVATION_FACT.START_DATE >= CAST('2020-01-01' as datetime)
-        and 
-        (
-            OBSERVATION_FACT.CONCEPT_CD in (SELECT loinc FROM covid_loinc )   
-        )
+    FROM @cdmDatabaseSchema.OBSERVATION_FACT 
+    	WHERE OBSERVATION_FACT.START_DATE >= CAST('2020-01-01' as datetime) AND  
+	(OBSERVATION_FACT.CONCEPT_CD like 'LOINC:% POSITIVE'
+		OR OBSERVATION_FACT.CONCEPT_CD = 'UMLS:C1335447' 
+		OR OBSERVATION_FACT.CONCEPT_CD = 'ACT|LOCAL|LAB:ANY POSITIVE ANTIBODY TEST')
  ),
 
 -- patients with covid related diagnosis since start_date
@@ -272,6 +272,21 @@ dx_weak as
             count(*) >= 2
     ) dx_same_date
 ),
+-- patients with asymptomatic DX 
+-- ensure they had a covid lab, and that the code was after April 1
+-- and make sure they are not in the strong positive set OR positive lab set, which overrules the asymptomatic
+-- these are patients who will be EXCLUDED, not INCLUDED
+dx_asymp as
+(SELECT distinct
+        cda.patient_num
+    FROM 
+        covid_diagnosis cda 
+        JOIN covid_lab on cda.patient_num = covid_lab.patient_num and cda.dx_category='asymptomatic' and cda.best_dx_date >= '01-APR-2020'
+        LEFT JOIN covid_diagnosis cds ON cda.patient_num = cds.patient_num AND cds.dx_category='dx_strong_positive'
+        LEFT JOIN covid_lab_pos cpl ON cda.patient_num = cpl.patient_num
+     WHERE     
+        cds.patient_num is null AND cpl.patient_num is null
+ ),
 -- patients with a covid related procedure since start_date
 -- if using i2b2 multi-fact table please substitute obseravation_fact with appropriate fact view
 covid_procedure as
@@ -304,7 +319,7 @@ n3c_cohort as
         case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
         case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
         case when covid_procedure.patient_num is not null then 1 else 0 end as inc_procedure,
-        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab
+        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab,
         case when dx_asymp.patient_num is not null then 1 else 0 end as exc_dx_asymp
 
 	from
