@@ -139,6 +139,8 @@ executeChunkAndromeda <- function(conn,
                                          ,andromedaTableName = "tmp")
 
   write.table(andr$tmp, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE, na="")
+  
+  Andromeda::close(andr)
 
 
 }
