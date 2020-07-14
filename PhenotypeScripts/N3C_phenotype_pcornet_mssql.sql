@@ -1,5 +1,16 @@
---N3C covid-19 phenotype, PCORnet CDM, MS SqlServer
---N3C phenotype V1.6
+--N3C covid-19 phenotype, PCORnet CDM
+--N3C phenotype V2.0
+
+--Significant changes from V1:
+--Weak diagnoses no longer checked after May 1, 2020
+--Added asymptomatic test code (Z11.59) to diagnosis list
+--Added new temp table definition "dx_asymp" to capture asymptomatic test patients who got that code after April 1, 2020, 
+--  had a covid lab (regardless of result), and doesnt have a strong dx
+--Added new temp table covid_lab_pos to capture positive lab tests
+--Added new temp table covid_pos_list to capture a given site's definition of positive
+--Added a column to the n3c_cohort table to capture the exc_dx_asymp flag
+--Added a column to the final select statement to populate that field
+--Added a WHERE to the final select to exclude asymptomatic patients
 
 -- start date is set to '2020-01-01'
 
@@ -16,7 +27,8 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
 	inc_procedure		INT  NOT NULL,
-	inc_lab				INT  NOT NULL
+	inc_lab				INT  NOT NULL,
+	exc_dx_asymp        INT  NOT NULL
 );
   
 
@@ -96,10 +108,15 @@ with covid_loinc as
 	select '95410-7' as loinc UNION
 	select '95411-5' as loinc	
 ),
+
+ --The ways that your site describes a positive COVID test
+covid_pos_list as (SELECT 'POSITIVE' as word UNION SELECT 'DETECTED' as word),
+
 -- Diagnosis ICD-10/SNOMED codes from phenotype doc
 covid_dx_codes as
 (
     -- ICD-10
+        SELECT 'Z11.59' as dx_code,'asymptomatic' as dx_category UNION
 	select 'B97.21' as dx_code,	'dx_strong_positive' as dx_category UNION
 	select 'B97.29' as dx_code,	'dx_strong_positive' as dx_category UNION
 	select 'U07.1' as dx_code,	'dx_strong_positive' as dx_category UNION
@@ -153,6 +170,7 @@ covid_dx_codes as
 	select '75483001' as dx_code,	'dx_weak_positive' as dx_category
 
 ),
+
 -- procedure codes from phenotype doc
 covid_proc_codes as
 (
@@ -163,6 +181,7 @@ covid_proc_codes as
     select '86328' as procedure_code UNION
     select '86769' as procedure_code
 ),
+
 -- patients with covid related lab since start_date
 covid_lab as
 (
@@ -181,6 +200,23 @@ covid_lab as
 			upper(lab_result_cm.raw_lab_name) like '%SARS-COV-2%'            
         )
 ),
+
+ --patients with positive covid lab test
+ covid_lab_pos as
+(SELECT distinct
+        lab_result_cm.patid
+    FROM @cdmDatabaseSchema.lab_result_cm JOIN covid_pos_list ON LAB_RESULT_CM.RESULT_QUAL = covid_pos_list.word
+      WHERE lab_result_cm.result_date >= CAST('2020-01-01' as datetime)
+        and 
+        (
+            lab_result_cm.lab_loinc in (SELECT loinc FROM covid_loinc )
+            or
+			upper(lab_result_cm.raw_lab_name) like '%COVID-19%'
+			or
+			upper(lab_result_cm.raw_lab_name) like '%SARS-COV-2%'            
+        )
+ ),
+
 -- patients with covid related diagnosis since start_date
 covid_diagnosis as
 (
@@ -209,6 +245,7 @@ covid_diagnosis as
             coalesce(dx_date,admit_date) >= CAST('2020-01-01' as datetime)
     ) dxq
 ),
+
 -- patients with strong positive DX included
 dx_strong as
 (
@@ -220,6 +257,23 @@ dx_strong as
         dx_category='dx_strong_positive'    
         
 ),
+
+-- patients with asymptomatic DX 
+-- ensure they had a covid lab, and that the code was after April 1
+-- and make sure they are not in the strong positive set OR positive lab set, which overrules the asymptomatic
+-- these are patients who will be EXCLUDED, not INCLUDED
+dx_asymp as
+(SELECT distinct
+        cda.patid
+    FROM 
+        covid_diagnosis cda 
+        JOIN covid_lab on cda.patid = covid_lab.patid and cda.dx_category='asymptomatic' and cda.best_dx_date >= CAST('2020-04-01' as datetime)
+        LEFT JOIN covid_diagnosis cds ON cda.patid = cds.patid AND cds.dx_category='dx_strong_positive'
+        LEFT JOIN covid_lab_pos cpl ON cda.patid = cpl.patid
+     WHERE     
+        cds.patid is null AND cpl.patid is null
+ ),
+
 -- patients with two different weak DX in same encounter and/or on same date included
 dx_weak as
 (
@@ -237,7 +291,7 @@ dx_weak as
             from
                 covid_diagnosis
             where
-                dx_category='dx_weak_positive'
+                dx_category='dx_weak_positive' and best_dx_date <= CAST('2020-05-01' as datetime)
         ) subq
         group by
             patid,
@@ -262,7 +316,7 @@ dx_weak as
             from
                 covid_diagnosis
             where
-                dx_category='dx_weak_positive'
+                dx_category='dx_weak_positive' and best_dx_date <= CAST('2020-05-01' as datetime)
         ) subq
         group by
             patid,
@@ -271,6 +325,7 @@ dx_weak as
             count(*) >= 2
     ) dx_same_date
 ),
+
 -- patients with a covid related procedure since start_date
 covid_procedure as
 (
@@ -283,6 +338,7 @@ covid_procedure as
         procedures.px_date >=  CAST('2020-01-01' as datetime)
 
 ),
+
 covid_cohort as
 (
     select distinct patid from dx_strong
@@ -292,25 +348,30 @@ covid_cohort as
     select distinct patid from covid_procedure
     UNION
     select distinct patid from covid_lab
+     UNION
+    select distinct patid FROM dx_asymp
 ),
+
 cohort as
 (
- 
 select
 	covid_cohort.patid,
 	case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
 	case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
 	case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
-	case when covid_lab.patid is not null then 1 else 0 end as inc_lab
+	case when covid_lab.patid is not null then 1 else 0 end as inc_lab,
+	case when dx_asymp.patid is not null then 1 else 0 end as exc_dx_asymp
 from
 	covid_cohort
 	left outer join dx_strong on covid_cohort.patid = dx_strong.patid
 	left outer join dx_weak on covid_cohort.patid = dx_weak.patid
 	left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
 	left outer join covid_lab on covid_cohort.patid = covid_lab.patid
+	left outer join dx_asymp on covid_cohort.patid = dx_asymp.patid
 )
 
 
 INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
-SELECT patid, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab
-FROM cohort;
+SELECT patid, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab, exc_dx_asymp
+FROM cohort
+where exc_dx_asymp = 0;
