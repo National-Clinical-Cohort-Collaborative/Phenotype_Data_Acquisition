@@ -171,7 +171,8 @@ covid_lab as
 
 --MAPPING POSITIVE LAB VALUES
 --patients with positive covid lab test
- covid_lab_pos as
+--Option #1
+covid_lab_pos as
 (SELECT 
     distinct OBSERVATION_FACT.PATIENT_NUM
     FROM @cdmDatabaseSchema.OBSERVATION_FACT 
@@ -180,6 +181,19 @@ covid_lab as
 		OR OBSERVATION_FACT.CONCEPT_CD = 'UMLS:C1335447' 
 		OR OBSERVATION_FACT.CONCEPT_CD = 'ACT|LOCAL|LAB:ANY POSITIVE ANTIBODY TEST')
  ),
+--Option #2 if you have not mapped to the ACT COVID Ontology
+--Search TVAL_CHAR for your COVID labs for strings that mean Positive. YOu may need to increase the list in the 
+--WHERE clause below
+--covid_lab_pos as
+--(SELECT 
+--    DISTINCT OBSERVATION_FACT.PATIENT_NUM
+--    FROM @cdmDatabaseSchema.OBSERVATION_FACT 
+--	 JOIN COVID_LOINC ON LOINC = OBSERVATION_FACT.CONCEPT_CD
+--       WHERE (UPPER(OBSERVATION_FACT.TVAL_CHAR) like 'POSITIVE' OR UPPER(OBSERVATION_FACT.TVAL_CHAR) LIKE 'DETECT%')
+--        AND OBSERVATION_FACT.START_DATE >= CAST('2020-01-01' as datetime) 
+--),
+
+
 
 -- patients with covid related diagnosis since start_date
 -- if using i2b2 multi-fact table please substitute 'observation_fact' with appropriate fact view
