@@ -13,7 +13,6 @@
 --Added new temp table definition "dx_asymp" to capture asymptomatic test patients who got that code after April 1, 2020, 
 --  had a covid lab (regardless of result), and doesnt have a strong dx
 --Added new temp table covid_lab_pos to capture positive lab tests
---Added new temp table covid_pos_list to capture a given site's definition of positive
 --Added a column to the n3c_cohort table to capture the exc_dx_asymp flag
 --Added a column to the final select statement to populate that field
 --Added a WHERE to the final select to exclude asymptomatic patients
@@ -101,20 +100,30 @@ covid_lab as
             observation_fact.concept_cd in (SELECT loinc FROM covid_loinc )
         )
  ),
---The ways that your site describes a positive COVID test
-covid_pos_list as (SELECT 'POSITIVE' as word FROM DUAL UNION SELECT 'DETECTED' as word from DUAL UNION SELECT 'ABNORMAL' as word from DUAL),
 
+--MAPPING POSITIVE LAB VALUES
 --patients with positive covid lab test
- covid_lab_pos as
+--Option #1
+covid_lab_pos as
 (SELECT 
     distinct OBSERVATION_FACT.PATIENT_NUM
-    FROM @cdmDatabaseSchema.OBSERVATION_FACT JOIN covid_pos_list ON UPPER(OBSERVATION_FACT.TVAL_CHAR) = covid_pos_list.word
-      WHERE OBSERVATION_FACT.START_DATE >= CAST('01-JAN-2020' as TIMESTAMP)
-        and 
-        (
-            OBSERVATION_FACT.CONCEPT_CD in (SELECT loinc FROM covid_loinc )   
-        )
+    FROM @cdmDatabaseSchema.OBSERVATION_FACT 
+    	WHERE OBSERVATION_FACT.START_DATE >= CAST('01-JAN-2020' as TIMESTAMP) AND  
+	(OBSERVATION_FACT.CONCEPT_CD like 'LOINC:% POSITIVE'
+		OR OBSERVATION_FACT.CONCEPT_CD = 'UMLS:C1335447' 
+		OR OBSERVATION_FACT.CONCEPT_CD = 'ACT|LOCAL|LAB:ANY POSITIVE ANTIBODY TEST')
  ),
+--Option #2 if you have not mapped to the ACT COVID Ontology
+--Search TVAL_CHAR for your COVID labs for strings that mean Positive. YOu may need to increase the list in the 
+--WHERE clause below
+--covid_lab_pos as
+--(SELECT 
+--    DISTINCT OBSERVATION_FACT.PATIENT_NUM
+--    FROM @cdmDatabaseSchema.OBSERVATION_FACT 
+--	 JOIN COVID_LOINC ON LOINC = OBSERVATION_FACT.CONCEPT_CD
+--       WHERE (UPPER(OBSERVATION_FACT.TVAL_CHAR) like 'POSITIVE' OR UPPER(OBSERVATION_FACT.TVAL_CHAR) LIKE 'DETECT%')
+--        AND OBSERVATION_FACT.START_DATE >= CAST('01-JAN-2020' as TIMESTAMP) 
+--),
 
 -- patients with covid related diagnosis since start_date
 -- if using i2b2 multi-fact table please substitute 'observation_fact' with appropriate fact view
