@@ -169,7 +169,7 @@ covid_lab as
         )
 ),
 
-
+--MAPPING POSITIVE LAB VALUES
 --patients with positive covid lab test
  covid_lab_pos as
 (SELECT 
