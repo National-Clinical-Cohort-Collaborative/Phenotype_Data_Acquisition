@@ -1,17 +1,28 @@
 ---------------------------------------------------------------------------------------------------------
--- 1. Create table if it does not exist in current schema
+-- 1. Create tables if it does not exist in current schema
 ---------------------------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS :TNX_SCHEMA.n3c_cohort (
 	patient_id	VARCHAR(200)
 );
 
+CREATE TABLE IF NOT EXISTS :TNX_SCHEMA.n3c_pheno_version (
+ version VARCHAR(200)
+);
+
 ---------------------------------------------------------------------------------------------------------
--- 2. Clear out existing patient list
+-- 2. Update pheno version table
+---------------------------------------------------------------------------------------------------------
+TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
+INSERT INTO :TNX_SCHEMA.n3c_pheno_version
+SELECT '2.0';
+
+---------------------------------------------------------------------------------------------------------
+-- 3. Clear out existing patient list
 ---------------------------------------------------------------------------------------------------------
 TRUNCATE TABLE :TNX_SCHEMA.n3c_cohort;
 
 ---------------------------------------------------------------------------------------------------------
--- 3. Insert patients into table
+-- 4. Insert patients into table
 -- 	Change Log:
 --		5/11/20 - Updated handling for B97.21
 --				- Added new codes for phenotype v1.4
