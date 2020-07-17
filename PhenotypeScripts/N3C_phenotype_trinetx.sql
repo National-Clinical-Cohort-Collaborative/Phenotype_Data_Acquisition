@@ -265,7 +265,7 @@ FROM (
 LEFT JOIN (
 	SELECT distinct patient_id
 	FROM :TNX_SCHEMA.diagnosis dx
-	JOIN TNX_SCHEMA.mapping mp on mp.provider_code = (dx.code_system || ':' || dx.code)
+	JOIN :TNX_SCHEMA.mapping mp on mp.provider_code = (dx.code_system || ':' || dx.code)
 	WHERE dx.date >= '2020-04-01'
 	AND mp.mt_code = 'UMLS:ICD10CM:Z11.59'
 ) phenoExcl on phenoExcl.patient_id = results.patient_id 
