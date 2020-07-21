@@ -56,7 +56,7 @@ library(remotes)
 
 remotes::install_github(repo = "National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition"
                ,ref = "master"
-               ,subdir = "Exporters/OMOPExporter"
+               ,subdir = "Exporters/RExporter"
                ,INSTALL_opts = "--no-multiarch"
 )
 
