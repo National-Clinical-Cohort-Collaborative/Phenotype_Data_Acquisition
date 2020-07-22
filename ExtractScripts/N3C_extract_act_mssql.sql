@@ -425,7 +425,7 @@ from @cdmDatabaseSchema.observation_fact
 --OUTPUT_FILE: PATIENT_DIMENSION.csv
 SELECT
     patient_dimension.patient_num,
-    LEFT(CAST(BIRTH_DATE as varchar(20)),7) as birth_date,
+    LEFT(CAST(convert(varchar, BIRTH_DATE, 23) as varchar),7) as birth_date,
     death_date,
     race_cd,
     sex_cd,
