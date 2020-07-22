@@ -247,7 +247,7 @@ where dup_count > 0
 --OUTPUT_FILE: DEMOGRAPHIC.csv
 SELECT
    DEMOGRAPHIC.PATID,
-   LEFT(CAST(BIRTH_DATE as varchar),7) as BIRTH_DATE, --purposely removing day from birth date
+   LEFT(CAST(convert(varchar, BIRTH_DATE, 23) as varchar),7) as BIRTH_DATE, --purposely removing day from birth date
    '00:00' as BIRTH_TIME, --purposely removing time from birth date
    SEX,
    SEXUAL_ORIENTATION,
