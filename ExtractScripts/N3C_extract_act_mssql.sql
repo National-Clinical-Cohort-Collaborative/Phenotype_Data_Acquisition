@@ -38,12 +38,12 @@ select
 -- OUTPUT_FILE: EXTRACT_VALIDATION.csv
  SELECT * FROM (SELECT 'OBSERVATION_FACT' as TABLE_NAME, 
 	(SELECT COUNT(*) 
-		FROM (SELECT ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
+		FROM (SELECT ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, CONVERT(VARCHAR(50),HASHBYTES('MD5',provider_id),2) AS provider_id, 
 		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM, COUNT(*) as COUNT_N 
 			FROM @cdmDatabaseSchema.OBSERVATION_FACT ofct 
 				JOIN @resultsDatabaseSchema.N3C_COHORT ON ofct.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM 
 				    AND ofct.START_DATE >= CAST('2018-01-01' as datetime)
-			GROUP BY ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
+			GROUP BY ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, CONVERT(VARCHAR(50),HASHBYTES('MD5',provider_id),2) AS provider_id, 
 		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM 
 			HAVING COUNT(*) >= 2
 		 ) tbl
@@ -376,9 +376,9 @@ select * from dem_nonstandard_codes_mapped;
 --Extract OBSERVATION_FACTS represented in the ACT Ontology
 --This should extract standard and non-standard prefixes
 --select all facts - concept_cd when mapped to OMOP determines domain/value
-with all_act_prefixes as
+with n3c_concepts as
 (
-    select distinct substring(concept_cd,1, charindex(':',concept_cd,1)) as term_prefix
+    select distinct concept_cd as concept_cd
     from @cdmDatabaseSchema.concept_dimension
     where
     concept_path like '\ACT\Demographics\%'
@@ -414,11 +414,8 @@ select
     upload_id
 from @cdmDatabaseSchema.observation_fact
     join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num
-  WHERE start_date >= '01/01/2018' and
-     substring(concept_cd,1, charindex(':',concept_cd,1)) in
-    (
-        select term_prefix from all_act_prefixes
-    );
+    join n3c_concepts on n3c_concepts.concept_cd = observation_fact.concept_cd 
+  WHERE start_date >= '01/01/2018';
 
 --select patient dimension the demographic facts including ethnicity are included in observation_fact table as well
 --PATIENT_DIMENSION TABLE
