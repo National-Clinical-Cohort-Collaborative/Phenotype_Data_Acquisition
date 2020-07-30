@@ -38,12 +38,12 @@ SELECT '@siteAbbrev' as SITE_ABBREV,
 -- OUTPUT_FILE: EXTRACT_VALIDATION.csv
  SELECT * FROM (SELECT 'OBSERVATION_FACT' as TABLE_NAME, 
 	(SELECT COUNT(*) 
-		FROM (SELECT ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
-		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM, COUNT(*) as COUNT_N 
+		FROM (SELECT ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, standard_hash(ofct.PROVIDER_ID,'MD5') AS provider_id,
+		      ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM, COUNT(*) as COUNT_N 
 			FROM @cdmDatabaseSchema.OBSERVATION_FACT ofct 
 				JOIN @resultsDatabaseSchema.N3C_COHORT ON ofct.PATIENT_NUM = @resultsDatabaseSchema.N3C_COHORT.PATIENT_NUM 
 				    AND ofct.START_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
-			GROUP BY ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, ofct.PROVIDER_ID, 
+			GROUP BY ofct.ENCOUNTER_NUM, ofct.PATIENT_NUM, ofct.CONCEPT_CD, standard_hash(ofct.PROVIDER_ID,'MD5'), 
 		            ofct.START_DATE, ofct.MODIFIER_CD, ofct.INSTANCE_NUM 
 			HAVING COUNT(*) >= 2
 		 ) tbl
@@ -367,10 +367,10 @@ select * from dem_nonstandard_codes_mapped;
 --Extract OBSERVATION_FACTS represented in the ACT Ontology
 --This should extract standard and non-standard prefixes
 --select all facts - concept_cd when mapped to OMOP determines domain/value    
-with all_act_prefixes as 
+with n3c_concepts as 
 (
-    select distinct regexp_substr(concept_cd,'[^:]+', 1, 1) term_prefix
-    from concept_dimension 
+    select distinct concept_cd as concept_cd
+    from @cdmDatabaseSchema.concept_dimension 
     where
     concept_path like '\ACT\Demographics\%'
     or concept_path like '\ACT\Visit Details\%'
@@ -405,11 +405,8 @@ select
     upload_id
 from @cdmDatabaseSchema.observation_fact
     join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
-  WHERE start_date >= '01-JAN-2018' and 
-     regexp_substr(observation_fact.concept_cd,'[^:]+', 1, 1) in 
-    (
-        select term_prefix from all_act_prefixes
-    );
+    join n3c_concepts on n3c_concepts.concept_cd = observation_fact.concept_cd 
+  WHERE start_date >= '01-JAN-2018';
 
     
 --select patient dimension the demographic facts including ethnicity are included in observation_fact table as well
