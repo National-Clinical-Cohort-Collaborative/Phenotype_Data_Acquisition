@@ -396,7 +396,7 @@ select
     encounter_num,
     observation_fact.patient_num,
     concept_cd,
-    --provider_id,
+    CONVERT(VARCHAR(50),HASHBYTES('MD5',provider_id),2) AS provider_id,
     start_date,
     end_date,
     modifier_cd,
