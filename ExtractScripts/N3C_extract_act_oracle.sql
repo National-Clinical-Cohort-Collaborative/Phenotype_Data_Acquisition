@@ -387,7 +387,7 @@ select
     encounter_num,
     observation_fact.patient_num,
     concept_cd,
-    --provider_id,
+    standard_hash(ofct.PROVIDER_ID,'MD5') AS provider_id,
     start_date,
     end_date,
     modifier_cd,
