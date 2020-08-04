@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, PCORnet CDM
---N3C phenotype V2.0
+--N3C phenotype V2.1
 
 --Significant changes from V1:
 --Weak diagnoses no longer checked after May 1, 2020
@@ -26,9 +26,9 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 	patid				VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
-	inc_procedure		INT  NOT NULL,
 	inc_lab				INT  NOT NULL,
-	exc_dx_asymp        INT  NOT NULL
+	exc_dx_asymp        INT  NOT NULL,
+	phenotype_version 		VARCHAR(10)
 );
   
 
@@ -106,7 +106,16 @@ with covid_loinc as
 	select '95406-5' as loinc UNION
 	select '95409-9' as loinc UNION
 	select '95410-7' as loinc UNION
-	select '95411-5' as loinc	
+	select '95411-5' as loinc UNION
+	-- new for v2.1
+	select '95416-4' as loinc UNION    
+	select '95424-8' as loinc UNION    
+	select '95425-5' as loinc UNION    
+	select '95427-1' as loinc UNION    
+	select '95428-9' as loinc UNION    
+	select '95429-7' as loinc UNION    
+	select '95521-1' as loinc UNION    
+	select '95522-9' as loinc 
 ),
 
  --The ways that your site describes a positive COVID test
@@ -169,17 +178,6 @@ covid_dx_codes as
 	select '60845006' as dx_code,	'dx_weak_positive' as dx_category UNION
 	select '75483001' as dx_code,	'dx_weak_positive' as dx_category
 
-),
-
--- procedure codes from phenotype doc
-covid_proc_codes as
-(
-    select 'U0001' as procedure_code UNION
-    select 'U0002' as procedure_code UNION
-    select '87635' as procedure_code UNION
-    select '86318' as procedure_code UNION
-    select '86328' as procedure_code UNION
-    select '86769' as procedure_code
 ),
 
 -- patients with covid related lab since start_date
@@ -326,26 +324,11 @@ dx_weak as
     ) dx_same_date
 ),
 
--- patients with a covid related procedure since start_date
-covid_procedure as
-(
-    select distinct
-        procedures.patid
-    from
-		@cdmDatabaseSchema.procedures
-		join covid_proc_codes on procedures.px = covid_proc_codes.procedure_code
-    where
-        procedures.px_date >=  CAST('2020-01-01' as datetime)
-
-),
-
 covid_cohort as
 (
     select distinct patid from dx_strong
     UNION
     select distinct patid from dx_weak
-    UNION
-    select distinct patid from covid_procedure
     UNION
     select distinct patid from covid_lab
      UNION
@@ -358,20 +341,18 @@ select
 	covid_cohort.patid,
 	case when dx_strong.patid is not null then 1 else 0 end as inc_dx_strong,
 	case when dx_weak.patid is not null then 1 else 0 end as inc_dx_weak,
-	case when covid_procedure.patid is not null then 1 else 0 end as inc_procedure,
 	case when covid_lab.patid is not null then 1 else 0 end as inc_lab,
 	case when dx_asymp.patid is not null then 1 else 0 end as exc_dx_asymp
 from
 	covid_cohort
 	left outer join dx_strong on covid_cohort.patid = dx_strong.patid
 	left outer join dx_weak on covid_cohort.patid = dx_weak.patid
-	left outer join covid_procedure on covid_cohort.patid = covid_procedure.patid
 	left outer join covid_lab on covid_cohort.patid = covid_lab.patid
 	left outer join dx_asymp on covid_cohort.patid = dx_asymp.patid
 )
 
 
 INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
-SELECT patid, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab, exc_dx_asymp
+SELECT patid, inc_dx_strong, inc_dx_weak, inc_lab, exc_dx_asymp, '2.1' as phenotype_version
 FROM cohort
 where exc_dx_asymp = 0;
