@@ -16,10 +16,11 @@ SELECT '@siteAbbrev' as SITE_ABBREV,
    '@cdmVersion' as CDM_VERSION,
    null AS VOCABULARY_VERSION, -- hardwired null for pcornet
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
-   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   phenotype_version as N3C_PHENOTYPE_VERSION,
    CAST(SYSDATE as date) as RUN_DATE,
    CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE FROM DUAL;
+   CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE
+FROM @resultsDatabaseSchema.N3C_COHORT;
 
 -- pcornet duplicate key validation script
 -- VALIDATION_SCRIPT
