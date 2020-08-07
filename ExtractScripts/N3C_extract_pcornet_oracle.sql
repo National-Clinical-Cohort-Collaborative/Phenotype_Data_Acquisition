@@ -8,7 +8,7 @@
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
-SELECT '@siteAbbrev' as SITE_ABBREV,
+SELECT distinct '@siteAbbrev' as SITE_ABBREV,
    '@siteName'    AS SITE_NAME,
    '@contactName' as CONTACT_NAME,
    '@contactEmail' as CONTACT_EMAIL,
