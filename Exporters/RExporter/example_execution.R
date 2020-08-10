@@ -45,9 +45,6 @@ contactName <- ""
 contactEmail <- ""
 cdmName <- "OMOP" #-- source data model. options: "OMOP", "ACT", "PCORNet", "TriNetX"
 cdmVersion <- "5.3.1"
-vocabularyVersion <- "" #-- will be null for non-OMOP sites, but needs to be passed at null
-n3cPhenotypeYN <- "Y"
-n3cPhenotypeVersion <- ""
 dataLatencyNumDays <- "2"  #-- this integer will be used to calculate UPDATE_DATE dynamically
 daysBetweenSubmissions <- "3"  #-- this integer will be used to calculate NEXT_SUBMISSION_DATE dynamically
 
@@ -80,9 +77,6 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         contactEmail = contactEmail,
                         cdmName = cdmName,
                         cdmVersion = cdmVersion,
-                        vocabularyVersion = vocabularyVersion,
-                        n3cPhenotypeYN = n3cPhenotypeYN,
-                        n3cPhenotypeVersion = n3cPhenotypeVersion,
                         dataLatencyNumDays = dataLatencyNumDays,
                         daysBetweenSubmissions = daysBetweenSubmissions
                         )
