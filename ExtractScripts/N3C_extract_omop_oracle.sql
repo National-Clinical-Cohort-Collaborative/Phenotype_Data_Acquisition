@@ -18,9 +18,9 @@ SELECT '@siteAbbrev' as SITE_ABBREV,
    '@contactEmail' as CONTACT_EMAIL,
    '@cdmName' as CDM_NAME,
    '@cdmVersion' as CDM_VERSION,
-   '@vocabularyVersion'    AS VOCABULARY_VERSION,
-   '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
-   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   (SELECT  vocabulary_version FROM @resultsDatabaseSchema.phenotype_execution  WHERE ROWNUM <= 1) AS VOCABULARY_VERSION,
+   'Y' as N3C_PHENOTYPE_YN,
+   (SELECT  phenotype_version FROM @resultsDatabaseSchema.phenotype_execution  WHERE ROWNUM <= 1) as N3C_PHENOTYPE_VERSION,
    CAST(SYSDATE as date) as RUN_DATE,
    CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE FROM DUAL;
