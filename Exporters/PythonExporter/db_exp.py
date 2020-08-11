@@ -223,7 +223,6 @@ sql_params = [
     {'tag': '@cdmVersion', 'value': config['site']['cdm_version']},
     {'tag': '@vocabularyVersion', 'value': config['site']['vocabulary_version']},
     {'tag': '@n3cPhenotypeYN', 'value': config['site']['n3c_phenotype_yn']},
-    {'tag': '@n3cPhenotypeVersion', 'value': config['site']['n3c_phenotype_version']},
     {'tag': '@dataLatencyNumDays', 'value': config['site']['data_latency_num_days']},
     {'tag': '@daysBetweenSubmissions', 'value': config['site']['days_between_submissions']}
 ]
@@ -303,13 +302,15 @@ if sftp_zip == True:
     #python -m pip install paramiko
     import paramiko
     paramiko.util.log_to_file("sftp.log")
-
+    # get key
+    sftpkey = paramiko.RSAKey.from_private_key_file(config['sftp']['keyfile'])
     # open paramiko transport
     hp = config['sftp']['host'] + ':' + config['sftp']['port']
     transport = paramiko.Transport(hp)
     # authenticate
-    transport.connect(None,config['sftp']['user'],config['sftp']['pwd'])
+    transport.connect(username=config['sftp']['user'],pkey=sftpkey)
     # sftp client
     sftp = paramiko.SFTPClient.from_transport(transport)
     sftp.chdir(config['sftp']['remote_dir'])
     sftp.put(zip_fname,zip_fname)
+
