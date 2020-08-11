@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS :TNX_SCHEMA.n3c_pheno_version (
 ---------------------------------------------------------------------------------------------------------
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
 INSERT INTO :TNX_SCHEMA.n3c_pheno_version
-SELECT '2.0';
+SELECT '2.1';
 
 ---------------------------------------------------------------------------------------------------------
 -- 3. Clear out existing patient list
@@ -35,6 +35,7 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_cohort;
 --					3 - Procedure
 --					4 - Any Lab Test
 --					5 - Weak Diagnosis
+--		8/11/20 - Update to v2.1
 ---------------------------------------------------------------------------------------------------------
 
 INSERT INTO :TNX_SCHEMA.n3c_cohort
@@ -144,25 +145,6 @@ FROM (
 			) dx_weak_date
 		) dx_weak
 		---------------------------------------------------------------------------------------------------------
-		-- PX - Patient has one of the codes
-		---------------------------------------------------------------------------------------------------------
-		UNION
-		SELECT distinct 
-			px.patient_id	AS patient_id
-			, '00100'		AS key			--third digit indicates procedure
-		FROM :TNX_SCHEMA.procedure px
-		JOIN :TNX_SCHEMA.mapping mp on mp.provider_code = (px.code_system || ':' || px.code)
-		WHERE px.date >= '2020-01-01'
-		AND 
-		(	-- PX List
-			mp.mt_code IN ('UMLS:HCPCS:U0001'
-				, 'UMLS:HCPCS:U0002'
-				, 'UMLS:CPT:87635'
-				, 'UMLS:CPT:86318'
-				, 'UMLS:CPT:86328'
-				, 'UMLS:CPT:86769')
-		)
-		---------------------------------------------------------------------------------------------------------
 		-- LAB - Patient has one of the codes
 		---------------------------------------------------------------------------------------------------------
 		UNION
@@ -252,7 +234,15 @@ FROM (
 					,'UMLS:LNC:95406-5'
 					,'UMLS:LNC:95409-9'
 					,'UMLS:LNC:95410-7'
-					,'UMLS:LNC:95411-5')
+					,'UMLS:LNC:95411-5'
+					,'UMLS:LNC:95416-4'
+					,'UMLS:LNC:95424-8'
+					,'UMLS:LNC:95425-5'
+					,'UMLS:LNC:95427-1'
+					,'UMLS:LNC:95428-9'
+					,'UMLS:LNC:95429-7'
+					,'UMLS:LNC:95521-1'
+					,'UMLS:LNC:95522-9')
 				--OTHER LAB
 				OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
 				OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
