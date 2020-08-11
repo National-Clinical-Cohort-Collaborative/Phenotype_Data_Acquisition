@@ -20,7 +20,7 @@
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
 select
-   '@siteAbbrev' as SITE_ABBREV,
+   distinct '@siteAbbrev' as SITE_ABBREV,
    '@siteName'    AS SITE_NAME,
    '@contactName' as CONTACT_NAME,
    '@contactEmail' as CONTACT_EMAIL,
@@ -28,7 +28,7 @@ select
    '@cdmVersion' as CDM_VERSION,
    null AS VOCABULARY_VERSION, -- hardwired null for pcornet
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
-   '@n3cPhenotypeVersion' as N3C_PHENOTYPE_VERSION,
+   phenotype_version  as N3C_PHENOTYPE_VERSION,
    CAST(GETDATE() as date) as RUN_DATE,
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
