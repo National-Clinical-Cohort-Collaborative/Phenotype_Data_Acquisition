@@ -386,8 +386,8 @@ order by 1
 select 
     encounter_num,
     observation_fact.patient_num,
-    concept_cd,
-    standard_hash(ofct.PROVIDER_ID,'MD5') AS provider_id,
+    observation_fact.concept_cd,
+    standard_hash(observation_fact.PROVIDER_ID,'MD5') AS provider_id,
     start_date,
     end_date,
     modifier_cd,
