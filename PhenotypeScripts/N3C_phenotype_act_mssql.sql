@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, ACT/i2b2, MS SQL Server
---N3C phenotype V1.5
+--N3C phenotype V2.1
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
 --05.01.2020 Michele Morris add create table
@@ -18,6 +18,9 @@
 --Added a column to the final select statement to populate that field
 --Added a WHERE to the final select to exclude asymptomatic patients
 --Code assumes that COVID Labs are coded per the ACT Guidance https://github.com/shyamvis/ACT-COVID-Ontology/blob/master/ontology/ExampleStepsForMappingLabs.md
+--Added V2.1 LOINCs 8/11/2020
+--Removed procedures
+--Added phenotype version for manifest table
 
 
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; 
@@ -32,7 +35,8 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 	inc_dx_weak			INT  NOT NULL,
 	inc_procedure		INT  NOT NULL,
 	inc_lab				INT  NOT NULL,
-    	dx_asymp            INT  NOT NULL
+    	dx_asymp            INT  NOT NULL,
+	phenotype_version 	VARCHAR(10)
 );
 
 
@@ -114,7 +118,16 @@ with covid_loinc as
 	SELECT 'LOINC:95406-5' AS LOINC UNION 
 	SELECT 'LOINC:95409-9' AS LOINC UNION 
 	SELECT 'LOINC:95410-7' AS LOINC UNION 
-	SELECT 'LOINC:95411-5' AS LOINC  
+	SELECT 'LOINC:95411-5' AS LOINC UNION
+	-- new for v2.1
+	select '95416-4' as loinc UNION    
+	select '95424-8' as loinc UNION    
+	select '95425-5' as loinc UNION    
+	select '95427-1' as loinc UNION    
+	select '95428-9' as loinc UNION    
+	select '95429-7' as loinc UNION    
+	select '95521-1' as loinc UNION    
+	select '95522-9' as loinc 
 ),
 -- Diagnosis ICD-10 codes from phenotype doc
 covid_icd10 as
@@ -143,16 +156,7 @@ covid_icd10 as
 	select 'ICD10CM:R07.1' as icd10_code,	'2_weak_positive' as dx_category UNION
 	select 'ICD10CM:R68.83' as icd10_code,	'2_weak_positive' as dx_category 
 ),
--- procedure codes from phenotype doc
-covid_proc_codes as
-(
-    select 'HCPCS:U0001' as procedure_code UNION
-    select 'HCPCS:U0002' as procedure_code UNION
-    select 'CPT4:87635' as procedure_code UNION
-    select 'CPT4:86318' as procedure_code UNION
-    select 'CPT4:86328' as procedure_code UNION
-    select 'CPT4:86769' as procedure_code
-),
+
 -- patients with covid related lab since start_date
 -- if using i2b2 multi-fact table please substitute 'obseravation_fact' with appropriate fact view
 covid_lab as
@@ -301,26 +305,11 @@ dx_asymp as
      WHERE     
         cds.patient_num is null AND cpl.patient_num is null
  ),
--- patients with a covid related procedure since start_date
--- if using i2b2 multi-fact table please substitute obseravation_fact with appropriate fact view
-covid_procedure as
-(
-    select
-        distinct observation_fact.patient_num
-    from
-        @cdmDatabaseSchema.observation_fact
-    where
-        observation_fact.start_date >=  CAST('2020-01-01' as datetime)
-        and observation_fact.concept_cd in (select procedure_code from covid_proc_codes)
-
-),
 covid_cohort as
 (
     select distinct patient_num from dx_strong
     UNION
     select distinct patient_num from dx_weak
-    UNION
-    select distinct patient_num from covid_procedure
     UNION
     select distinct patient_num from covid_lab
     UNION
@@ -332,15 +321,13 @@ n3c_cohort as
 		covid_cohort.patient_num,
         case when dx_strong.patient_num is not null then 1 else 0 end as inc_dx_strong,
         case when dx_weak.patient_num is not null then 1 else 0 end as inc_dx_weak,
-        case when covid_procedure.patient_num is not null then 1 else 0 end as inc_procedure,
-        case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab,
+	case when covid_lab.patient_num is not null then 1 else 0 end as inc_lab,
         case when dx_asymp.patient_num is not null then 1 else 0 end as exc_dx_asymp
 
 	from
 		covid_cohort
 		left outer join dx_strong on covid_cohort.patient_num = dx_strong.patient_num
 		left outer join dx_weak on covid_cohort.patient_num = dx_weak.patient_num
-		left outer join covid_procedure on covid_cohort.patient_num = covid_procedure.patient_num
 		left outer join covid_lab on covid_cohort.patient_num = covid_lab.patient_num
         	left outer join dx_asymp on covid_cohort.patient_num = dx_asymp.patient_num
 
@@ -348,7 +335,7 @@ n3c_cohort as
 )
 
 INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
-SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_procedure, inc_lab
+SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, '2.1' as phenotype_version
 from n3c_cohort
 where exc_dx_asymp = 0
 ;

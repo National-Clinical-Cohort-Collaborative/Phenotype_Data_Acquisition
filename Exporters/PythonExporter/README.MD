@@ -42,8 +42,8 @@ You can (optionally) use our Python Data Exporter to run the N3C data extract sc
 
 1. Copy or download the contents of this folder to your local system. To make it easy, use the same directory where your extract SQL and phenotype SQL files are located.
 2. You may need to edit the extract SQL and phenotype SQL for the queries to work on your local system. 
-3. Use the "config_example.ini" file to create your own configuration.  You will want to edit your config file and enter in information for database connection, sftp connection and zip file create (site).
-4. Run the following command, replacing the arguments with whatever options make sense for your environment. 
+3. Use the "config_ini_example.txt" file to create your own configuration.  You will want to edit your config file and enter in information for database connection, sftp connection and zip file create (site).
+4. Run the following command, replacing the arguments with whatever options make sense for your environment. You don't have to specify all options when you run, you can leave of the --zip, --sftp, --phenotype or --extract if you don't want to perform those operations.
 
 
 ```

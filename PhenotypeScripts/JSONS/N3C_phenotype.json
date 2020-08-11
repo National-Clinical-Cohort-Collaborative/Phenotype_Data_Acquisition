@@ -8,347 +8,562 @@
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94504-8",
-              "CONCEPT_ID": 706179,
-              "CONCEPT_NAME": "SARS coronavirus 2 Ab panel - Serum or Plasma by Immunoassay",
+              "CONCEPT_CODE": "94762-2",
+              "CONCEPT_ID": 586515,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) Ab [Presence] in Serum or Plasma by Immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94769-7",
+              "CONCEPT_ID": 586522,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) Ab [Units/volume] in Serum or Plasma by Immunoassay",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94504-8",
+              "CONCEPT_ID": 706179,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) Ab panel - Serum or Plasma by Immunoassay",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94509-7",
               "CONCEPT_ID": 706166,
-              "CONCEPT_NAME": "SARS coronavirus 2 E gene [Cycle Threshold #] in Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) E gene [Cycle Threshold #] in Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94758-0",
+              "CONCEPT_ID": 586523,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) E gene [Presence] in Respiratory specimen by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94765-5",
+              "CONCEPT_ID": 586518,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) E gene [Presence] in Serum or Plasma by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94315-9",
               "CONCEPT_ID": 706174,
-              "CONCEPT_NAME": "SARS coronavirus 2 E gene [Presence] in Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) E gene [Presence] in Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94768-9",
+              "CONCEPT_ID": 586521,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgA Ab [Presence] in Serum, Plasma or Blood by Rapid immunoassay",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94720-0",
               "CONCEPT_ID": 723459,
-              "CONCEPT_NAME": "SARS coronavirus 2 IgA Ab [Units/volume] in Serum or Plasma by Immunoassay",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgA Ab [Units/volume] in Serum or Plasma by Immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94507-1",
               "CONCEPT_ID": 706181,
-              "CONCEPT_NAME": "SARS coronavirus 2 IgG Ab [Presence] in Serum or Plasma by Rapid immunoassay",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgG Ab [Presence] in Serum, Plasma or Blood by Rapid immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94505-5",
               "CONCEPT_ID": 706177,
-              "CONCEPT_NAME": "SARS coronavirus 2 IgG Ab [Units/volume] in Serum or Plasma by Immunoassay",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgG Ab [Units/volume] in Serum or Plasma by Immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94503-0",
               "CONCEPT_ID": 706176,
-              "CONCEPT_NAME": "SARS coronavirus 2 IgG and IgM panel - Serum or Plasma by Rapid immunoassay",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgG and IgM panel - Serum, Plasma or Blood by Rapid immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94508-9",
               "CONCEPT_ID": 706180,
-              "CONCEPT_NAME": "SARS coronavirus 2 IgM Ab [Presence] in Serum or Plasma by Rapid immunoassay",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgM Ab [Presence] in Serum, Plasma or Blood by Rapid immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94506-3",
               "CONCEPT_ID": 706178,
-              "CONCEPT_NAME": "SARS coronavirus 2 IgM Ab [Units/volume] in Serum or Plasma by Immunoassay",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgM Ab [Units/volume] in Serum or Plasma by Immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94510-5",
               "CONCEPT_ID": 706167,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Cycle Threshold #] in Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Cycle Threshold #] in Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94311-8",
               "CONCEPT_ID": 706157,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Cycle Threshold #] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N1",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Cycle Threshold #] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N1",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94312-6",
               "CONCEPT_ID": 706155,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Cycle Threshold #] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N2",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Cycle Threshold #] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N2",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "95409-9",
+              "CONCEPT_ID": 757678,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Presence] in Nose by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94533-7",
               "CONCEPT_ID": 706161,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Presence] in Respiratory specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Presence] in Respiratory specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94766-3",
+              "CONCEPT_ID": 586520,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Presence] in Serum or Plasma by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94316-7",
               "CONCEPT_ID": 706175,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Presence] in Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Presence] in Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94307-6",
               "CONCEPT_ID": 706156,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Presence] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N1",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Presence] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N1",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94308-4",
               "CONCEPT_ID": 706154,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Presence] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N2",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) N gene [Presence] in Unspecified specimen by Nucleic acid amplification using CDC primer-probe set N2",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94511-3",
               "CONCEPT_ID": 706168,
-              "CONCEPT_NAME": "SARS coronavirus 2 ORF1ab region [Cycle Threshold #] in Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) ORF1ab region [Cycle Threshold #] in Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94819-0",
+              "CONCEPT_ID": 715262,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA [Log #/volume] (viral load) in Unspecified specimen by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94759-8",
+              "CONCEPT_ID": 586526,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA [Presence] in Nasopharynx by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "95406-5",
+              "CONCEPT_ID": 757677,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA [Presence] in Nose by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94500-6",
               "CONCEPT_ID": 706163,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA [Presence] in Respiratory specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA [Presence] in Respiratory specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94845-5",
+              "CONCEPT_ID": 715260,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA [Presence] in Saliva (oral fluid) by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94822-4",
+              "CONCEPT_ID": 715261,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA [Presence] in Saliva (oral fluid) by Sequencing",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94309-2",
               "CONCEPT_ID": 706170,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA [Presence] in Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA [Presence] in Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94531-1",
               "CONCEPT_ID": 706158,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA panel - Respiratory specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA panel - Respiratory specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94306-8",
               "CONCEPT_ID": 706169,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA panel - Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RNA panel - Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94534-5",
               "CONCEPT_ID": 706160,
-              "CONCEPT_NAME": "SARS coronavirus 2 RdRp gene [Presence] in Respiratory specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RdRp gene [Presence] in Respiratory specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
               "CONCEPT_CODE": "94314-2",
               "CONCEPT_ID": 706173,
-              "CONCEPT_NAME": "SARS coronavirus 2 RdRp gene [Presence] in Unspecified specimen by NAA with probe detection",
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) RdRp gene [Presence] in Unspecified specimen by NAA with probe detection",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94767-1",
+              "CONCEPT_ID": 586519,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) S gene [Presence] in Serum or Plasma by NAA with probe detection",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94763-0",
+              "CONCEPT_ID": 586516,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) [Presence] in Unspecified specimen by Organism specific culture",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "95411-5",
+              "CONCEPT_ID": 757680,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) neutralizing antibody [Presence] in Serum by pVNT",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "95410-7",
+              "CONCEPT_ID": 757679,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) neutralizing antibody [Titer] in Serum by pVNT",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
+          },
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "Lab Test",
+              "CONCEPT_CODE": "94764-8",
+              "CONCEPT_ID": 586517,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) whole genome [Nucleotide sequence] in Isolate by Sequencing",
+              "DOMAIN_ID": "Measurement",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "S",
+              "STANDARD_CONCEPT_CAPTION": "Standard",
+              "VOCABULARY_ID": "LOINC"
+            }
           },
           {
             "concept": {
@@ -362,8 +577,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -377,8 +591,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -392,8 +605,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -407,286 +619,35 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94758-0",
-              "CONCEPT_ID": 586523,
-              "CONCEPT_NAME": "SARS coronavirus 2 E gene [Presence] in Respiratory specimen by NAA with probe detection",
+              "CONCEPT_CODE": "95209-3",
+              "CONCEPT_ID": 757685,
+              "CONCEPT_NAME": "SARS-CoV+SARS-CoV-2 (COVID19) Ag [Presence] in Respiratory specimen by Rapid immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
               "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94759-8",
-              "CONCEPT_ID": 586526,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA [Presence] in Nasopharynx by NAA with probe detection",
+              "CONCEPT_CODE": "95125-1",
+              "CONCEPT_ID": 757686,
+              "CONCEPT_NAME": "SARS-CoV-2 (COVID19) IgA+IgM [Presence] in Serum or Plasma by Immunoassay",
               "DOMAIN_ID": "Measurement",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94760-6",
-              "CONCEPT_ID": 715272,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Presence] in Nasopharynx by NAA with probe detection",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94762-2",
-              "CONCEPT_ID": 586515,
-              "CONCEPT_NAME": "SARS coronavirus 2 Ab [Presence] in Serum or Plasma by Immunoassay",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94763-0",
-              "CONCEPT_ID": 586516,
-              "CONCEPT_NAME": "SARS coronavirus 2 [Presence] in Unspecified specimen by Organism specific culture",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94764-8",
-              "CONCEPT_ID": 586517,
-              "CONCEPT_NAME": "SARS coronavirus 2 whole genome [Nucleotide sequence] in Isolate by Sequencing",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94765-5",
-              "CONCEPT_ID": 586518,
-              "CONCEPT_NAME": "SARS coronavirus 2 E gene [Presence] in Serum or Plasma by NAA with probe detection",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94766-3",
-              "CONCEPT_ID": 586520,
-              "CONCEPT_NAME": "SARS coronavirus 2 N gene [Presence] in Serum or Plasma by NAA with probe detection",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94767-1",
-              "CONCEPT_ID": 586519,
-              "CONCEPT_NAME": "SARS coronavirus 2 S gene [Presence] in Serum or Plasma by NAA with probe detection",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94768-9",
-              "CONCEPT_ID": 586521,
-              "CONCEPT_NAME": "SARS coronavirus 2 IgA Ab [Presence] in Serum or Plasma by Rapid immunoassay",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94769-7",
-              "CONCEPT_ID": 586522,
-              "CONCEPT_NAME": "SARS coronavirus 2 Ab [Units/volume] in Serum or Plasma by Immunoassay",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94819-0",
-              "CONCEPT_ID": 715262,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA [Log #/volume] (viral load) in Unspecified specimen by NAA with probe detection",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94822-4",
-              "CONCEPT_ID": 715261,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA [Presence] in Saliva (oral fluid) by Sequencing",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "Lab Test",
-              "CONCEPT_CODE": "94845-5",
-              "CONCEPT_ID": 715260,
-              "CONCEPT_NAME": "SARS coronavirus 2 RNA [Presence] in Saliva (oral fluid) by NAA with probe detection",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "LOINC"
-            },
-            "includeDescendants": true
-          }
-        ]
-      }
-    },
-    {
-      "id": 1,
-      "name": "CD2H HCPCS/CPT Codes",
-      "expression": {
-        "items": [
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "CPT4",
-              "CONCEPT_CODE": "86318",
-              "CONCEPT_ID": 2212793,
-              "CONCEPT_NAME": "Immunoassay for infectious agent antibody, qualitative or semiquantitative, single step method (eg, reagent strip)",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "CPT4"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "CPT4",
-              "CONCEPT_CODE": "87635",
-              "CONCEPT_ID": 700360,
-              "CONCEPT_NAME": "Infectious agent detection by nucleic acid (DNA or RNA); severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) (Coronavirus disease [COVID-19]), amplified probe technique",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "CPT4"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "HCPCS",
-              "CONCEPT_CODE": "U0001",
-              "CONCEPT_ID": 40218805,
-              "CONCEPT_NAME": "Testing for SARS-CoV-2 in CDC laboratory",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "HCPCS"
-            },
-            "includeDescendants": true
-          },
-          {
-            "concept": {
-              "CONCEPT_CLASS_ID": "HCPCS",
-              "CONCEPT_CODE": "U0002",
-              "CONCEPT_ID": 40218804,
-              "CONCEPT_NAME": "Testing for SARS-CoV-2 in non-CDC laboratory",
-              "DOMAIN_ID": "Measurement",
-              "INVALID_REASON": "V",
-              "INVALID_REASON_CAPTION": "Valid",
-              "STANDARD_CONCEPT": "S",
-              "STANDARD_CONCEPT_CAPTION": "Standard",
-              "VOCABULARY_ID": "HCPCS"
-            },
-            "includeDescendants": true
+            }
           }
         ]
       }
@@ -708,8 +669,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -723,8 +683,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -738,8 +697,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -753,8 +711,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -768,8 +725,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -783,8 +739,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -798,8 +753,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -813,8 +767,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -828,8 +781,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -843,8 +795,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -858,8 +809,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -873,8 +823,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -888,8 +837,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -903,8 +851,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -918,8 +865,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -933,8 +879,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -948,8 +893,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -963,8 +907,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -978,8 +921,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -993,8 +935,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1008,8 +949,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1023,8 +963,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1038,8 +977,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1053,8 +991,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1068,8 +1005,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1083,8 +1019,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1098,8 +1033,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1113,8 +1047,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1128,8 +1061,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1143,8 +1075,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1158,8 +1089,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1173,8 +1103,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1188,8 +1117,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1203,8 +1131,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1218,8 +1145,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1233,8 +1159,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1248,8 +1173,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1263,8 +1187,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1278,8 +1201,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1293,8 +1215,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1308,8 +1229,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1323,8 +1243,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           }
         ]
       }
@@ -1339,7 +1258,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873906",
               "CONCEPT_ID": 756023,
-              "CONCEPT_NAME": "Acute bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1354,7 +1273,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873911",
               "CONCEPT_ID": 756044,
-              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1369,7 +1288,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873910",
               "CONCEPT_ID": 756061,
-              "CONCEPT_NAME": "Asymptomatic infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Asymptomatic COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1384,7 +1303,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873909",
               "CONCEPT_ID": 756031,
-              "CONCEPT_NAME": "Bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1414,7 +1333,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873908",
               "CONCEPT_ID": 756081,
-              "CONCEPT_NAME": "Infection of lower respiratory tract caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Infection of lower respiratory tract due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1444,7 +1363,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873907",
               "CONCEPT_ID": 756039,
-              "CONCEPT_NAME": "Respiratory infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Respiratory infection due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1474,7 +1393,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873906",
               "CONCEPT_ID": 756023,
-              "CONCEPT_NAME": "Acute bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1489,7 +1408,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873911",
               "CONCEPT_ID": 756044,
-              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1504,7 +1423,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873910",
               "CONCEPT_ID": 756061,
-              "CONCEPT_NAME": "Asymptomatic infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Asymptomatic COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1519,7 +1438,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873909",
               "CONCEPT_ID": 756031,
-              "CONCEPT_NAME": "Bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1549,7 +1468,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873908",
               "CONCEPT_ID": 756081,
-              "CONCEPT_NAME": "Infection of lower respiratory tract caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Infection of lower respiratory tract due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1579,7 +1498,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873907",
               "CONCEPT_ID": 756039,
-              "CONCEPT_NAME": "Respiratory infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Respiratory infection due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1647,7 +1566,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873906",
               "CONCEPT_ID": 756023,
-              "CONCEPT_NAME": "Acute bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1662,7 +1581,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873911",
               "CONCEPT_ID": 756044,
-              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1677,7 +1596,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873910",
               "CONCEPT_ID": 756061,
-              "CONCEPT_NAME": "Asymptomatic infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Asymptomatic COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1692,7 +1611,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873909",
               "CONCEPT_ID": 756031,
-              "CONCEPT_NAME": "Bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1722,7 +1641,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873908",
               "CONCEPT_ID": 756081,
-              "CONCEPT_NAME": "Infection of lower respiratory tract caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Infection of lower respiratory tract due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1752,7 +1671,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873907",
               "CONCEPT_ID": 756039,
-              "CONCEPT_NAME": "Respiratory infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Respiratory infection due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1782,7 +1701,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873906",
               "CONCEPT_ID": 756023,
-              "CONCEPT_NAME": "Acute bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1797,7 +1716,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873911",
               "CONCEPT_ID": 756044,
-              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Acute respiratory distress syndrome (ARDS) due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1812,7 +1731,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873910",
               "CONCEPT_ID": 756061,
-              "CONCEPT_NAME": "Asymptomatic infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Asymptomatic COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1827,7 +1746,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873909",
               "CONCEPT_ID": 756031,
-              "CONCEPT_NAME": "Bronchitis caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Bronchitis due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1857,7 +1776,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873908",
               "CONCEPT_ID": 756081,
-              "CONCEPT_NAME": "Infection of lower respiratory tract caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Infection of lower respiratory tract due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1887,7 +1806,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "OMOP4873907",
               "CONCEPT_ID": 756039,
-              "CONCEPT_NAME": "Respiratory infection caused by Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+              "CONCEPT_NAME": "Respiratory infection due to COVID-19",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -1932,8 +1851,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1947,8 +1865,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1962,8 +1879,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1977,8 +1893,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -1992,8 +1907,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2007,8 +1921,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2022,8 +1935,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2037,8 +1949,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2052,8 +1963,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2067,8 +1977,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2082,8 +1991,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2097,8 +2005,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2112,8 +2019,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2127,8 +2033,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2142,8 +2047,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2157,8 +2061,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2172,8 +2075,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2187,8 +2089,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2202,8 +2103,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2217,8 +2117,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2232,8 +2131,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2247,8 +2145,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2262,8 +2159,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2277,8 +2173,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2292,8 +2187,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2307,8 +2201,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2322,8 +2215,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2337,8 +2229,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2352,8 +2243,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2367,8 +2257,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2382,8 +2271,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2397,8 +2285,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2412,8 +2299,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2427,8 +2313,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2442,8 +2327,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2457,8 +2341,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2472,8 +2355,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2487,8 +2369,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2502,8 +2383,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2517,8 +2397,7 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
           },
           {
             "concept": {
@@ -2532,8 +2411,29 @@
               "STANDARD_CONCEPT": "S",
               "STANDARD_CONCEPT_CAPTION": "Standard",
               "VOCABULARY_ID": "SNOMED"
-            },
-            "includeDescendants": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "name": "CD2H Asymptomatic",
+      "expression": {
+        "items": [
+          {
+            "concept": {
+              "CONCEPT_CLASS_ID": "5-char billing code",
+              "CONCEPT_CODE": "Z11.59",
+              "CONCEPT_ID": 45595484,
+              "CONCEPT_NAME": "Encounter for screening for other viral diseases",
+              "DOMAIN_ID": "Observation",
+              "INVALID_REASON": "V",
+              "INVALID_REASON_CAPTION": "Valid",
+              "STANDARD_CONCEPT": "N",
+              "STANDARD_CONCEPT_CAPTION": "Non-Standard",
+              "VOCABULARY_ID": "ICD10CM"
+            }
           }
         ]
       }
@@ -2547,16 +2447,45 @@
           "OccurrenceStartDate": {
             "Value": "2020-01-01",
             "Op": "gte"
-          }
-        }
-      },
-      {
-        "ProcedureOccurrence": {
-          "CodesetId": 1,
-          "OccurrenceStartDate": {
-            "Value": "2020-01-01",
-            "Op": "gte"
-          }
+          },
+          "ValueAsConcept": [
+            {
+              "CONCEPT_CODE": "260373001",
+              "CONCEPT_ID": 4126681,
+              "CONCEPT_NAME": "Detected",
+              "DOMAIN_ID": "Meas Value",
+              "INVALID_REASON_CAPTION": "Unknown",
+              "STANDARD_CONCEPT_CAPTION": "Unknown",
+              "VOCABULARY_ID": "SNOMED"
+            },
+            {
+              "CONCEPT_CODE": "LA11882-0",
+              "CONCEPT_ID": 45877985,
+              "CONCEPT_NAME": "Detected",
+              "DOMAIN_ID": "Meas Value",
+              "INVALID_REASON_CAPTION": "Unknown",
+              "STANDARD_CONCEPT_CAPTION": "Unknown",
+              "VOCABULARY_ID": "LOINC"
+            },
+            {
+              "CONCEPT_CODE": "LA6576-8",
+              "CONCEPT_ID": 45884084,
+              "CONCEPT_NAME": "Positive",
+              "DOMAIN_ID": "Meas Value",
+              "INVALID_REASON_CAPTION": "Unknown",
+              "STANDARD_CONCEPT_CAPTION": "Unknown",
+              "VOCABULARY_ID": "LOINC"
+            },
+            {
+              "CONCEPT_CODE": "10828004",
+              "CONCEPT_ID": 9191,
+              "CONCEPT_NAME": "Positive",
+              "DOMAIN_ID": "Meas Value",
+              "INVALID_REASON_CAPTION": "Unknown",
+              "STANDARD_CONCEPT_CAPTION": "Unknown",
+              "VOCABULARY_ID": "SNOMED"
+            }
+          ]
         }
       },
       {
@@ -2566,6 +2495,15 @@
             "Value": "2020-01-01",
             "Extent": "2020-03-31",
             "Op": "bt"
+          }
+        }
+      },
+      {
+        "ConditionOccurrence": {
+          "CodesetId": 4,
+          "OccurrenceStartDate": {
+            "Value": "2020-04-01",
+            "Op": "gte"
           }
         }
       },
@@ -2611,15 +2549,6 @@
       },
       {
         "ConditionOccurrence": {
-          "CodesetId": 4,
-          "OccurrenceStartDate": {
-            "Value": "2020-04-01",
-            "Op": "gte"
-          }
-        }
-      },
-      {
-        "ConditionOccurrence": {
           "CorrelatedCriteria": {
             "Type": "ALL",
             "CriteriaList": [
@@ -2653,8 +2582,319 @@
           "CodesetId": 2,
           "OccurrenceStartDate": {
             "Value": "2020-04-01",
-            "Op": "gte"
+            "Extent": "2020-05-01",
+            "Op": "bt"
           }
+        }
+      },
+      {
+        "Observation": {
+          "CorrelatedCriteria": {
+            "Type": "AT_LEAST",
+            "Count": 1,
+            "CriteriaList": [
+              {
+                "Criteria": {
+                  "ConditionOccurrence": {
+                    "CorrelatedCriteria": {
+                      "Type": "AT_MOST",
+                      "Count": 0,
+                      "CriteriaList": [
+                        {
+                          "Criteria": {
+                            "Measurement": {
+                              "CodesetId": 0,
+                              "ValueAsConcept": [
+                                {
+                                  "CONCEPT_CODE": "LA6577-6",
+                                  "CONCEPT_ID": 45878583,
+                                  "CONCEPT_NAME": "Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA29782-2",
+                                  "CONCEPT_ID": 37079494,
+                                  "CONCEPT_NAME": "Negative (0)",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA29465-4",
+                                  "CONCEPT_ID": 1177295,
+                                  "CONCEPT_NAME": "Negative to date",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA13968-5",
+                                  "CONCEPT_ID": 36307756,
+                                  "CONCEPT_NAME": "Non-reportable Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA13549-3",
+                                  "CONCEPT_ID": 36309158,
+                                  "CONCEPT_NAME": "Not detected/negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA11155-1",
+                                  "CONCEPT_ID": 36308436,
+                                  "CONCEPT_NAME": "Ordered - Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "260385009",
+                                  "CONCEPT_ID": 9189,
+                                  "CONCEPT_NAME": "Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "SNOMED"
+                                }
+                              ]
+                            }
+                          },
+                          "StartWindow": {
+                            "Start": {
+                              "Coeff": -1
+                            },
+                            "End": {
+                              "Coeff": 1
+                            },
+                            "UseEventEnd": false
+                          },
+                          "Occurrence": {
+                            "Type": 2,
+                            "Count": 1
+                          }
+                        }
+                      ],
+                      "DemographicCriteriaList": [],
+                      "Groups": []
+                    },
+                    "CodesetId": 4,
+                    "OccurrenceStartDate": {
+                      "Value": "2020-04-01",
+                      "Op": "gte"
+                    }
+                  }
+                },
+                "StartWindow": {
+                  "Start": {
+                    "Coeff": -1
+                  },
+                  "End": {
+                    "Coeff": 1
+                  },
+                  "UseEventEnd": false
+                },
+                "Occurrence": {
+                  "Type": 2,
+                  "Count": 1
+                }
+              },
+              {
+                "Criteria": {
+                  "ConditionOccurrence": {
+                    "CorrelatedCriteria": {
+                      "Type": "AT_MOST",
+                      "Count": 0,
+                      "CriteriaList": [
+                        {
+                          "Criteria": {
+                            "Measurement": {
+                              "CodesetId": 0,
+                              "ValueAsConcept": [
+                                {
+                                  "CONCEPT_CODE": "LA6577-6",
+                                  "CONCEPT_ID": 45878583,
+                                  "CONCEPT_NAME": "Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA29782-2",
+                                  "CONCEPT_ID": 37079494,
+                                  "CONCEPT_NAME": "Negative (0)",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA29465-4",
+                                  "CONCEPT_ID": 1177295,
+                                  "CONCEPT_NAME": "Negative to date",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA13968-5",
+                                  "CONCEPT_ID": 36307756,
+                                  "CONCEPT_NAME": "Non-reportable Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA13549-3",
+                                  "CONCEPT_ID": 36309158,
+                                  "CONCEPT_NAME": "Not detected/negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "LA11155-1",
+                                  "CONCEPT_ID": 36308436,
+                                  "CONCEPT_NAME": "Ordered - Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "LOINC"
+                                },
+                                {
+                                  "CONCEPT_CODE": "260385009",
+                                  "CONCEPT_ID": 9189,
+                                  "CONCEPT_NAME": "Negative",
+                                  "DOMAIN_ID": "Meas Value",
+                                  "INVALID_REASON_CAPTION": "Unknown",
+                                  "STANDARD_CONCEPT_CAPTION": "Unknown",
+                                  "VOCABULARY_ID": "SNOMED"
+                                }
+                              ]
+                            }
+                          },
+                          "StartWindow": {
+                            "Start": {
+                              "Coeff": -1
+                            },
+                            "End": {
+                              "Coeff": 1
+                            },
+                            "UseEventEnd": false
+                          },
+                          "Occurrence": {
+                            "Type": 2,
+                            "Count": 1
+                          }
+                        }
+                      ],
+                      "DemographicCriteriaList": [],
+                      "Groups": []
+                    },
+                    "CodesetId": 3,
+                    "OccurrenceStartDate": {
+                      "Value": "2020-01-01",
+                      "Extent": "2020-03-31",
+                      "Op": "bt"
+                    }
+                  }
+                },
+                "StartWindow": {
+                  "Start": {
+                    "Coeff": -1
+                  },
+                  "End": {
+                    "Coeff": 1
+                  },
+                  "UseEventEnd": false
+                },
+                "Occurrence": {
+                  "Type": 2,
+                  "Count": 1
+                }
+              },
+              {
+                "Criteria": {
+                  "Measurement": {
+                    "CodesetId": 0,
+                    "ValueAsConcept": [
+                      {
+                        "CONCEPT_CODE": "260373001",
+                        "CONCEPT_ID": 4126681,
+                        "CONCEPT_NAME": "Detected",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "SNOMED"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA11882-0",
+                        "CONCEPT_ID": 45877985,
+                        "CONCEPT_NAME": "Detected",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "LA6576-8",
+                        "CONCEPT_ID": 45884084,
+                        "CONCEPT_NAME": "Positive",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "LOINC"
+                      },
+                      {
+                        "CONCEPT_CODE": "10828004",
+                        "CONCEPT_ID": 9191,
+                        "CONCEPT_NAME": "Positive",
+                        "DOMAIN_ID": "Meas Value",
+                        "INVALID_REASON_CAPTION": "Unknown",
+                        "STANDARD_CONCEPT_CAPTION": "Unknown",
+                        "VOCABULARY_ID": "SNOMED"
+                      }
+                    ]
+                  }
+                },
+                "StartWindow": {
+                  "Start": {
+                    "Coeff": -1
+                  },
+                  "End": {
+                    "Coeff": 1
+                  },
+                  "UseEventEnd": false
+                },
+                "Occurrence": {
+                  "Type": 2,
+                  "Count": 1
+                }
+              }
+            ],
+            "DemographicCriteriaList": [],
+            "Groups": []
+          },
+          "OccurrenceStartDate": {
+            "Value": "2020-04-01",
+            "Op": "gte"
+          },
+          "ObservationSourceConcept": 6
         }
       }
     ],
