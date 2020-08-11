@@ -395,8 +395,8 @@ with n3c_concepts as
 select
     encounter_num,
     observation_fact.patient_num,
-    concept_cd,
-    CONVERT(VARCHAR(50),HASHBYTES('MD5',provider_id),2) AS provider_id,
+    observation_fact.concept_cd,
+    CONVERT(VARCHAR(50),HASHBYTES('MD5',observation_fact.provider_id),2) AS provider_id,
     start_date,
     end_date,
     modifier_cd,
