@@ -31,7 +31,8 @@ SELECT distinct '@siteAbbrev' as SITE_ABBREV,
    phenotype_version  as N3C_PHENOTYPE_VERSION,
    CAST(SYSDATE as date) as RUN_DATE,
    CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE FROM DUAL;
+   CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE
+FROM @resultsDatabaseSchema.N3C_COHORT;
 
 -- ACT duplicate key validation script
 -- VALIDATION_SCRIPT
