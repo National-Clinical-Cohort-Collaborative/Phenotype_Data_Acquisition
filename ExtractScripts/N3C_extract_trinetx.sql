@@ -57,6 +57,7 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.encounter enc ON enc.patient_id = n3c.patient_id AND enc.start_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('TNX:ENCOUNTER_TYPE:' || enc.type)
+WHERE enc.source_id NOT IN ('Diamond','Datavant')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -83,6 +84,7 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.diagnosis dx ON dx.patient_id = n3c.patient_id AND dx.date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_dx ON map_dx.provider_code = (dx.code_system || ':' || dx.code)
+WHERE dx.source_id NOT IN ('Diamond','Datavant')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -115,6 +117,7 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.procedure px ON px.patient_id = n3c.patient_id AND px.date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_px ON map_px.provider_code = (px.code_system || ':' || px.code)
+WHERE px.source_id NOT IN ('Diamond','Datavant')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -167,6 +170,7 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.medication rx ON rx.patient_id = n3c.patient_id AND rx.start_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_rx ON map_rx.provider_code = (rx.code_system || ':' || rx.code)
+WHERE rx.source_id NOT IN ('Diamond','Datavant')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -200,6 +204,7 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_lab ON map_lab.provider_code = (lab.observation_code_system || ':' || lab.observation_code)
+WHERE lab.source_id NOT IN ('Diamond','Datavant')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -228,6 +233,7 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_vit ON map_vit.provider_code = (vit.code_system || ':' || vit.code)
+WHERE vit.source_id NOT IN ('Diamond','Datavant')
 ;
 
 ---------------------------------------------------------------------------------------------------------

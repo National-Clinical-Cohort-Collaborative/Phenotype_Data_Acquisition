@@ -60,6 +60,7 @@ FROM (
 			-- special handling for B97.21 & B97.29
 			OR (mp.mt_code IN ('UMLS:ICD10CM:B97.21', 'UMLS:ICD10CM:B97.29') AND dx.date < '2020-04-01')
 		)
+		AND dx.source_id NOT IN ('Diamond','Datavant')
 		---------------------------------------------------------------------------------------------------------
 		-- DX Weak - Patient has 2 or more of the codes on same encounter/date 
 		---------------------------------------------------------------------------------------------------------
@@ -102,6 +103,7 @@ FROM (
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J22%'
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J80%'
 				)
+				AND dx.source_id NOT IN ('Diamond','Datavant')
 				GROUP BY dx.patient_id, dx.encounter_id
 				HAVING count(distinct mp.mt_code) >= 2
 			) dx_weak_enc
@@ -140,6 +142,7 @@ FROM (
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J22%'
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J80%'
 				)
+				AND dx.source_id NOT IN ('Diamond','Datavant')
 				GROUP BY dx.patient_id, dx.date
 				HAVING count(distinct mp.mt_code) >= 2
 			) dx_weak_date
@@ -247,6 +250,7 @@ FROM (
 				OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
 				OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
 			)
+			AND lr.source_id NOT IN ('Diamond','Datavant')
 			GROUP BY lr.patient_id
 		) labs
 	) pt_list
@@ -258,6 +262,7 @@ LEFT JOIN (
 	JOIN :TNX_SCHEMA.mapping mp on mp.provider_code = (dx.code_system || ':' || dx.code)
 	WHERE dx.date >= '2020-04-01'
 	AND mp.mt_code = 'UMLS:ICD10CM:Z11.59'
+	AND dx.source_id NOT IN ('Diamond','Datavant')
 ) phenoExcl on phenoExcl.patient_id = results.patient_id 
 	and SUBSTR(results.key,4,1) = '1'	--Has a lab
 	and SUBSTR(results.key,1,1) != '1'	--No positive lab
