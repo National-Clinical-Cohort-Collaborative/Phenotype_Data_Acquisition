@@ -31,7 +31,8 @@ select
    phenotype_version  as N3C_PHENOTYPE_VERSION,
    CAST(GETDATE() as date) as RUN_DATE,
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
-   CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE;
+   CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE
+ FROM @resultsDatabaseSchema.N3C_COHORT;
    
 -- ACT duplicate key validation script
 -- VALIDATION_SCRIPT
