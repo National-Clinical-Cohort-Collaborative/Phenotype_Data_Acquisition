@@ -20,7 +20,7 @@ If desired to evaluate feasibility of each cohort, individual cohorts are availa
 3- Suspected positive cases	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
 4- Possible positive cases (http://atlas-covid19.ohdsi.org/#/cohortdefinition/658)
 
-To run, you will need to find and replace @cdmDatabaseSchema, @vocabularyDatabaseSchema with your local OMOP schema details
+To run, you will need to find and replace @cdmDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details
 Harmonization note:
 In OHDSI conventions, we do not usually write tables to the main database schema.
 NOTE: OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis. We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdmDatabaseSchema.
@@ -73,7 +73,7 @@ CREATE TABLE h8qz4ba8Codesets (
 ;
 
 INSERT INTO h8qz4ba8Codesets (codeset_id, concept_id)
-SELECT 0 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabaluaryDatabaseSchema.CONCEPT   WHERE concept_id in (586515,586522,706179,706166,586523,586518,706174,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,706172,706171,706165,706159,757685,757686)
+SELECT 0 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @cdmDatabaseSchema.CONCEPT   WHERE concept_id in (586515,586522,706179,706166,586523,586518,706174,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,706172,706171,706165,706159,757685,757686)
 
  ) I
  ) C ;
@@ -678,7 +678,7 @@ FROM final_cohort ;
 INSERT INTO @resultsDatabaseSchema.phenotype_execution
 SELECT SYSDATE as run_datetime
     ,'2.1' as phenotype_version
-    , (SELECT vocabulary_version FROM @vocabularyDatabaseSchema.vocabulary    WHERE vocabulary_id='None'   AND ROWNUM <= 1) AS VOCABULARY_VERSION
+    , (SELECT vocabulary_version FROM @cdmDatabaseSchema.vocabulary    WHERE vocabulary_id='None'   AND ROWNUM <= 1) AS VOCABULARY_VERSION
 FROM final_cohort ;
 
 
