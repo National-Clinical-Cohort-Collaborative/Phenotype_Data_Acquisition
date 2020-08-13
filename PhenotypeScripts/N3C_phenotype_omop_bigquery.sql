@@ -50,27 +50,27 @@ create table @resultsDatabaseSchema.phenotype_execution (
 );
 
 -- OHDSI ATLAS generated cohort logic
-create table @tempDatabaseSchema.r7lbk37dcodesets (
+create table @tempDatabaseSchema.ubx2u0bocodesets (
   codeset_id INT64 not null,
   concept_id INT64 not null
 )
 ;
 
-insert into @tempDatabaseSchema.r7lbk37dcodesets (codeset_id, concept_id)
+insert into @tempDatabaseSchema.ubx2u0bocodesets (codeset_id, concept_id)
 select 0 as codeset_id, c.concept_id from (select distinct i.concept_id from
 ( 
-  select concept_id from @vocabulary_database_schema.concept where concept_id in (586515,586522,706179,706166,586523,586518,706174,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,706172,706171,706165,706159,757685,757686)
+  select concept_id from @vocabaluaryDatabaseSchema.concept where concept_id in (586515,586522,706179,706166,586523,586518,706174,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,706172,706171,706165,706159,757685,757686)
 
 ) i
 ) c;
-insert into @tempDatabaseSchema.r7lbk37dcodesets (codeset_id, concept_id)
+insert into @tempDatabaseSchema.ubx2u0bocodesets (codeset_id, concept_id)
 select 2 as codeset_id, c.concept_id from (select distinct i.concept_id from
 ( 
   select concept_id from @vocabulary_database_schema.concept where concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326,320651)
 
 ) i
 ) c;
-insert into @tempDatabaseSchema.r7lbk37dcodesets (codeset_id, concept_id)
+insert into @tempDatabaseSchema.ubx2u0bocodesets (codeset_id, concept_id)
 select 3 as codeset_id, c.concept_id from (select distinct i.concept_id from
 ( 
   select concept_id from @vocabulary_database_schema.concept where concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,320651,4100065)
@@ -82,7 +82,7 @@ union distinct select c.concept_id
 
 ) i
 ) c;
-insert into @tempDatabaseSchema.r7lbk37dcodesets (codeset_id, concept_id)
+insert into @tempDatabaseSchema.ubx2u0bocodesets (codeset_id, concept_id)
 select 4 as codeset_id, c.concept_id from (select distinct i.concept_id from
 ( 
   select concept_id from @vocabulary_database_schema.concept where concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060)
@@ -94,14 +94,14 @@ union distinct select c.concept_id
 
 ) i
 ) c;
-insert into @tempDatabaseSchema.r7lbk37dcodesets (codeset_id, concept_id)
+insert into @tempDatabaseSchema.ubx2u0bocodesets (codeset_id, concept_id)
 select 5 as codeset_id, c.concept_id from (select distinct i.concept_id from
 ( 
   select concept_id from @vocabulary_database_schema.concept where concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326)
 
 ) i
 ) c;
-insert into @tempDatabaseSchema.r7lbk37dcodesets (codeset_id, concept_id)
+insert into @tempDatabaseSchema.ubx2u0bocodesets (codeset_id, concept_id)
 select 6 as codeset_id, c.concept_id from (select distinct i.concept_id from
 ( 
   select concept_id from @vocabulary_database_schema.concept where concept_id in (45595484)
@@ -110,7 +110,7 @@ select 6 as codeset_id, c.concept_id from (select distinct i.concept_id from
 ) c;
 
 
-CREATE TABLE @tempDatabaseSchema.r7lbk37dqualified_events
+CREATE TABLE @tempDatabaseSchema.ubx2u0boqualified_events
  AS WITH primary_events   as (select p.ordinal  as event_id,p.person_id as person_id,p.start_date as start_date,p.end_date as end_date,op_start_date as op_start_date,op_end_date as op_end_date,cast(p.visit_occurrence_id  as int64)  as visit_occurrence_id from (
   select e.person_id, e.start_date, e.end_date,
          row_number() over (partition by e.person_id order by e.sort_date asc) ordinal,
@@ -124,8 +124,8 @@ select c.person_id, c.measurement_id as event_id, c.measurement_date as start_da
 from 
 (
   select m.* 
-  from @cdm_database_schema.measurement m
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+  from @cdmDatabaseSchema.measurement m
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
 ) c
 
 where c.measurement_date >= DATE(2020, 01, 01)
@@ -140,8 +140,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 01, 01) and c.condition_start_date <= DATE(2020, 03, 31))
@@ -155,8 +155,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
 ) c
 
 where c.condition_start_date >= DATE(2020, 04, 01)
@@ -171,8 +171,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 01, 01) and c.condition_start_date <= DATE(2020, 03, 31))
@@ -193,14 +193,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 01, 01) and c.condition_start_date <= DATE(2020, 03, 31))
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) e
   inner join
@@ -215,14 +215,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 01, 01) and c.condition_start_date <= DATE(2020, 03, 31))
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) p
 inner join
@@ -234,8 +234,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
 ) c
 
 
@@ -262,8 +262,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 04, 01) and c.condition_start_date <= DATE(2020, 05, 01))
@@ -284,14 +284,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 04, 01) and c.condition_start_date <= DATE(2020, 05, 01))
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) e
   inner join
@@ -306,14 +306,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 04, 01) and c.condition_start_date <= DATE(2020, 05, 01))
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) p
 inner join
@@ -325,8 +325,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
 ) c
 
 
@@ -353,8 +353,8 @@ select c.person_id, c.observation_id as event_id, c.observation_date as start_da
 from 
 (
   select o.* 
-  from @cdm_database_schema.observation o
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+  from @cdmDatabaseSchema.observation o
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
 ) c
 
 where c.observation_date >= DATE(2020, 04, 01)
@@ -375,14 +375,14 @@ select c.person_id, c.observation_id as event_id, c.observation_date as start_da
 from 
 (
   select o.* 
-  from @cdm_database_schema.observation o
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+  from @cdmDatabaseSchema.observation o
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
 ) c
 
 where c.observation_date >= DATE(2020, 04, 01)
 -- End Observation Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) e
   inner join
@@ -397,14 +397,14 @@ select c.person_id, c.observation_id as event_id, c.observation_date as start_da
 from 
 (
   select o.* 
-  from @cdm_database_schema.observation o
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+  from @cdmDatabaseSchema.observation o
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
 ) c
 
 where c.observation_date >= DATE(2020, 04, 01)
 -- End Observation Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) p
 inner join
@@ -417,8 +417,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
 ) c
 
 where c.condition_start_date >= DATE(2020, 04, 01)
@@ -439,14 +439,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
 ) c
 
 where c.condition_start_date >= DATE(2020, 04, 01)
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) e
   left join
@@ -461,14 +461,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
 ) c
 
 where c.condition_start_date >= DATE(2020, 04, 01)
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) p
 inner join
@@ -480,8 +480,8 @@ select c.person_id, c.measurement_id as event_id, c.measurement_date as start_da
 from 
 (
   select m.* 
-  from @cdm_database_schema.measurement m
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+  from @cdmDatabaseSchema.measurement m
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
 ) c
 
 where c.value_as_concept_id in (45878583,37079494,1177295,36307756,36309158,36308436,9189)
@@ -515,14 +515,14 @@ select c.person_id, c.observation_id as event_id, c.observation_date as start_da
 from 
 (
   select o.* 
-  from @cdm_database_schema.observation o
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+  from @cdmDatabaseSchema.observation o
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
 ) c
 
 where c.observation_date >= DATE(2020, 04, 01)
 -- End Observation Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) p
 inner join
@@ -535,8 +535,8 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 01, 01) and c.condition_start_date <= DATE(2020, 03, 31))
@@ -557,14 +557,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 01, 01) and c.condition_start_date <= DATE(2020, 03, 31))
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) e
   left join
@@ -579,14 +579,14 @@ select c.person_id, c.condition_occurrence_id as event_id, c.condition_start_dat
 from 
 (
   select co.* 
-  from @cdm_database_schema.condition_occurrence co
-  join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  from @cdmDatabaseSchema.condition_occurrence co
+  join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
 ) c
 
 where (c.condition_start_date >= DATE(2020, 01, 01) and c.condition_start_date <= DATE(2020, 03, 31))
 -- End Condition Occurrence Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) p
 inner join
@@ -598,8 +598,8 @@ select c.person_id, c.measurement_id as event_id, c.measurement_date as start_da
 from 
 (
   select m.* 
-  from @cdm_database_schema.measurement m
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+  from @cdmDatabaseSchema.measurement m
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
 ) c
 
 where c.value_as_concept_id in (45878583,37079494,1177295,36307756,36309158,36308436,9189)
@@ -633,14 +633,14 @@ select c.person_id, c.observation_id as event_id, c.observation_date as start_da
 from 
 (
   select o.* 
-  from @cdm_database_schema.observation o
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+  from @cdmDatabaseSchema.observation o
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
 ) c
 
 where c.observation_date >= DATE(2020, 04, 01)
 -- End Observation Criteria
 ) q
-join @cdm_database_schema.observation_period op on q.person_id = op.person_id 
+join @cdmDatabaseSchema.observation_period op on q.person_id = op.person_id 
   and op.observation_period_start_date <= q.start_date and op.observation_period_end_date >= q.start_date
 ) p
 inner join
@@ -652,8 +652,8 @@ select c.person_id, c.measurement_id as event_id, c.measurement_date as start_da
 from 
 (
   select m.* 
-  from @cdm_database_schema.measurement m
-join @tempDatabaseSchema.r7lbk37dcodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+  from @cdmDatabaseSchema.measurement m
+join @tempDatabaseSchema.ubx2u0bocodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
 ) c
 
 where c.value_as_concept_id in (4126681,45877985,45884084,9191)
@@ -672,7 +672,7 @@ where c.value_as_concept_id in (4126681,45877985,45884084,9191)
 ) ac on ac.person_id = pe.person_id and ac.event_id = pe.event_id
 
   ) e
-	join @cdm_database_schema.observation_period op on e.person_id = op.person_id and e.start_date >=  op.observation_period_start_date and e.start_date <= op.observation_period_end_date
+	join @cdmDatabaseSchema.observation_period op on e.person_id = op.person_id and e.start_date >=  op.observation_period_start_date and e.start_date <= op.observation_period_end_date
   where DATE_ADD(cast(op.observation_period_start_date as date), interval 0 DAY) <= e.start_date and DATE_ADD(cast(e.start_date as date), interval 0 DAY) <= op.observation_period_end_date
 ) p
 where p.ordinal = 1
@@ -690,16 +690,16 @@ where p.ordinal = 1
 
 --- Inclusion Rule Inserts
 
-create table @tempDatabaseSchema.r7lbk37dinclusion_events (inclusion_rule_id INT64,
+create table @tempDatabaseSchema.ubx2u0boinclusion_events (inclusion_rule_id INT64,
 	person_id INT64,
 	event_id INT64
 );
 
-CREATE TABLE @tempDatabaseSchema.r7lbk37dincluded_events
+CREATE TABLE @tempDatabaseSchema.ubx2u0boincluded_events
  AS WITH cteincludedevents  as (select event_id as event_id,person_id as person_id,start_date as start_date,end_date as end_date,op_start_date as op_start_date,op_end_date as op_end_date,row_number() over (partition by person_id order by start_date asc)  as ordinal from (
      select q.event_id, q.person_id, q.start_date, q.end_date, q.op_start_date, q.op_end_date, sum(coalesce(cast(power(cast(2  as int64), i.inclusion_rule_id) as int64), 0)) as inclusion_rule_mask
-     from @tempDatabaseSchema.r7lbk37dqualified_events q
-    left join @tempDatabaseSchema.r7lbk37dinclusion_events i on i.person_id = q.person_id and i.event_id = q.event_id
+     from @tempDatabaseSchema.ubx2u0boqualified_events q
+    left join @tempDatabaseSchema.ubx2u0boinclusion_events i on i.person_id = q.person_id and i.event_id = q.event_id
      group by  q.event_id, q.person_id, q.start_date, q.end_date, q.op_start_date, q.op_end_date
    ) mg -- matching groups
 
@@ -712,12 +712,12 @@ where results.ordinal = 1
 
 
 -- generate cohort periods into #final_cohort
-CREATE TABLE @tempDatabaseSchema.r7lbk37dcohort_rows
- AS WITH cohort_ends   as (select event_id as event_id,person_id as person_id,op_end_date  as end_date from @tempDatabaseSchema.r7lbk37dincluded_events
+CREATE TABLE @tempDatabaseSchema.ubx2u0bocohort_rows
+ AS WITH cohort_ends   as (select event_id as event_id,person_id as person_id,op_end_date  as end_date from @tempDatabaseSchema.ubx2u0boincluded_events
 ), first_ends   as (select f.person_id as person_id,f.start_date as start_date,f.end_date
 	 as end_date from (
 	  select i.event_id, i.person_id, i.start_date, e.end_date, row_number() over (partition by i.person_id, i.event_id order by e.end_date) as ordinal 
-	  from @tempDatabaseSchema.r7lbk37dincluded_events i
+	  from @tempDatabaseSchema.ubx2u0boincluded_events i
 	  join cohort_ends e on i.event_id = e.event_id and i.person_id = e.person_id and e.end_date >= i.start_date
 	) f
 	where f.ordinal = 1
@@ -741,7 +741,7 @@ INSERT INTO @resultsDatabaseSchema.n3c_cohort
 				, start_date as event_date
 				, -1 as event_type
 				, row_number() over (partition by person_id order by start_date) as start_ordinal
-			from @tempDatabaseSchema.r7lbk37dcohort_rows
+			from @tempDatabaseSchema.ubx2u0bocohort_rows
 		
 			union all
 		
@@ -751,13 +751,13 @@ INSERT INTO @resultsDatabaseSchema.n3c_cohort
 				, DATE_ADD(cast(end_date as date), interval 0 DAY) as end_date
 				, 1 as event_type
 				, null
-			from @tempDatabaseSchema.r7lbk37dcohort_rows
+			from @tempDatabaseSchema.ubx2u0bocohort_rows
 		) rawdata
 	) e
 	where (2 * e.start_ordinal) - e.overall_ord = 0
 ), cteends   as ( select c.person_id
 		 as person_id,c.start_date
-		 as start_date,min(e.end_date)  as end_date  from @tempDatabaseSchema.r7lbk37dcohort_rows c
+		 as start_date,min(e.end_date)  as end_date  from @tempDatabaseSchema.ubx2u0bocohort_rows c
 	join cteenddates e on c.person_id = e.person_id and e.end_date >= c.start_date
 	 group by  c.person_id, c.start_date
  ), final_cohort   as ( select person_id as person_id,min(start_date)  as start_date,end_date
@@ -775,21 +775,21 @@ insert into @resultsDatabaseSchema.phenotype_execution
 select
     CURRENT_DATE() as run_datetime
     ,'2.1' as phenotype_version
-    , (SELECT  vocabulary_version from vocabulary where vocabulary_id='None' LIMIT 1) as vocabulary_version,
+    , (SELECT  vocabulary_version from @vocabularyDatabaseSchema.vocabulary where vocabulary_id='None' LIMIT 1) as vocabulary_version
 from final_cohort;
 
 
-DELETE FROM @tempDatabaseSchema.r7lbk37dcohort_rows WHERE True;
-drop table @tempDatabaseSchema.r7lbk37dcohort_rows;
+DELETE FROM @tempDatabaseSchema.ubx2u0bocohort_rows WHERE True;
+drop table @tempDatabaseSchema.ubx2u0bocohort_rows;
 
-DELETE FROM @tempDatabaseSchema.r7lbk37dinclusion_events WHERE True;
-drop table @tempDatabaseSchema.r7lbk37dinclusion_events;
+DELETE FROM @tempDatabaseSchema.ubx2u0boinclusion_events WHERE True;
+drop table @tempDatabaseSchema.ubx2u0boinclusion_events;
 
-DELETE FROM @tempDatabaseSchema.r7lbk37dqualified_events WHERE True;
-drop table @tempDatabaseSchema.r7lbk37dqualified_events;
+DELETE FROM @tempDatabaseSchema.ubx2u0boqualified_events WHERE True;
+drop table @tempDatabaseSchema.ubx2u0boqualified_events;
 
-DELETE FROM @tempDatabaseSchema.r7lbk37dincluded_events WHERE True;
-drop table @tempDatabaseSchema.r7lbk37dincluded_events;
+DELETE FROM @tempDatabaseSchema.ubx2u0boincluded_events WHERE True;
+drop table @tempDatabaseSchema.ubx2u0boincluded_events;
 
-DELETE FROM @tempDatabaseSchema.r7lbk37dcodesets WHERE True;
-drop table @tempDatabaseSchema.r7lbk37dcodesets;
+DELETE FROM @tempDatabaseSchema.ubx2u0bocodesets WHERE True;
+drop table @tempDatabaseSchema.ubx2u0bocodesets;
