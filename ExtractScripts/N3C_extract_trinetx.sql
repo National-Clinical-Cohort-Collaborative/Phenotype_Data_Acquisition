@@ -201,9 +201,11 @@ SELECT
 	, lab.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_lab.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_lab.mt_code,':',3)	AS MAPPED_CODE
+	, SPLIT_PART(map_res.mt_code,':',3)	AS MAPPED_TEXT_RESULT_VAL
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_lab ON map_lab.provider_code = (lab.observation_code_system || ':' || lab.observation_code)
+	LEFT JOIN :TNX_SCHEMA.mapping map_res on map_res.provider_code = ('TNX:LAB_RESULT:' || lab.lab_result_text_val)
 WHERE lab.source_id NOT IN ('Diamond','Datavant')
 ;
 
@@ -230,9 +232,11 @@ SELECT
 	, vit.orphan_reason	AS ORPHAN_REASON
 	, SPLIT_PART(map_vit.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_vit.mt_code,':',3)	AS MAPPED_CODE
+	, SPLIT_PART(map_res.mt_code,':',3)	AS MAPPED_TEXT_RESULT_VAL
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_vit ON map_vit.provider_code = (vit.code_system || ':' || vit.code)
+	LEFT JOIN :TNX_SCHEMA.mapping map_res on map_res.provider_code = ('TNX:LAB_RESULT:' || vit.text_value)
 WHERE vit.source_id NOT IN ('Diamond','Datavant')
 ;
 
