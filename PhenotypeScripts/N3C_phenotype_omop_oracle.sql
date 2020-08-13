@@ -66,55 +66,55 @@ CREATE TABLE @resultsDatabaseSchema.phenotype_execution (
 );
 
 -- OHDSI ATLAS generated cohort logic
-CREATE TABLE h8qz4ba8Codesets (
+CREATE TABLE lzbrauyoCodesets (
   codeset_id int NOT NULL,
   concept_id NUMBER(19) NOT NULL
 )
 ;
 
-INSERT INTO h8qz4ba8Codesets (codeset_id, concept_id)
+INSERT INTO lzbrauyoCodesets (codeset_id, concept_id)
 SELECT 0 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @cdmDatabaseSchema.CONCEPT   WHERE concept_id in (586515,586522,706179,706166,586523,586518,706174,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,706172,706171,706165,706159,757685,757686)
 
  ) I
  ) C ;
-INSERT INTO h8qz4ba8Codesets (codeset_id, concept_id)
-SELECT 2 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabulary_database_schema.CONCEPT   WHERE concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326,320651)
+INSERT INTO lzbrauyoCodesets (codeset_id, concept_id)
+SELECT 2 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @cdmDatabaseSchema.CONCEPT   WHERE concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326,320651)
 
  ) I
  ) C ;
-INSERT INTO h8qz4ba8Codesets (codeset_id, concept_id)
-SELECT 3 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabulary_database_schema.CONCEPT     WHERE concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,320651,4100065)
+INSERT INTO lzbrauyoCodesets (codeset_id, concept_id)
+SELECT 3 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @cdmDatabaseSchema.CONCEPT     WHERE concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,320651,4100065)
    UNION  select c.concept_id
-  FROM @vocabulary_database_schema.CONCEPT c
-  join @vocabulary_database_schema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
+  FROM @cdmDatabaseSchema.CONCEPT c
+  join @cdmDatabaseSchema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
   and ca.ancestor_concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,320651,4100065)
   and c.invalid_reason is null
 
  ) I
  ) C ;
-INSERT INTO h8qz4ba8Codesets (codeset_id, concept_id)
-SELECT 4 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabulary_database_schema.CONCEPT     WHERE concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060)
+INSERT INTO lzbrauyoCodesets (codeset_id, concept_id)
+SELECT 4 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @cdmDatabaseSchema.CONCEPT     WHERE concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060)
    UNION  select c.concept_id
-  FROM @vocabulary_database_schema.CONCEPT c
-  join @vocabulary_database_schema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
+  FROM @cdmDatabaseSchema.CONCEPT c
+  join @cdmDatabaseSchema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
   and ca.ancestor_concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060)
   and c.invalid_reason is null
 
  ) I
  ) C ;
-INSERT INTO h8qz4ba8Codesets (codeset_id, concept_id)
-SELECT 5 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabulary_database_schema.CONCEPT   WHERE concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326)
+INSERT INTO lzbrauyoCodesets (codeset_id, concept_id)
+SELECT 5 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @cdmDatabaseSchema.CONCEPT   WHERE concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326)
 
  ) I
  ) C ;
-INSERT INTO h8qz4ba8Codesets (codeset_id, concept_id)
-SELECT 6 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @vocabulary_database_schema.CONCEPT   WHERE concept_id in (45595484)
+INSERT INTO lzbrauyoCodesets (codeset_id, concept_id)
+SELECT 6 as codeset_id, c.concept_id FROM (SELECT distinct I.concept_id FROM (SELECT concept_id FROM @cdmDatabaseSchema.CONCEPT   WHERE concept_id in (45595484)
 
  ) I
  ) C ;
 
 
-CREATE TABLE h8qz4ba8qualified_events
+CREATE TABLE lzbrauyoqualified_events
 
 AS
 WITH primary_events (event_id, person_id, start_date, end_date, op_start_date, op_end_date, visit_occurrence_id)  AS (SELECT P.ordinal as event_id, P.person_id, P.start_date, P.end_date, op_start_date, op_end_date, cast(P.visit_occurrence_id as NUMBER(19)) as visit_occurrence_id
@@ -126,7 +126,7 @@ FROM (SELECT E.person_id, E.start_date, E.end_date,
        C.measurement_date as sort_date
 FROM (SELECT m.* 
   FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN h8qz4ba8Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+JOIN lzbrauyoCodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
  ) C
 
     WHERE C.measurement_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -140,7 +140,7 @@ SELECT C.person_id, C.condition_occurrence_id  event_id, C.condition_start_date 
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
  ) C
 
    WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD'))
@@ -153,7 +153,7 @@ SELECT C.person_id, C.condition_occurrence_id  event_id, C.condition_start_date 
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
  ) C
 
    WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -165,7 +165,7 @@ SELECT PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD'))
@@ -180,7 +180,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD'))
@@ -197,7 +197,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD'))
@@ -212,7 +212,7 @@ INNER JOIN
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
  ) C
 
 
@@ -236,7 +236,7 @@ SELECT PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(05,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD'))
@@ -251,7 +251,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(05,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD'))
@@ -268,7 +268,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(05,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD'))
@@ -283,7 +283,7 @@ INNER JOIN
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
  ) C
 
 
@@ -307,7 +307,7 @@ select PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_
        C.observation_date as sort_date
 FROM (SELECT o.* 
   FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN h8qz4ba8Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+JOIN lzbrauyoCodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
  ) C
 
   WHERE C.observation_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -322,7 +322,7 @@ FROM (SELECT C.person_id, C.observation_id as event_id, C.observation_date as st
        C.observation_date as sort_date
 FROM (SELECT o.* 
   FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN h8qz4ba8Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+JOIN lzbrauyoCodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
  ) C
 
   WHERE C.observation_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -339,7 +339,7 @@ FROM (SELECT C.person_id, C.observation_id as event_id, C.observation_date as st
        C.observation_date as sort_date
 FROM (SELECT o.* 
   FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN h8qz4ba8Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+JOIN lzbrauyoCodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
  ) C
 
   WHERE C.observation_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -354,7 +354,7 @@ INNER JOIN
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
  ) C
 
   WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -369,7 +369,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
  ) C
 
   WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -386,7 +386,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
  ) C
 
   WHERE C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -401,7 +401,7 @@ INNER JOIN
        C.measurement_date as sort_date
 FROM (SELECT m.* 
   FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN h8qz4ba8Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+JOIN lzbrauyoCodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
  ) C
 
   WHERE C.value_as_concept_id in (45878583,37079494,1177295,36307756,36309158,36308436,9189)
@@ -433,7 +433,7 @@ FROM (SELECT C.person_id, C.observation_id as event_id, C.observation_date as st
        C.observation_date as sort_date
 FROM (SELECT o.* 
   FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN h8qz4ba8Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+JOIN lzbrauyoCodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
  ) C
 
   WHERE C.observation_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -448,7 +448,7 @@ INNER JOIN
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD'))
@@ -463,7 +463,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD'))
@@ -480,7 +480,7 @@ FROM (SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_sta
        C.condition_start_date as sort_date
 FROM (SELECT co.* 
   FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN h8qz4ba8Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
+  JOIN lzbrauyoCodesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
  ) C
 
   WHERE (C.condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') and C.condition_start_date <= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD'))
@@ -495,7 +495,7 @@ INNER JOIN
        C.measurement_date as sort_date
 FROM (SELECT m.* 
   FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN h8qz4ba8Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+JOIN lzbrauyoCodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
  ) C
 
   WHERE C.value_as_concept_id in (45878583,37079494,1177295,36307756,36309158,36308436,9189)
@@ -527,7 +527,7 @@ FROM (SELECT C.person_id, C.observation_id as event_id, C.observation_date as st
        C.observation_date as sort_date
 FROM (SELECT o.* 
   FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN h8qz4ba8Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
+JOIN lzbrauyoCodesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
  ) C
 
   WHERE C.observation_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
@@ -542,7 +542,7 @@ INNER JOIN
        C.measurement_date as sort_date
 FROM (SELECT m.* 
   FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN h8qz4ba8Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
+JOIN lzbrauyoCodesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
  ) C
 
   WHERE C.value_as_concept_id in (4126681,45877985,45884084,9191)
@@ -581,18 +581,18 @@ FROM
 
 --- Inclusion Rule Inserts
 
-create table h8qz4ba8inclusion_events (inclusion_rule_id NUMBER(19),
+create table lzbrauyoinclusion_events (inclusion_rule_id NUMBER(19),
 	person_id NUMBER(19),
 	event_id NUMBER(19)
 );
 
-CREATE TABLE h8qz4ba8included_events
+CREATE TABLE lzbrauyoincluded_events
 
 AS
 WITH cteIncludedEvents(event_id, person_id, start_date, end_date, op_start_date, op_end_date, ordinal)  AS (SELECT event_id, person_id, start_date, end_date, op_start_date, op_end_date, row_number() over (partition by person_id order by start_date ASC) as ordinal
   FROM (SELECT Q.event_id, Q.person_id, Q.start_date, Q.end_date, Q.op_start_date, Q.op_end_date, SUM(coalesce(POWER(cast(2 as NUMBER(19)), I.inclusion_rule_id), 0)) as inclusion_rule_mask
-    FROM h8qz4ba8qualified_events Q
-    LEFT JOIN h8qz4ba8inclusion_events I on I.person_id = Q.person_id and I.event_id = Q.event_id
+    FROM lzbrauyoqualified_events Q
+    LEFT JOIN lzbrauyoinclusion_events I on I.person_id = Q.person_id and I.event_id = Q.event_id
     GROUP BY Q.event_id, Q.person_id, Q.start_date, Q.end_date, Q.op_start_date, Q.op_end_date
    ) MG -- matching groups
 
@@ -608,15 +608,15 @@ cteIncludedEvents Results
 
 
 -- generate cohort periods into #final_cohort
-CREATE TABLE h8qz4ba8cohort_rows
+CREATE TABLE lzbrauyocohort_rows
 
 AS
-WITH cohort_ends (event_id, person_id, end_date)  AS (SELECT event_id, person_id, op_end_date as end_date FROM h8qz4ba8included_events
+WITH cohort_ends (event_id, person_id, end_date)  AS (SELECT event_id, person_id, op_end_date as end_date FROM lzbrauyoincluded_events
  ),
 first_ends (person_id, start_date, end_date) as
 (SELECT F.person_id, F.start_date, F.end_date
 	FROM (SELECT I.event_id, I.person_id, I.start_date, E.end_date, row_number() over (partition by I.person_id, I.event_id order by E.end_date) as ordinal 
-	  FROM h8qz4ba8included_events I
+	  FROM lzbrauyoincluded_events I
 	  join cohort_ends E on I.event_id = E.event_id and I.person_id = E.person_id and E.end_date >= I.start_date
 	 ) F
 	  WHERE F.ordinal = 1
@@ -639,7 +639,7 @@ INSERT INTO @resultsDatabaseSchema.n3c_cohort
 				, start_date AS event_date
 				, -1 AS event_type
 				, ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY start_date) AS start_ordinal
-			FROM h8qz4ba8cohort_rows
+			FROM lzbrauyocohort_rows
 		
 			  UNION ALL
 		
@@ -649,7 +649,7 @@ INSERT INTO @resultsDatabaseSchema.n3c_cohort
 				, (end_date + NUMTODSINTERVAL(0, 'day'))  end_date
 				, 1 AS event_type
 				, NULL
-			FROM h8qz4ba8cohort_rows
+			FROM lzbrauyocohort_rows
 		 ) RAWDATA
 	 ) e
 	  WHERE (2 * e.start_ordinal) - e.overall_ord = 0
@@ -658,7 +658,7 @@ cteEnds (person_id, start_date, end_date) AS
 (SELECT c.person_id
 		, c.start_date
 		, MIN(e.end_date) AS end_date
-	FROM h8qz4ba8cohort_rows c
+	FROM lzbrauyocohort_rows c
 	JOIN cteEndDates e ON c.person_id = e.person_id AND e.end_date >= c.start_date
 	GROUP BY c.person_id, c.start_date
  ),
@@ -682,17 +682,17 @@ SELECT SYSDATE as run_datetime
 FROM final_cohort ;
 
 
-TRUNCATE TABLE h8qz4ba8cohort_rows;
-DROP TABLE h8qz4ba8cohort_rows;
+TRUNCATE TABLE lzbrauyocohort_rows;
+DROP TABLE lzbrauyocohort_rows;
 
-TRUNCATE TABLE h8qz4ba8inclusion_events;
-DROP TABLE h8qz4ba8inclusion_events;
+TRUNCATE TABLE lzbrauyoinclusion_events;
+DROP TABLE lzbrauyoinclusion_events;
 
-TRUNCATE TABLE h8qz4ba8qualified_events;
-DROP TABLE h8qz4ba8qualified_events;
+TRUNCATE TABLE lzbrauyoqualified_events;
+DROP TABLE lzbrauyoqualified_events;
 
-TRUNCATE TABLE h8qz4ba8included_events;
-DROP TABLE h8qz4ba8included_events;
+TRUNCATE TABLE lzbrauyoincluded_events;
+DROP TABLE lzbrauyoincluded_events;
 
-TRUNCATE TABLE h8qz4ba8Codesets;
-DROP TABLE h8qz4ba8Codesets;
+TRUNCATE TABLE lzbrauyoCodesets;
+DROP TABLE lzbrauyoCodesets;
