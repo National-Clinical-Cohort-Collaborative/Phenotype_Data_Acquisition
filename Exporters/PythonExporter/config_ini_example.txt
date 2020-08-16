@@ -32,9 +32,9 @@ contact_name = xxxxx
 contact_email = xxxxx
 ; cdm name (pcornet, omop, act)
 cdm_name = xxxxx
+cdm_version = xxxxxx
 vocabulary_version = xxxxx
 n3c_phenotype_yn = xxxxx
-n3c_phenotype_version = xxxxx
 data_latency_num_days = xxxxx
 days_between_submissions = xxxxx
 
