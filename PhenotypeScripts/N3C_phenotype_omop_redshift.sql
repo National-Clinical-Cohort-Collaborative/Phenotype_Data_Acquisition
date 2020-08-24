@@ -138,7 +138,10 @@ JOIN #Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and 
 ) C
 
 WHERE C.measurement_date >= TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
-AND C.value_as_concept_id in (4126681,45877985,45884084,9191)
+AND ( C.value_as_concept_id in (4126681,45877985,45884084,9191)
+	OR
+	C.value_source_value in ('Positive', 'Present', 'Detected')
+	)
 -- End Measurement Criteria
 
 UNION ALL
