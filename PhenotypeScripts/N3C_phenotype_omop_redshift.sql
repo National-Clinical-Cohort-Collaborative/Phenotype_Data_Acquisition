@@ -835,8 +835,7 @@ INSERT INTO @resultsDatabaseSchema.phenotype_execution
 SELECT
     CURRENT_DATE as run_datetime
     ,'2.1' as phenotype_version
-    , (SELECT TOP 1 vocabulary_version FROM @cdmDatabaseSchema.vocabulary WHERE vocabulary_id='None') AS VOCABULARY_VERSION
-FROM final_cohort;
+    , (SELECT TOP 1 vocabulary_version FROM @cdmDatabaseSchema.vocabulary WHERE vocabulary_id='None') AS VOCABULARY_VERSION;
 
 
 TRUNCATE TABLE #cohort_rows;
