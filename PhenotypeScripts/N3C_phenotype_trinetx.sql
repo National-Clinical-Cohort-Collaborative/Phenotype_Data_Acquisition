@@ -154,8 +154,8 @@ FROM (
 		SELECT
 			labs.patient_id	AS patient_id
 			, CASE 
-				WHEN labs.numPositive > 0 THEN '10001'	--first digit indicates positive covid lab
-				ELSE '00001'							--fifth digit indicates any covid lab
+				WHEN labs.numPositive > 0 THEN '10010'	--first digit indicates positive covid lab
+				ELSE '00010'							--fourth digit indicates any covid lab
 				END			AS key
 		FROM (
 			SELECT 
