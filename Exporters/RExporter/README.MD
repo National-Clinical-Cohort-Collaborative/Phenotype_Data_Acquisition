@@ -125,7 +125,8 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         n3cPhenotypeYN = n3cPhenotypeYN,
                         n3cPhenotypeVersion = n3cPhenotypeVersion,
                         dataLatencyNumDays = dataLatencyNumDays,
-                        daysBetweenSubmissions = daysBetweenSubmissions
+                        daysBetweenSubmissions = daysBetweenSubmissions,
+                        useAndromeda = FALSE # See troubleshooting note below
                         )
 
 
@@ -135,6 +136,8 @@ zip::zipr(zipfile = paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%
 
 
 ```
+**Troubleshooting note:** The default settings of the `runExtraction` function pulls data from your database into local memory before saving it disk as delimited files. If you are experiencing RAM limitation issues on your local machine, you can avoid storing the query results in memory by leveraging the Andromeda package (set `useAndromeda=TRUE` parameter in `runExtraction()` ) which instead temporarily stores that data on disk instead of RAM.
+
 
 Note: if you cannot call out to the internet from R, you may download the [TAR here](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/archive/master.zip). 
 
