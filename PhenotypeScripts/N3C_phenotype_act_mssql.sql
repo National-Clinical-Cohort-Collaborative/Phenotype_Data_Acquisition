@@ -120,14 +120,14 @@ with covid_loinc as
 	SELECT 'LOINC:95410-7' AS LOINC UNION 
 	SELECT 'LOINC:95411-5' AS LOINC UNION
 	-- new for v2.1
-	select '95416-4' as loinc UNION    
-	select '95424-8' as loinc UNION    
-	select '95425-5' as loinc UNION    
-	select '95427-1' as loinc UNION    
-	select '95428-9' as loinc UNION    
-	select '95429-7' as loinc UNION    
-	select '95521-1' as loinc UNION    
-	select '95522-9' as loinc 
+	select 'LOINC:95416-4' as loinc UNION    
+	select 'LOINC:95424-8' as loinc UNION    
+	select 'LOINC:95425-5' as loinc UNION    
+	select 'LOINC:95427-1' as loinc UNION    
+	select 'LOINC:95428-9' as loinc UNION    
+	select 'LOINC:95429-7' as loinc UNION    
+	select 'LOINC:95521-1' as loinc UNION    
+	select 'LOINC:95522-9' as loinc 
 ),
 -- Diagnosis ICD-10 codes from phenotype doc
 covid_icd10 as
