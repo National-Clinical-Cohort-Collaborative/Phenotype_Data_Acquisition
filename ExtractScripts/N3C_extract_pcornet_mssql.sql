@@ -18,6 +18,8 @@ select distinct
    null AS VOCABULARY_VERSION, -- hardwired null for pcornet
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
    phenotype_version as N3C_PHENOTYPE_VERSION,
+   '@shiftDateYN' as SHIFT_DATE_YN,
+   '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS,
    CAST(GETDATE() as date) as RUN_DATE,
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE
