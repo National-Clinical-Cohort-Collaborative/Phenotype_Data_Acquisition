@@ -1,8 +1,8 @@
 --OMOP v5.3.1 extraction code for N3C
---Written by Kristin Kostka, OHDSI
+--Written by Kristin Kostka and Robert Miller, OHDSI
 --Code written for MS SQL Server
 --This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH
---Currently this script extracts the derived tables for DRUG_ERA, DOSE_ERA, CONDITION_ERA as well (could be modified we run these in Palantir instead)
+--Currently this script extracts the derived tables for DRUG_ERA, DOSE_ERA, CONDITION_ERA as well
 --Assumptions:
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
 --	2. You are extracting data with a lookback period to 1-1-2018
@@ -22,9 +22,9 @@ select
    (SELECT  vocabulary_version from @resultsDatabaseSchema.phenotype_execution LIMIT 1) as vocabulary_version,
    'Y' as n3c_phenotype_yn,
    (SELECT  phenotype_version from @resultsDatabaseSchema.phenotype_execution LIMIT 1) as n3c_phenotype_version,
-   cast(CURRENT_DATE() as date) as run_date,
-   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval -@dataLatencyNumDays DAY) as date) as update_date,	--change integer based on your site's data latency
-   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval @daysBetweenSubmissions DAY) as date) as next_submission_date;
+   cast(CURRENT_DATE() as datetime) as run_date,
+   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval -@dataLatencyNumDays DAY) as datetime) as update_date,	--change integer based on your site's data latency
+   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval @daysBetweenSubmissions DAY) as datetime) as next_submission_date;
 
 
 
@@ -175,8 +175,8 @@ select
 select
    observation_period_id,
    p.person_id,
-   cast(observation_period_start_date as date) as observation_period_start_date,
-   cast(observation_period_end_date as date) as observation_period_end_date,
+   cast(observation_period_start_date as datetime) as observation_period_start_date,
+   cast(observation_period_end_date as datetime) as observation_period_end_date,
    period_type_concept_id
  from @cdmDatabaseSchema.observation_period p
  join @resultsDatabaseSchema.n3c_cohort n
@@ -188,9 +188,9 @@ select
    visit_occurrence_id,
    n.person_id,
    visit_concept_id,
-   cast(visit_start_date as date) as visit_start_date,
+   cast(visit_start_date as datetime) as visit_start_date,
    cast(visit_start_datetime as datetime) as visit_start_datetime,
-   cast(visit_end_date as date) as visit_end_date,
+   cast(visit_end_date as datetime) as visit_end_date,
    cast(visit_end_datetime as datetime) as visit_end_datetime,
    visit_type_concept_id,
    provider_id,
@@ -213,9 +213,9 @@ select
    condition_occurrence_id,
    n.person_id,
    condition_concept_id,
-   cast(condition_start_date as date) as condition_start_date,
+   cast(condition_start_date as datetime) as condition_start_date,
    cast(condition_start_datetime as datetime) as condition_start_datetime,
-   cast(condition_end_date as date) as condition_end_date,
+   cast(condition_end_date as datetime) as condition_end_date,
    cast(condition_end_datetime as datetime) as condition_end_datetime,
    condition_type_concept_id,
    condition_status_concept_id,
@@ -236,9 +236,9 @@ select
    drug_exposure_id,
    n.person_id,
    drug_concept_id,
-   cast(drug_exposure_start_date as date) as drug_exposure_start_date,
+   cast(drug_exposure_start_date as datetime) as drug_exposure_start_date,
    cast(drug_exposure_start_datetime as datetime) as drug_exposure_start_datetime,
-   cast(drug_exposure_end_date as date) as drug_exposure_end_date,
+   cast(drug_exposure_end_date as datetime) as drug_exposure_end_date,
    cast(drug_exposure_end_datetime as datetime) as drug_exposure_end_datetime,
    drug_type_concept_id,
    null as stop_reason,
@@ -266,7 +266,7 @@ select
    procedure_occurrence_id,
    n.person_id,
    procedure_concept_id,
-   cast(procedure_date as date) as procedure_date,
+   cast(procedure_date as datetime) as procedure_date,
    cast(procedure_datetime as datetime) as procedure_datetime,
    procedure_type_concept_id,
    modifier_concept_id,
@@ -288,7 +288,7 @@ select
    measurement_id,
    n.person_id,
    measurement_concept_id,
-   cast(measurement_date as date) as measurement_date,
+   cast(measurement_date as datetime) as measurement_date,
    cast(measurement_datetime as datetime) as measurement_datetime,
    null as measurement_time,
    measurement_type_concept_id,
@@ -316,7 +316,7 @@ select
    observation_id,
    n.person_id,
    observation_concept_id,
-   cast(observation_date as date) as observation_date,
+   cast(observation_date as datetime) as observation_date,
    cast(observation_datetime as datetime) as observation_datetime,
    observation_type_concept_id,
    value_as_number,
@@ -340,7 +340,7 @@ where o.observation_date >= DATE(2018, 01, 01);
 --OUTPUT_FILE: DEATH.csv
 select
    n.person_id,
-    cast(death_date as date) as death_date,
+    cast(death_date as datetime) as death_date,
 	cast(death_datetime as datetime) as death_datetime,
 	death_type_concept_id,
 	cause_concept_id,
@@ -442,8 +442,8 @@ select
    drug_era_id,
    n.person_id,
    drug_concept_id,
-   cast(drug_era_start_date as date) as drug_era_start_date,
-   cast(drug_era_end_date as date) as drug_era_end_date,
+   cast(drug_era_start_date as datetime) as drug_era_start_date,
+   cast(drug_era_end_date as datetime) as drug_era_end_date,
    drug_exposure_count,
    gap_days
 from @cdmDatabaseSchema.drug_era dre
@@ -460,8 +460,8 @@ select
    drug_concept_id,
    unit_concept_id,
    dose_value,
-   cast(dose_era_start_date as date) as dose_era_start_date,
-   cast(dose_era_end_date as date) as dose_era_end_date
+   cast(dose_era_start_date as datetime) as dose_era_start_date,
+   cast(dose_era_end_date as datetime) as dose_era_end_date
 from @cdmDatabaseSchema.dose_era y join @resultsDatabaseSchema.n3c_cohort n on y.person_id = n.person_id
 where y.dose_era_start_date >= DATE(2018, 01, 01);
 
@@ -472,8 +472,8 @@ select
    condition_era_id,
    n.person_id,
    condition_concept_id,
-   cast(condition_era_start_date as date) as condition_era_start_date,
-   cast(condition_era_end_date as date) as condition_era_end_date,
+   cast(condition_era_start_date as datetime) as condition_era_start_date,
+   cast(condition_era_end_date as datetime) as condition_era_end_date,
    condition_occurrence_count
 from @cdmDatabaseSchema.condition_era ce join @resultsDatabaseSchema.n3c_cohort n on ce.person_id = n.person_id
 where condition_era_start_date >= DATE(2018, 01, 01);
