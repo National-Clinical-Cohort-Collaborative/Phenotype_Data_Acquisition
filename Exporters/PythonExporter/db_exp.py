@@ -224,7 +224,9 @@ sql_params = [
     {'tag': '@vocabularyVersion', 'value': config['site']['vocabulary_version']},
     {'tag': '@n3cPhenotypeYN', 'value': config['site']['n3c_phenotype_yn']},
     {'tag': '@dataLatencyNumDays', 'value': config['site']['data_latency_num_days']},
-    {'tag': '@daysBetweenSubmissions', 'value': config['site']['days_between_submissions']}
+    {'tag': '@daysBetweenSubmissions', 'value': config['site']['days_between_submissions']},
+    {'tag': '@shiftDateYN', 'value': config['site']['shift_date_yn']},
+    {'tag': '@maxNumShiftDays', 'value': config['site']['max_num_shift_days']}
 ]
 
 db_conn = None
