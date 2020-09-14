@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, PCORnet CDM
---N3C phenotype V2.1
+--N3C phenotype V2.1 
 
 --Significant changes from V1:
 --Weak diagnoses no longer checked after May 1, 2020
