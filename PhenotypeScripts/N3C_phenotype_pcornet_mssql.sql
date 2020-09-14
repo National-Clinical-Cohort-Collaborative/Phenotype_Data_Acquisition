@@ -38,23 +38,17 @@ with covid_loinc as
 	select '94307-6' as loinc UNION
 	select '94308-4' as loinc UNION
 	select '94309-2' as loinc UNION
-	select '94310-0' as loinc UNION
 	select '94311-8' as loinc UNION
 	select '94312-6' as loinc UNION
-	select '94313-4' as loinc UNION
 	select '94314-2' as loinc UNION
-	select '94315-9' as loinc UNION
 	select '94316-7' as loinc UNION
 	select '94500-6' as loinc UNION
-	select '94502-2' as loinc UNION
 	select '94505-5' as loinc UNION
 	select '94506-3' as loinc UNION
 	select '94507-1' as loinc UNION
 	select '94508-9' as loinc UNION
-	select '94509-7' as loinc UNION
 	select '94510-5' as loinc UNION
 	select '94511-3' as loinc UNION
-	select '94532-9' as loinc UNION
 	select '94533-7' as loinc UNION
 	select '94534-5' as loinc UNION
 	select '94547-7' as loinc UNION
@@ -72,7 +66,6 @@ with covid_loinc as
 	select '94644-2' as loinc UNION
 	select '94645-9' as loinc UNION
 	select '94646-7' as loinc UNION
-	select '94647-5' as loinc UNION
 	select '94660-8' as loinc UNION
 	select '94661-6' as loinc UNION
     	select '94306-8' as loinc UNION
@@ -80,13 +73,11 @@ with covid_loinc as
 	select '94504-8' as loinc UNION
 	select '94531-1' as loinc UNION
 	select '94720-0' as loinc UNION
-	select '94758-0' as loinc UNION
 	select '94759-8' as loinc UNION
 	select '94760-6' as loinc UNION
 	select '94762-2' as loinc UNION
 	select '94763-0' as loinc UNION
 	select '94764-8' as loinc UNION
-	select '94765-5' as loinc UNION
 	select '94766-3' as loinc UNION
 	select '94767-1' as loinc UNION
 	select '94768-9' as loinc UNION
@@ -101,7 +92,6 @@ with covid_loinc as
 	select '94822-4' as loinc UNION    
 	select '94845-5' as loinc UNION    
 	select '95125-1' as loinc UNION    
-	select '95209-3' as loinc UNION
 	-- new for v1.6
 	select '95406-5' as loinc UNION
 	select '95409-9' as loinc UNION
@@ -353,6 +343,6 @@ from
 
 
 INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
-SELECT patid, inc_dx_strong, inc_dx_weak, inc_lab, exc_dx_asymp, '2.1' as phenotype_version
+SELECT patid, inc_dx_strong, inc_dx_weak, inc_lab, exc_dx_asymp, '2.2' as phenotype_version
 FROM cohort
 where exc_dx_asymp = 0;
