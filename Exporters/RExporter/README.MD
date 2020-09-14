@@ -98,6 +98,9 @@ n3cPhenotypeYN <- "Y"
 n3cPhenotypeVersion <- ""
 dataLatencyNumDays <- "2"  #-- this integer will be used to calculate UPDATE_DATE dynamically
 daysBetweenSubmissions <- "3"  #-- this integer will be used to calculate NEXT_SUBMISSION_DATE dynamically
+shiftDateYN <- 'X' #-- Replace with either 'Y' or 'N' to indicate if your data is date shifted
+maxNumShiftDays <- 'unknown' #-- If date shifting, replace with max number of days shifted
+
 
 ```
 **Execution**
@@ -126,6 +129,8 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         n3cPhenotypeVersion = n3cPhenotypeVersion,
                         dataLatencyNumDays = dataLatencyNumDays,
                         daysBetweenSubmissions = daysBetweenSubmissions,
+                        shiftDateYN = shiftDateYN,
+                        maxNumShiftDays = maxNumShiftDays,
                         useAndromeda = FALSE # See troubleshooting note below
                         )
 
