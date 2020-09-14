@@ -39,8 +39,9 @@ n3c_phenotype_yn = xxxxx
 data_latency_num_days = xxxxx
 days_between_submissions = xxxxx
 ; set below to Y or N
-shift_date_yn = xxxxx
-max_num_shift_days = xxxx
+shift_date_yn = X
+; set below to number of days, UNKNOWN if shifting and not known, NA if not shifting
+max_num_shift_days = NA
 
 [sftp]
 ; host examples:
