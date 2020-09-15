@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, ACT/i2b2, MS SQL Server
---N3C phenotype V2.1
+--N3C phenotype V2.2
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
 --05.01.2020 Michele Morris add create table
@@ -48,14 +48,14 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 INSERT INTO @resultsDatabaseSchema.n3c_cohort 
 WITH covid_loinc  AS (SELECT 'LOINC:94307-6' as loinc  FROM DUAL  UNION SELECT 'LOINC:94308-4'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94309-2'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:94310-0'  loinc   FROM DUAL  UNION SELECT 'LOINC:94311-8'  loinc FROM DUAL  
-		       UNION SELECT 'LOINC:94312-6'  loinc   FROM DUAL  UNION SELECT 'LOINC:94313-4'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:94314-2'  loinc   FROM DUAL  UNION SELECT 'LOINC:94315-9'  loinc   FROM DUAL  
+		       UNION SELECT 'LOINC:94311-8'  loinc FROM DUAL  
+		       UNION SELECT 'LOINC:94312-6'  loinc   FROM DUAL    
+		       UNION SELECT 'LOINC:94314-2'  loinc   FROM DUAL    
 		       UNION SELECT 'LOINC:94316-7'  loinc   FROM DUAL  UNION SELECT 'LOINC:94500-6'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:94502-2'  loinc   FROM DUAL  UNION SELECT 'LOINC:94505-5'  loinc   FROM DUAL 
+		       UNION SELECT 'LOINC:94505-5'  loinc   FROM DUAL 
 		       UNION SELECT 'LOINC:94506-3'  loinc   FROM DUAL  UNION SELECT 'LOINC:94507-1'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94510-5'  loinc   FROM DUAL  UNION SELECT 'LOINC:94511-3'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:94532-9'  loinc   FROM DUAL  UNION SELECT 'LOINC:94533-7'  loinc   FROM DUAL  
+		       UNION SELECT 'LOINC:94533-7'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94534-5'  loinc   FROM DUAL  UNION SELECT 'LOINC:94547-7'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94558-4'  loinc   FROM DUAL  UNION SELECT 'LOINC:94559-2'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94562-6'  loinc   FROM DUAL  UNION SELECT 'LOINC:94563-4'  loinc   FROM DUAL  
@@ -64,22 +64,22 @@ WITH covid_loinc  AS (SELECT 'LOINC:94307-6' as loinc  FROM DUAL  UNION SELECT '
 		       UNION SELECT 'LOINC:94641-8'  loinc   FROM DUAL  UNION SELECT 'LOINC:94642-6'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94643-4'  loinc   FROM DUAL  UNION SELECT 'LOINC:94644-2'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94645-9'  loinc   FROM DUAL  UNION SELECT 'LOINC:94646-7'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:94647-5'  loinc   FROM DUAL  UNION SELECT 'LOINC:94660-8'  loinc   FROM DUAL  
+		       UNION SELECT 'LOINC:94660-8'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94661-6'  loinc   FROM DUAL  UNION SELECT 'UMLS:C1611271'  loinc   FROM DUAL  
 		       UNION SELECT 'UMLS:C1335447'  loinc   FROM DUAL  UNION SELECT 'UMLS:C1334932'  loinc   FROM DUAL  
 		       UNION SELECT 'UMLS:C1334932'  loinc   FROM DUAL  UNION SELECT 'UMLS:C1335447'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:94720-0'  loinc   FROM DUAL  UNION SELECT 'LOINC:94758-0'  loinc   FROM DUAL  
+		       UNION SELECT 'LOINC:94720-0'  loinc   FROM DUAL    
 		       UNION SELECT 'LOINC:94759-8'  loinc   FROM DUAL  UNION SELECT 'LOINC:94760-6'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94762-2'  loinc   FROM DUAL  UNION SELECT 'LOINC:94763-0'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:94764-8'  loinc   FROM DUAL  UNION SELECT 'LOINC:94765-5'  loinc   FROM DUAL  
+		       UNION SELECT 'LOINC:94764-8'  loinc   FROM DUAL    
 		       UNION SELECT 'LOINC:94766-3'  loinc   FROM DUAL  UNION SELECT 'LOINC:94767-1'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94768-9'  loinc   FROM DUAL  UNION SELECT 'LOINC:94769-7'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94819-0'  loinc   FROM DUAL  UNION SELECT 'LOINC:94745-7'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94746-5'  loinc   FROM DUAL  UNION SELECT 'LOINC:94756-4'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94757-2'  loinc   FROM DUAL  UNION SELECT 'LOINC:94761-4'  loinc   FROM DUAL  
 		       UNION SELECT 'LOINC:94822-4'  loinc   FROM DUAL  UNION SELECT 'LOINC:94845-5'  loinc   FROM DUAL  
-		       UNION SELECT 'LOINC:95125-1'  loinc   FROM DUAL   UNION select 'LOINC:95209-3' AS LOINC FROM DUAL
-		       UNION SELECT 'LOINC:95406-5' AS LOINC FROM DUAL UNION SELECT 'LOINC:95409-9' AS LOINC FROM DUAL 
+		       UNION SELECT 'LOINC:95125-1'  loinc   FROM DUAL   
+		       UNION SELECT 'LOINC:95406-5' AS LOINC FROM DUAL  
 		       UNION SELECT 'LOINC:95410-7' AS LOINC FROM DUAL UNION SELECT 'LOINC:95411-5' AS LOINC FROM DUAL 
                UNION SELECT 'LOINC:94307-6' as loinc  FROM DUAL  UNION SELECT 'LOINC:95416-4' as loinc  FROM DUAL  UNION
                SELECT 'LOINC:95424-8' as loinc  FROM DUAL  UNION SELECT 'LOINC:95425-5' as loinc  FROM DUAL  UNION
@@ -233,7 +233,7 @@ n3c_cohort as
         left outer join dx_asymp on covid_cohort.patient_num = dx_asymp.patient_num
  )
 
-SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, exc_dx_asymp, '2.1' as phenotype_version
+SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, exc_dx_asymp, '2.2' as phenotype_version
 FROM n3c_cohort
 where exc_dx_asymp = 0
  ;

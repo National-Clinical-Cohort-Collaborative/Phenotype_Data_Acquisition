@@ -17,6 +17,8 @@ SELECT distinct '@siteAbbrev' as SITE_ABBREV,
    null AS VOCABULARY_VERSION, -- hardwired null for pcornet
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
    phenotype_version as N3C_PHENOTYPE_VERSION,
+   '@shiftDateYN' as SHIFT_DATE_YN, --if shifting dates prior to submission say Y, else N
+   '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS, --maximum number of days that you are shifting dates, write UNKNOWN if you do not know, NA if not shifting
    CAST(SYSDATE as date) as RUN_DATE,
    CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE

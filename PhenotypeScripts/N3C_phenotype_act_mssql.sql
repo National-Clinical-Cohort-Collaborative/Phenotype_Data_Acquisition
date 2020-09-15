@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, ACT/i2b2, MS SQL Server
---N3C phenotype V2.1
+--N3C phenotype V2.2
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
 --05.01.2020 Michele Morris add create table
@@ -49,23 +49,17 @@ with covid_loinc as
 	select 'LOINC:94307-6' as loinc UNION
 	select 'LOINC:94308-4' as loinc UNION
 	select 'LOINC:94309-2' as loinc UNION
-	select 'LOINC:94310-0' as loinc UNION
 	select 'LOINC:94311-8' as loinc UNION
 	select 'LOINC:94312-6' as loinc UNION
-	select 'LOINC:94313-4' as loinc UNION
 	select 'LOINC:94314-2' as loinc UNION
-	select 'LOINC:94315-9' as loinc UNION
 	select 'LOINC:94316-7' as loinc UNION
 	select 'LOINC:94500-6' as loinc UNION
-	select 'LOINC:94502-2' as loinc UNION
 	select 'LOINC:94505-5' as loinc UNION
 	select 'LOINC:94506-3' as loinc UNION
 	select 'LOINC:94507-1' as loinc UNION
 	select 'LOINC:94508-9' as loinc UNION
-	select 'LOINC:94509-7' as loinc UNION
 	select 'LOINC:94510-5' as loinc UNION
 	select 'LOINC:94511-3' as loinc UNION
-	select 'LOINC:94532-9' as loinc UNION
 	select 'LOINC:94533-7' as loinc UNION
 	select 'LOINC:94534-5' as loinc UNION
 	select 'LOINC:94547-7' as loinc UNION
@@ -83,7 +77,6 @@ with covid_loinc as
 	select 'LOINC:94644-2' as loinc UNION
 	select 'LOINC:94645-9' as loinc UNION
 	select 'LOINC:94646-7' as loinc UNION
-	select 'LOINC:94647-5' as loinc UNION
 	select 'LOINC:94660-8' as loinc UNION
 	select 'LOINC:94661-6' as loinc UNION
     	select 'UMLS:C1611271' as loinc UNION --ACT_COVID ontology terms
@@ -92,13 +85,11 @@ with covid_loinc as
     	select 'UMLS:C1334932' as loinc UNION
     	select 'UMLS:C1335447' as loinc UNION
 	select 'LOINC:94720-0' as loinc UNION
-	select 'LOINC:94758-0' as loinc UNION
 	select 'LOINC:94759-8' as loinc UNION
 	select 'LOINC:94760-6' as loinc UNION
 	select 'LOINC:94762-2' as loinc UNION
 	select 'LOINC:94763-0' as loinc UNION
 	select 'LOINC:94764-8' as loinc UNION
-	select 'LOINC:94765-5' as loinc UNION
 	select 'LOINC:94766-3' as loinc UNION
 	select 'LOINC:94767-1' as loinc UNION
 	select 'LOINC:94768-9' as loinc UNION
@@ -113,7 +104,6 @@ with covid_loinc as
 	select 'LOINC:94822-4' as loinc UNION    
 	select 'LOINC:94845-5' as loinc UNION    
 	select 'LOINC:95125-1' as loinc UNION    
-	select 'LOINC:95209-3' as loinc UNION
 	-- new for v1.6
 	SELECT 'LOINC:95406-5' AS LOINC UNION 
 	SELECT 'LOINC:95409-9' AS LOINC UNION 
@@ -335,7 +325,7 @@ n3c_cohort as
 )
 
 INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
-SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, '2.1' as phenotype_version
+SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, '2.2' as phenotype_version
 from n3c_cohort
 where exc_dx_asymp = 0
 ;

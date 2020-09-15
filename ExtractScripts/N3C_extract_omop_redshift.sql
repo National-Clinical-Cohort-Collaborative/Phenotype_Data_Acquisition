@@ -22,6 +22,8 @@ select
    (SELECT TOP 1 vocabulary_version FROM @resultsDatabaseSchema.phenotype_execution) AS VOCABULARY_VERSION,
    'Y' as N3C_PHENOTYPE_YN,
    (SELECT TOP 1 phenotype_version FROM @resultsDatabaseSchema.phenotype_execution) as N3C_PHENOTYPE_VERSION,
+   '@shiftDateYN' as SHIFT_DATE_YN,
+   '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS,
    CAST(CURRENT_DATE as TIMESTAMP) as RUN_DATE,
    CAST( DATEADD(day,CAST(-@dataLatencyNumDays as int),CURRENT_DATE) as TIMESTAMP) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day,CAST(@daysBetweenSubmissions as int),CURRENT_DATE) as TIMESTAMP) as NEXT_SUBMISSION_DATE;
@@ -570,19 +572,60 @@ UNION
 --We could re-engineer the cohort table to include the JOIN variables
 select
    'LOCATION' as TABLE_NAME,
-   (select count(*) from @cdmDatabaseSchema.LOCATION) as ROW_COUNT
+   (select count(*) from @cdmDatabaseSchema.LOCATION l
+   JOIN (
+        SELECT DISTINCT p.LOCATION_ID
+        FROM @cdmDatabaseSchema.PERSON p
+        JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON p.person_id = n.person_id
+      ) a
+  ON l.location_id = a.location_id) as ROW_COUNT
 
 UNION
 
 select
    'CARE_SITE' as TABLE_NAME,
-   (select count(*) from @cdmDatabaseSchema.CARE_SITE) as ROW_COUNT
+   (select count(*) from @cdmDatabaseSchema.CARE_SITE cs
+	JOIN (
+        SELECT DISTINCT CARE_SITE_ID
+        FROM @cdmDatabaseSchema.VISIT_OCCURRENCE vo
+        JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON vo.person_id = n.person_id
+      ) a
+  ON cs.CARE_SITE_ID = a.CARE_SITE_ID) as ROW_COUNT
 
 UNION
 
  select
    'PROVIDER' as TABLE_NAME,
-   (select count(*) from @cdmDatabaseSchema.PROVIDER) as ROW_COUNT
+   (select count(*) from @cdmDatabaseSchema.PROVIDER pr
+	JOIN (
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.VISIT_OCCURRENCE vo
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON vo.PERSON_ID = n.PERSON_ID
+       UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.DRUG_EXPOSURE de
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON de.PERSON_ID = n.PERSON_ID
+       UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.MEASUREMENT m
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON m.PERSON_ID = n.PERSON_ID
+       UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.PROCEDURE_OCCURRENCE po
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON po.PERSON_ID = n.PERSON_ID
+       UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.OBSERVATION o
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON o.PERSON_ID = n.PERSON_ID
+     ) a
+ ON pr.PROVIDER_ID = a.PROVIDER_ID) as ROW_COUNT
 
 UNION
 

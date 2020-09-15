@@ -29,6 +29,8 @@ SELECT distinct '@siteAbbrev' as SITE_ABBREV,
    null AS VOCABULARY_VERSION, -- hardwired null for ACT
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
    phenotype_version  as N3C_PHENOTYPE_VERSION,
+   '@shiftDateYN' as SHIFT_DATE_YN, --if shifting dates prior to submission say Y, else N
+   '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS, --maximum number of days that you are shifting dates, write UNKNOWN if you do not know, NA if not shifting
    CAST(SYSDATE as date) as RUN_DATE,
    CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE
@@ -426,9 +428,9 @@ SELECT patient_dimension.patient_num,
     zip_cd,
     statecityzip_path,
     income_cd,
-    CAST(UPDATE_DATE as date) as update_date,
-    CAST(DOWNLOAD_DATE as date) as download_date,
-    CAST(IMPORT_DATE as date) as import_date,
+    CAST(UPDATE_DATE as timestamp) as update_date,
+    CAST(DOWNLOAD_DATE as timestamp) as download_date,
+    CAST(IMPORT_DATE as timestamp) as import_date,
     sourcesystem_cd,
     upload_id
 FROM @cdmDatabaseSchema.patient_dimension join @resultsDatabaseSchema.n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num  ;
