@@ -521,15 +521,52 @@ union distinct select
 
 union distinct select
    'LOCATION' as table_name,
-   (select count(*) from @cdmDatabaseSchema.location) as row_count
+   (select count(*) from @cdmDatabaseSchema.location l
+   join (
+        select distinct p.location_id
+        from @cdmDatabaseSchema.person p
+        join @resultsDatabaseSchema.n3c_cohort n
+          on p.person_id = n.person_id
+      ) a
+  on l.location_id = a.location_id) as row_count
 
 union distinct select
    'CARE_SITE' as table_name,
-   (select count(*) from @cdmDatabaseSchema.care_site) as row_count
+   (select count(*) from @cdmDatabaseSchema.care_site cs
+	join (
+        select distinct care_site_id
+        from @cdmDatabaseSchema.visit_occurrence vo
+        join @resultsDatabaseSchema.n3c_cohort n
+          on vo.person_id = n.person_id
+      ) a
+  on cs.care_site_id = a.care_site_id) as row_count
 
 union distinct select
    'PROVIDER' as table_name,
-   (select count(*) from @cdmDatabaseSchema.provider) as row_count
+   (select count(*) from @cdmDatabaseSchema.provider pr
+	join (
+       select distinct provider_id
+       from @cdmDatabaseSchema.visit_occurrence vo
+       join @resultsDatabaseSchema.n3c_cohort n
+          on vo.person_id = n.person_id
+       union distinct select distinct provider_id
+       from @cdmDatabaseSchema.drug_exposure de
+       join @resultsDatabaseSchema.n3c_cohort n
+          on de.person_id = n.person_id
+       union distinct select distinct provider_id
+       from @cdmDatabaseSchema.measurement m
+       join @resultsDatabaseSchema.n3c_cohort n
+          on m.person_id = n.person_id
+       union distinct select distinct provider_id
+       from @cdmDatabaseSchema.procedure_occurrence po
+       join @resultsDatabaseSchema.n3c_cohort n
+          on po.person_id = n.person_id
+       union distinct select distinct provider_id
+       from @cdmDatabaseSchema.observation o
+       join @resultsDatabaseSchema.n3c_cohort n
+          on o.person_id = n.person_id
+     ) a
+ on pr.provider_id = a.provider_id) as row_count
 
 union distinct select
    'DRUG_ERA' as table_name,

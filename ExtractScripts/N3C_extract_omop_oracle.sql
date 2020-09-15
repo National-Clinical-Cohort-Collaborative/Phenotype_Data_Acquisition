@@ -508,13 +508,51 @@ SELECT * FROM (SELECT 'PERSON' as TABLE_NAME,
   (SELECT count(*) FROM @cdmDatabaseSchema.DEATH d JOIN @resultsDatabaseSchema.N3C_COHORT n ON d.PERSON_ID = n.PERSON_ID AND DEATH_DATE >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ) as ROW_COUNT
 
   FROM DUAL  UNION SELECT 'LOCATION'  TABLE_NAME,
-   (SELECT count(*) FROM @cdmDatabaseSchema.LOCATION ) as ROW_COUNT
+   (SELECT count(*) FROM @cdmDatabaseSchema.LOCATION l
+   JOIN (SELECT DISTINCT p.LOCATION_ID
+        FROM @cdmDatabaseSchema.PERSON p
+        JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON p.person_id = n.person_id
+       ) a
+  ON l.location_id = a.location_id ) as ROW_COUNT
 
   FROM DUAL  UNION SELECT 'CARE_SITE'  TABLE_NAME,
-   (SELECT count(*) FROM @cdmDatabaseSchema.CARE_SITE ) as ROW_COUNT
+   (SELECT count(*) FROM @cdmDatabaseSchema.CARE_SITE cs
+	JOIN (SELECT DISTINCT CARE_SITE_ID
+        FROM @cdmDatabaseSchema.VISIT_OCCURRENCE vo
+        JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON vo.person_id = n.person_id
+       ) a
+  ON cs.CARE_SITE_ID = a.CARE_SITE_ID ) as ROW_COUNT
 
   FROM DUAL  UNION SELECT 'PROVIDER'  TABLE_NAME,
-   (SELECT count(*) FROM @cdmDatabaseSchema.PROVIDER ) as ROW_COUNT
+   (SELECT count(*) FROM @cdmDatabaseSchema.PROVIDER pr
+	JOIN (SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.VISIT_OCCURRENCE vo
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON vo.PERSON_ID = n.PERSON_ID
+         UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.DRUG_EXPOSURE de
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON de.PERSON_ID = n.PERSON_ID
+         UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.MEASUREMENT m
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON m.PERSON_ID = n.PERSON_ID
+         UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.PROCEDURE_OCCURRENCE po
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON po.PERSON_ID = n.PERSON_ID
+         UNION
+       SELECT DISTINCT PROVIDER_ID
+       FROM @cdmDatabaseSchema.OBSERVATION o
+       JOIN @resultsDatabaseSchema.N3C_COHORT n
+          ON o.PERSON_ID = n.PERSON_ID
+      ) a
+ ON pr.PROVIDER_ID = a.PROVIDER_ID ) as ROW_COUNT
 
   FROM DUAL  UNION SELECT 'DRUG_ERA'  TABLE_NAME,
    (SELECT count(*) FROM @cdmDatabaseSchema.DRUG_ERA de JOIN @resultsDatabaseSchema.N3C_COHORT n ON de.PERSON_ID = n.PERSON_ID AND DRUG_ERA_START_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ) as ROW_COUNT
