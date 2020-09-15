@@ -1,5 +1,5 @@
 --N3C covid-19 phenotype, ACT/i2b2, MS SQL Server
---N3C phenotype V2.1
+--N3C phenotype V2.2
 --Modified Marshall's code to fit ACT
 --04.29.2020 Michele Morris hardcode variables, comment where multifact table i2b2s need to change table name
 --05.01.2020 Michele Morris add create table
@@ -335,7 +335,7 @@ n3c_cohort as
 )
 
 INSERT INTO  @resultsDatabaseSchema.n3c_cohort 
-SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, '2.1' as phenotype_version
+SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, '2.2' as phenotype_version
 from n3c_cohort
 where exc_dx_asymp = 0
 ;
