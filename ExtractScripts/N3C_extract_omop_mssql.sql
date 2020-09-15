@@ -22,6 +22,8 @@ select
    (SELECT TOP 1 vocabulary_version FROM @resultsDatabaseSchema.phenotype_execution) AS VOCABULARY_VERSION,
    'Y' as N3C_PHENOTYPE_YN,
    (SELECT TOP 1 phenotype_version FROM @resultsDatabaseSchema.phenotype_execution) as N3C_PHENOTYPE_VERSION,
+   '@shiftDateYN' as SHIFT_DATE_YN,
+   '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS,
    CAST(GETDATE() as datetime) as RUN_DATE,
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as datetime) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as datetime) as NEXT_SUBMISSION_DATE;

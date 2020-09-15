@@ -21,6 +21,8 @@ SELECT '@siteAbbrev' as SITE_ABBREV,
    (SELECT  vocabulary_version FROM @resultsDatabaseSchema.phenotype_execution  WHERE ROWNUM <= 1) AS VOCABULARY_VERSION,
    'Y' as N3C_PHENOTYPE_YN,
    (SELECT  phenotype_version FROM @resultsDatabaseSchema.phenotype_execution  WHERE ROWNUM <= 1) as N3C_PHENOTYPE_VERSION,
+   '@shiftDateYN' as SHIFT_DATE_YN,
+   '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS,
    CAST(SYSDATE as TIMESTAMP) as RUN_DATE,
    CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as TIMESTAMP) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as TIMESTAMP) as NEXT_SUBMISSION_DATE FROM DUAL;

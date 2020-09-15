@@ -48,7 +48,7 @@ cdmVersion <- "5.3.1"
 dataLatencyNumDays <- "2"  #-- this integer will be used to calculate UPDATE_DATE dynamically
 daysBetweenSubmissions <- "3"  #-- this integer will be used to calculate NEXT_SUBMISSION_DATE dynamically
 shiftDateYN <- "X" #-- Replace with either 'Y' or 'N' to indicate if your data is date shifted
-maxNumShiftDays <- "NA" #-- If date shifting, replace with max number of days shifted
+maxNumShiftDays <- "NA" #-- Maximum number of days shifted. 'NA' if NA, 'Unknown' if shifted but days unknown
 
 
 

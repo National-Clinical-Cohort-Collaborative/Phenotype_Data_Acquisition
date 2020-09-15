@@ -61,7 +61,12 @@ CREATE TABLE #Codesets (
 INSERT INTO #Codesets (codeset_id, concept_id)
 SELECT 0 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
 ( 
-  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (586515,586522,706179,706166,586523,586518,706174,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,706172,706171,706165,706159,757685,757686)
+  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (586515,586522,706179,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,757686,756055)
+UNION  select c.concept_id
+  from @cdmDatabaseSchema.CONCEPT c
+  join @cdmDatabaseSchema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
+  and ca.ancestor_concept_id in (756055)
+  and c.invalid_reason is null
 
 ) I
 ) C;
@@ -810,7 +815,7 @@ FROM final_cohort;
 INSERT INTO @resultsDatabaseSchema.phenotype_execution
 SELECT
     GETDATE() as run_datetime
-    ,'2.1' as phenotype_version
+    ,'2.2' as phenotype_version
     , (SELECT TOP 1 vocabulary_version FROM @cdmDatabaseSchema.vocabulary WHERE vocabulary_id='None') AS VOCABULARY_VERSION;
 
 
