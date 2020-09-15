@@ -29,6 +29,8 @@ SELECT distinct '@siteAbbrev' as SITE_ABBREV,
    null AS VOCABULARY_VERSION, -- hardwired null for ACT
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
    phenotype_version  as N3C_PHENOTYPE_VERSION,
+   '@shiftDateYN' as SHIFT_DATE_YN, --if shifting dates prior to submission say Y, else N
+   '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS, --maximum number of days that you are shifting dates, write UNKNOWN if you do not know, NA if not shifting
    CAST(SYSDATE as date) as RUN_DATE,
    CAST( (SYSDATE + NUMTODSINTERVAL(-@dataLatencyNumDays, 'day')) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( (SYSDATE + NUMTODSINTERVAL(@daysBetweenSubmissions, 'day')) as date) as NEXT_SUBMISSION_DATE
@@ -389,8 +391,8 @@ select
     observation_fact.patient_num,
     observation_fact.concept_cd,
     standard_hash(observation_fact.PROVIDER_ID,'MD5') AS provider_id,
-    start_date,
-    end_date,
+    CAST(START_DATE as timestamp) as start_date,
+    CAST(END_DATE as timestamp) as end_date,
     modifier_cd,
     instance_num,
     valtype_cd,
@@ -399,9 +401,9 @@ select
     nval_num,
     valueflag_cd,
     units_cd,
-    update_date,
-    download_date,
-    import_date,
+    CAST(UPDATE_DATE as timestamp) as update_date,
+    CAST(DOWNLOAD_DATE as timestamp) as download_date,
+    CAST(IMPORT_DATE as timestamp) as import_date,
     sourcesystem_cd,
     upload_id
 from @cdmDatabaseSchema.observation_fact
@@ -415,7 +417,7 @@ from @cdmDatabaseSchema.observation_fact
 --OUTPUT_FILE: PATIENT_DIMENSION.csv
 SELECT patient_dimension.patient_num,
     TO_CHAR(BIRTH_DATE, 'YYYY-MM') as birth_date,
-    death_date,
+    CAST(DEATH_DATE as timestamp) as death_date,
     race_cd,
     sex_cd,
     vital_status_cd,
@@ -426,9 +428,9 @@ SELECT patient_dimension.patient_num,
     zip_cd,
     statecityzip_path,
     income_cd,
-    update_date,
-    download_date,
-    import_date,
+    CAST(UPDATE_DATE as timestamp) as update_date,
+    CAST(DOWNLOAD_DATE as timestamp) as download_date,
+    CAST(IMPORT_DATE as timestamp) as import_date,
     sourcesystem_cd,
     upload_id
 FROM @cdmDatabaseSchema.patient_dimension join @resultsDatabaseSchema.n3c_cohort on patient_dimension.patient_num = n3c_cohort.patient_num  ;
@@ -441,15 +443,15 @@ FROM @cdmDatabaseSchema.patient_dimension join @resultsDatabaseSchema.n3c_cohort
 SELECT visit_dimension.patient_num,
     encounter_num,
     active_status_cd,
-    start_date,
-    end_date,
+    CAST(START_DATE as timestamp) as start_date,
+    CAST(END_DATE as timestamp) as end_date,
     inout_cd,
     location_cd,
     location_path,
     length_of_stay,
-    update_date,
-    download_date,
-    import_date,
+    CAST(UPDATE_DATE as timestamp) as update_date,
+    CAST(DOWNLOAD_DATE as timestamp) as download_date,
+    CAST(IMPORT_DATE as timestamp) as import_date,
     sourcesystem_cd,
     upload_id
 FROM @cdmDatabaseSchema.visit_dimension join @resultsDatabaseSchema.n3c_cohort on visit_dimension.patient_num = n3c_cohort.patient_num
