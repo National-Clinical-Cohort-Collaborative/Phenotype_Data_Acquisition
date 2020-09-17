@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS :TNX_SCHEMA.n3c_pheno_version (
 ---------------------------------------------------------------------------------------------------------
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
 INSERT INTO :TNX_SCHEMA.n3c_pheno_version
-SELECT '2.1';
+SELECT '2.2';
 
 ---------------------------------------------------------------------------------------------------------
 -- 3. Clear out existing patient list
@@ -36,6 +36,7 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_cohort;
 --					4 - Any Lab Test
 --					5 - Weak Diagnosis
 --		8/11/20 - Update to v2.1
+--		9/17/20 - Update to v2.2 - Remove some LOINC codes
 ---------------------------------------------------------------------------------------------------------
 
 INSERT INTO :TNX_SCHEMA.n3c_cohort
@@ -172,26 +173,20 @@ FROM (
 					,'UMLS:LNC:94307-6'
 					,'UMLS:LNC:94308-4'
 					,'UMLS:LNC:94309-2'
-					,'UMLS:LNC:94310-0'
 					,'UMLS:LNC:94311-8'
 					,'UMLS:LNC:94312-6'
-					,'UMLS:LNC:94313-4'
 					,'UMLS:LNC:94314-2'
-					,'UMLS:LNC:94315-9'
 					,'UMLS:LNC:94316-7'
 					,'UMLS:LNC:94500-6'
-					,'UMLS:LNC:94502-2'
 					,'UMLS:LNC:94503-0'
 					,'UMLS:LNC:94504-8'
 					,'UMLS:LNC:94505-5'
 					,'UMLS:LNC:94506-3'
 					,'UMLS:LNC:94507-1'
 					,'UMLS:LNC:94508-9'
-					,'UMLS:LNC:94509-7'
 					,'UMLS:LNC:94510-5'
 					,'UMLS:LNC:94511-3'
 					,'UMLS:LNC:94531-1'
-					,'UMLS:LNC:94532-9'
 					,'UMLS:LNC:94533-7'
 					,'UMLS:LNC:94534-5'
 					,'UMLS:LNC:94547-7'
@@ -209,7 +204,6 @@ FROM (
 					,'UMLS:LNC:94644-2'
 					,'UMLS:LNC:94645-9'
 					,'UMLS:LNC:94646-7'
-					,'UMLS:LNC:94647-5'
 					,'UMLS:LNC:94660-8'
 					,'UMLS:LNC:94661-6'
 					,'UMLS:LNC:94720-0'
@@ -217,14 +211,12 @@ FROM (
 					,'UMLS:LNC:94746-5'
 					,'UMLS:LNC:94756-4'
 					,'UMLS:LNC:94757-2'
-					,'UMLS:LNC:94758-0'
 					,'UMLS:LNC:94759-8'
 					,'UMLS:LNC:94760-6'
 					,'UMLS:LNC:94761-4'
 					,'UMLS:LNC:94762-2'
 					,'UMLS:LNC:94763-0'
 					,'UMLS:LNC:94764-8'
-					,'UMLS:LNC:94765-5'
 					,'UMLS:LNC:94766-3'
 					,'UMLS:LNC:94767-1'
 					,'UMLS:LNC:94768-9'
@@ -233,7 +225,6 @@ FROM (
 					,'UMLS:LNC:94822-4'
 					,'UMLS:LNC:94845-5'
 					,'UMLS:LNC:95125-1'
-					,'UMLS:LNC:95209-3'
 					,'UMLS:LNC:95406-5'
 					,'UMLS:LNC:95409-9'
 					,'UMLS:LNC:95410-7'

@@ -137,8 +137,8 @@ SELECT
 	, rx.alt_drug_code_sys							AS ALT_DRUG_CODE_SYS
 	, rx.alt_drug_code								AS ALT_DRUG_CODE
 	, rx.start_date::datetime						AS START_DATE
-	, rx.route_of_administration					AS ROUTE_OF_ADMINISTRATION
-	, REPLACE(rx.units_per_administration,'|',' ')	AS UNITS_PER_ADMINISTRATION
+	, REPLACE(rx.route_of_administration,'|',' ')	AS ROUTE_OF_ADMINISTRATION
+	, rx.units_per_administration					AS UNITS_PER_ADMINISTRATION
 	, REPLACE(rx.frequency,'|',' ')					AS FREQUENCY
 	, REPLACE(rx.strength,'|',' ')					AS STRENGTH
 	, REPLACE(rx.form,'|',' ')						AS FORM
@@ -273,6 +273,15 @@ SELECT
 	, ''								AS VOCABULARY_VERSION
 	, 'Y'								AS N3C_PHENOTYPE_YN
 	, phenoVers.version					AS N3C_PHENOTYPE_VERSION
+	, CASE 
+		WHEN LENGTH(:MNFST_SHIFT_DATE_YN) > 0 THEN :MNFST_SHIFT_DATE_YN
+		ELSE 'U'
+	  END								AS SHIFT_DATE_YN
+	, CASE 
+		WHEN :MNFST_SHIFT_DATE_YN = 'N' THEN 'NA'	-- If not shifting, set to NA
+		WHEN LENGTH(:MNFST_MAX_SHIFT_DAYS) > 0 THEN :MNFST_MAX_SHIFT_DAYS	-- Report days if found
+		ELSE 'UNKNOWN'	-- Otherwise report unknown
+		END								AS MAX_NUM_SHIFT_DAYS
 	, CURRENT_TIMESTAMP(0)::datetime	AS RUN_DATE
 	, MAX(import_date)					AS UPDATE_DATE
 	, TIMESTAMPADD(DAY, :MNFST_SUBMISSION_OFFSET, CURRENT_TIMESTAMP(0))::datetime	AS NEXT_SUBMISSION_DATE
