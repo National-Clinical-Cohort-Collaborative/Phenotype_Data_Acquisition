@@ -47,7 +47,7 @@ FROM :TNX_SCHEMA.n3c_cohort n3c
 CREATE TABLE :TNX_SCHEMA.n3c_encounter AS
 SELECT
 	n3c.patient_id				AS PATIENT_ID
-	, enc.encounter_id			AS ENCOUNTER_ID
+	, HASH(enc.source_id) || enc.encounter_id	AS ENCOUNTER_ID
 	, REPLACE(enc.type,'|',' ')	AS ENCOUNTER_TYPE
 	, enc.start_date			AS START_DATE
 	, enc.end_date				AS END_DATE
@@ -70,8 +70,8 @@ WHERE enc.source_id NOT IN ('Diamond','Datavant')
 CREATE TABLE :TNX_SCHEMA.n3c_diagnosis AS
 SELECT
 	n3c.patient_id						AS PATIENT_ID
-	, dx.encounter_id					AS ENCOUNTER_ID
-	, dx.code_system					AS DX_CODE_SYSTEM
+	, HASH(dx.source_id) || dx.encounter_id		AS ENCOUNTER_ID
+	, REPLACE(dx.code_system,'|',' ')	AS DX_CODE_SYSTEM
 	, dx.code							AS DX_CODE
 	, dx.date							AS DATE
 	, REPLACE(dx.description,'|',' ')	AS DX_DESCRIPTION
@@ -97,8 +97,8 @@ WHERE dx.source_id NOT IN ('Diamond','Datavant')
 CREATE TABLE :TNX_SCHEMA.n3c_procedure AS
 SELECT
 	n3c.patient_id						AS PATIENT_ID
-	, px.encounter_id					AS ENCOUNTER_ID
-	, px.code_system					AS PX_CODE_SYSTEM
+	, HASH(px.source_id) || px.encounter_id	AS ENCOUNTER_ID
+	, REPLACE(px.code_system,'|',' ')	AS PX_CODE_SYSTEM
 	, px.code							AS PX_CODE
 	, REPLACE(px.description,'|',' ')	AS PX_DESCRIPTION
 	, px.date							AS DATE
@@ -130,11 +130,11 @@ WHERE px.source_id NOT IN ('Diamond','Datavant')
 CREATE TABLE :TNX_SCHEMA.n3c_medication AS
 SELECT
 	n3c.patient_id									AS PATIENT_ID
-	, rx.encounter_id								AS ENCOUNTER_ID
-	, rx.code_system								AS RX_CODE_SYSTEM
+	, HASH(rx.source_id) || rx.encounter_id			AS ENCOUNTER_ID
+	, REPLACE(rx.code_system,'|',' ')				AS RX_CODE_SYSTEM
 	, rx.code										AS RX_CODE
 	, REPLACE(rx.name,'|',' ')						AS RX_DESCRIPTION
-	, rx.alt_drug_code_sys							AS ALT_DRUG_CODE_SYS
+	, REPLACE(rx.alt_drug_code_sys,'|',' ')			AS ALT_DRUG_CODE_SYS
 	, rx.alt_drug_code								AS ALT_DRUG_CODE
 	, rx.start_date::datetime						AS START_DATE
 	, REPLACE(rx.route_of_administration,'|',' ')	AS ROUTE_OF_ADMINISTRATION
@@ -145,7 +145,7 @@ SELECT
 	, rx.duration									AS DURATION
 	, rx.refills									AS REFILLS
 	, rx.source										AS RX_SOURCE
-	, rx.indication_code_system						AS INDICATION_CODE_SYSTEM
+	, REPLACE(rx.indication_code_system,'|',' ')	AS INDICATION_CODE_SYSTEM
 	, rx.indication_code							AS INDICATION_CODE
 	, REPLACE(rx.indication_desc,'|',' ')			AS INDICATION_DESC
 	, REPLACE(rx.alt_drug_name,'|',' ')				AS ALT_DRUG_NAME
@@ -183,11 +183,11 @@ WHERE rx.source_id NOT IN ('Diamond','Datavant')
 CREATE TABLE :TNX_SCHEMA.n3c_lab_result AS
 SELECT
 	n3c.patient_id								AS PATIENT_ID
-	, lab.encounter_id							AS ENCOUNTER_ID
-	, lab.observation_code_system				AS LAB_CODE_SYSTEM
+	, HASH(lab.source_id) || lab.encounter_id	AS ENCOUNTER_ID
+	, REPLACE(lab.observation_code_system,'|',' ')	AS LAB_CODE_SYSTEM
 	, lab.observation_code						AS LAB_CODE
 	, REPLACE(lab.observation_desc,'|',' ')		AS LAB_DESCRIPTION
-	, lab.battery_code_system					AS BATTERY_CODE_SYSTEM
+	, REPLACE(lab.battery_code_system,'|',' ')	AS BATTERY_CODE_SYSTEM
 	, lab.battery_code							AS BATTERY_CODE
 	, REPLACE(lab.battery_desc,'|',' ')			AS BATTERY_DESC
 	, lab.section								AS SECTION
@@ -219,9 +219,9 @@ WHERE lab.source_id NOT IN ('Diamond','Datavant')
 CREATE TABLE :TNX_SCHEMA.n3c_vital_signs AS
 SELECT
 	n3c.patient_id						AS PATIENT_ID
-	, vit.encounter_id					AS ENCOUNTER_ID
+	, HASH(vit.source_id) || vit.encounter_id	AS ENCOUNTER_ID
 	, vit.measure_date					AS MEASURE_DATE
-	, vit.code_system					AS VITAL_CODE_SYSTEM
+	, REPLACE(vit.code_system,'|',' ')	AS VITAL_CODE_SYSTEM
 	, vit.code							AS VITAL_CODE
 	, REPLACE(vit.description,'|',' ')	AS VITAL_DESCRIPTION
 	, vit.unit_of_measure				AS UNIT_OF_MEASURE
@@ -273,15 +273,8 @@ SELECT
 	, ''								AS VOCABULARY_VERSION
 	, 'Y'								AS N3C_PHENOTYPE_YN
 	, phenoVers.version					AS N3C_PHENOTYPE_VERSION
-	, CASE 
-		WHEN LENGTH(:MNFST_SHIFT_DATE_YN) > 0 THEN :MNFST_SHIFT_DATE_YN
-		ELSE 'U'
-	  END								AS SHIFT_DATE_YN
-	, CASE 
-		WHEN :MNFST_SHIFT_DATE_YN = 'N' THEN 'NA'	-- If not shifting, set to NA
-		WHEN LENGTH(:MNFST_MAX_SHIFT_DAYS) > 0 THEN :MNFST_MAX_SHIFT_DAYS	-- Report days if found
-		ELSE 'UNKNOWN'	-- Otherwise report unknown
-		END								AS MAX_NUM_SHIFT_DAYS
+	, :MNFST_SHIFT_DATE_YN				AS SHIFT_DATE_YN
+	, :MNFST_MAX_SHIFT_DAYS				AS MAX_NUM_SHIFT_DAYS
 	, CURRENT_TIMESTAMP(0)::datetime	AS RUN_DATE
 	, MAX(import_date)					AS UPDATE_DATE
 	, TIMESTAMPADD(DAY, :MNFST_SUBMISSION_OFFSET, CURRENT_TIMESTAMP(0))::datetime	AS NEXT_SUBMISSION_DATE
