@@ -34,6 +34,9 @@ SELECT
 	, map_ms.mt_code	AS MAPPED_MARITAL_STATUS
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.patient pt ON pt.patient_id = n3c.patient_id
+	JOIN (
+		SELECT source_id, patient_id, RANK() OVER(PARTITION BY patient_id ORDER BY batch_id DESC) AS rnk FROM :TNX_SCHEMA.patient
+	) ptDedupFilter ON ptDedupFilter.patient_id = pt.patient_id AND ptDedupFilter.source_id = pt.source_id AND ptDedupFilter.rnk = 1
 	LEFT JOIN :TNX_SCHEMA.mapping map_sx ON map_sx.provider_code = ('DEM|GENDER:' || pt.gender)
 	LEFT JOIN :TNX_SCHEMA.mapping map_rc ON map_rc.provider_code = ('DEM|RACE:' || pt.race)
 	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('DEM|ETHNICITY:' || pt.ethnicity)
