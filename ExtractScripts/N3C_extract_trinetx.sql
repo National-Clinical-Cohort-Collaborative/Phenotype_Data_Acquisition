@@ -75,7 +75,7 @@ SELECT
 	n3c.patient_id						AS PATIENT_ID
 	, HASH(dx.source_id) || dx.encounter_id		AS ENCOUNTER_ID
 	, REPLACE(dx.code_system,'|',' ')	AS DX_CODE_SYSTEM
-	, dx.code							AS DX_CODE
+	, REPLACE(dx.code,'|',' ')			AS DX_CODE
 	, dx.date							AS DATE
 	, REPLACE(dx.description,'|',' ')	AS DX_DESCRIPTION
 	, dx.principal_indicator			AS PRINCIPAL_INDICATOR
@@ -102,7 +102,7 @@ SELECT
 	n3c.patient_id						AS PATIENT_ID
 	, HASH(px.source_id) || px.encounter_id	AS ENCOUNTER_ID
 	, REPLACE(px.code_system,'|',' ')	AS PX_CODE_SYSTEM
-	, px.code							AS PX_CODE
+	, REPLACE(px.code,'|',' ')			AS PX_CODE
 	, REPLACE(px.description,'|',' ')	AS PX_DESCRIPTION
 	, px.date							AS DATE
 	, px.orphan							AS ORPHAN_FLAG
@@ -135,7 +135,7 @@ SELECT
 	n3c.patient_id									AS PATIENT_ID
 	, HASH(rx.source_id) || rx.encounter_id			AS ENCOUNTER_ID
 	, REPLACE(rx.code_system,'|',' ')				AS RX_CODE_SYSTEM
-	, rx.code										AS RX_CODE
+	, REPLACE(rx.code,'|',' ')						AS RX_CODE
 	, REPLACE(rx.name,'|',' ')						AS RX_DESCRIPTION
 	, REPLACE(rx.alt_drug_code_sys,'|',' ')			AS ALT_DRUG_CODE_SYS
 	, rx.alt_drug_code								AS ALT_DRUG_CODE
@@ -188,7 +188,7 @@ SELECT
 	n3c.patient_id								AS PATIENT_ID
 	, HASH(lab.source_id) || lab.encounter_id	AS ENCOUNTER_ID
 	, REPLACE(lab.observation_code_system,'|',' ')	AS LAB_CODE_SYSTEM
-	, lab.observation_code						AS LAB_CODE
+	, REPLACE(lab.observation_code,'|',' ')		AS LAB_CODE
 	, REPLACE(lab.observation_desc,'|',' ')		AS LAB_DESCRIPTION
 	, REPLACE(lab.battery_code_system,'|',' ')	AS BATTERY_CODE_SYSTEM
 	, lab.battery_code							AS BATTERY_CODE
@@ -198,7 +198,7 @@ SELECT
 	, lab.test_date								AS TEST_DATE
 	, lab.result_type							AS RESULT_TYPE
 	, lab.lab_result_num_val					AS NUMERIC_RESULT_VAL
-	, REPLACE(lab.lab_result_text_val,'|',' ')	AS TEXT_RESULT_VAL
+	, REPLACE(REPLACE(REPLACE(lab.lab_result_text_val,'|',' '),'\','\\'),E'\n',' ')	AS TEXT_RESULT_VAL
 	, lab.units_of_measure						AS UNITS_OF_MEASURE
 	, lab.orphan								AS ORPHAN_FLAG
 	, lab.orphan_reason							AS ORPHAN_REASON
@@ -225,12 +225,12 @@ SELECT
 	, HASH(vit.source_id) || vit.encounter_id	AS ENCOUNTER_ID
 	, vit.measure_date					AS MEASURE_DATE
 	, REPLACE(vit.code_system,'|',' ')	AS VITAL_CODE_SYSTEM
-	, vit.code							AS VITAL_CODE
+	, REPLACE(vit.code,'|',' ')			AS VITAL_CODE
 	, REPLACE(vit.description,'|',' ')	AS VITAL_DESCRIPTION
 	, vit.unit_of_measure				AS UNIT_OF_MEASURE
 	, vit.result_type					AS RESULT_TYPE
 	, vit.numeric_value					AS NUMERIC_RESULT_VAL
-	, REPLACE(vit.text_value,'|',' ')	AS TEXT_RESULT_VAL
+	, REPLACE(REPLACE(REPLACE(vit.text_value,'|',' '),'\','\\'),E'\n',' ')	AS TEXT_RESULT_VAL
 	, vit.orphan						AS ORPHAN_FLAG
 	, vit.orphan_reason					AS ORPHAN_REASON
 	, SPLIT_PART(map_vit.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
