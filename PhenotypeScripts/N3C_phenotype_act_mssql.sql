@@ -34,7 +34,7 @@ CREATE TABLE @resultsDatabaseSchema.n3c_cohort (
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
 	inc_lab				INT  NOT NULL,
-    	dx_asymp            INT  NOT NULL,
+    exc_dx_asymp        INT  NOT NULL,
 	phenotype_version 	VARCHAR(10)
 );
 
@@ -323,7 +323,7 @@ n3c_cohort as
 
 )
 
-INSERT INTO  @resultsDatabaseSchema.n3c_cohort (patient_num,inc_dx_strong,inc_dx_weak,inc_lab,dx_asymp,phenotype_version)
+INSERT INTO  @resultsDatabaseSchema.n3c_cohort (patient_num,inc_dx_strong,inc_dx_weak,inc_lab,exc_dx_asymp,phenotype_version)
 SELECT patient_num, inc_dx_strong, inc_dx_weak, inc_lab, exc_dx_asymp, '2.2' as phenotype_version
 from n3c_cohort
 where exc_dx_asymp = 0
