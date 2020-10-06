@@ -1,5 +1,5 @@
 --PCORNet 5.1 extraction code for N3C
---Written by Emily Pfaff, UNC Chapel Hill; Harold Lehmann, JHU
+--Written by Emily Pfaff, UNC Chapel Hill, Harold Lehmann, JHU
 --Code written for MS SQL Server
 --This extract purposefully excludes the following PCORnet tables: ENROLLMENT, HARVEST, HASH_TOKEN, PCORNET_TRIAL
 --Assumptions:
