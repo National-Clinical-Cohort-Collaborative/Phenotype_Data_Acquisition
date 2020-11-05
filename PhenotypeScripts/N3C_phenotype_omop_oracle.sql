@@ -14,7 +14,7 @@ V2.2 - added back OMOP Extension code (765055), removal of generic LOINC codes a
 Script changes between 10-29 & 11-05: simplified script to human-written SQL (versus ATLAS generated) to enable debugging by individual OMOP sites.
 
 HOW TO RUN:
-You will need to find and replace @cdmDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
+You will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
 
 USER NOTES: 
 In OHDSI conventions, we do not usually write tables to the main database schema. 
@@ -151,7 +151,7 @@ FROM @cdmDatabaseSchema.MEASUREMENT
 SELECT DISTINCT person_id
 FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
   WHERE condition_concept_id IN (SELECT concept_id
-		FROM @vocabulary_database_schema.CONCEPT
+		FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms
 		  WHERE concept_id IN (
@@ -177,7 +177,7 @@ FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 SELECT DISTINCT person_id
 FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
   WHERE condition_concept_id IN (SELECT concept_id
-		FROM @vocabulary_database_schema.CONCEPT
+		FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- This is the list of standard concepts that represent those terms
 		    WHERE concept_id IN (
@@ -195,8 +195,8 @@ FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 		   UNION
 		
 		SELECT c.concept_id
-		FROM @vocabulary_database_schema.CONCEPT c
-		JOIN @vocabulary_database_schema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
+		FROM @cdmDatabaseSchema.CONCEPT c
+		JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
 		-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
 			AND ca.ancestor_concept_id IN (
 				756044,
@@ -228,7 +228,7 @@ SELECT DISTINCT person_id
 FROM (SELECT person_id
 	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 	  WHERE condition_concept_id IN (SELECT concept_id
-			FROM @vocabulary_database_schema.CONCEPT
+			FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms
@@ -320,7 +320,7 @@ SELECT DISTINCT person_id
 FROM (SELECT person_id
 	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 	  WHERE condition_concept_id IN (SELECT concept_id
-			FROM @vocabulary_database_schema.CONCEPT
+			FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms	
@@ -413,7 +413,7 @@ SELECT DISTINCT person_id
 FROM (SELECT person_id
 	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 	  WHERE condition_concept_id IN (SELECT concept_id
-			FROM @vocabulary_database_schema.CONCEPT
+			FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms	
@@ -505,7 +505,7 @@ SELECT DISTINCT person_id
 FROM (SELECT person_id
 	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 	  WHERE condition_concept_id IN (SELECT concept_id
-			FROM @vocabulary_database_schema.CONCEPT
+			FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those term

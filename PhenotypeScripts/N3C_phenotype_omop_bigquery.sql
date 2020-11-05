@@ -14,7 +14,7 @@ V2.2 - added back OMOP Extension code (765055), removal of generic LOINC codes a
 Script changes between 10-29 & 11-05: simplified script to human-written SQL (versus ATLAS generated) to enable debugging by individual OMOP sites.
 
 HOW TO RUN:
-You will need to find and replace @cdmDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
+You will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
 
 USER NOTES: 
 In OHDSI conventions, we do not usually write tables to the main database schema. 
@@ -135,7 +135,7 @@ union distinct select distinct person_id
 from @cdmDatabaseSchema.condition_occurrence
 where condition_concept_id in (
 		select concept_id
-		from @vocabulary_database_schema.concept
+		from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms
 		where concept_id in (
@@ -159,7 +159,7 @@ union distinct select distinct person_id
 from @cdmDatabaseSchema.condition_occurrence
 where condition_concept_id in (
 		select concept_id
-		from @vocabulary_database_schema.concept
+		from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- This is the list of standard concepts that represent those terms
 		where concept_id in (
@@ -175,8 +175,8 @@ where condition_concept_id in (
 				)
 		
 		union distinct select c.concept_id
-		from @vocabulary_database_schema.concept c
-		join @vocabulary_database_schema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
+		from @cdmDatabaseSchema.concept c
+		join @cdmDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
 		-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
 			and ca.ancestor_concept_id in (
 				756044,
@@ -205,7 +205,7 @@ from (
 	  from @cdmDatabaseSchema.condition_occurrence
 	where condition_concept_id in (
 			select concept_id
-			from @vocabulary_database_schema.concept
+			from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms
@@ -295,7 +295,7 @@ from (
 	  from @cdmDatabaseSchema.condition_occurrence
 	where condition_concept_id in (
 			select concept_id
-			from @vocabulary_database_schema.concept
+			from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms	
@@ -384,7 +384,7 @@ from (
 	  from @cdmDatabaseSchema.condition_occurrence
 	where condition_concept_id in (
 			select concept_id
-			from @vocabulary_database_schema.concept
+			from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms	
@@ -474,7 +474,7 @@ from (
 	  from @cdmDatabaseSchema.condition_occurrence
 	where condition_concept_id in (
 			select concept_id
-			from @vocabulary_database_schema.concept
+			from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
 		-- This is the list of standard concepts that represent those term
