@@ -16,9 +16,9 @@ Script changes between 10-29 & 11-05: simplified script to human-written SQL (ve
 HOW TO RUN:
 You will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
 
-USER NOTES: 
-In OHDSI conventions, we do not usually write tables to the main database schema. 
-OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis. 
+USER NOTES:
+In OHDSI conventions, we do not usually write tables to the main database schema.
+OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis.
 We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdmDatabaseSchema.
 To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
@@ -49,10 +49,6 @@ create table @resultsDatabaseSchema.phenotype_execution (
 
 
 insert into @resultsDatabaseSchema.n3c_cohort
-select distinct person_id
-from
-(
-
 -- Phenotype Entry Criteria: A lab confirmed positive test
 select distinct person_id
 from @cdmDatabaseSchema.measurement
@@ -100,7 +96,7 @@ where measurement_concept_id in (
 				,757686
 				,756055
 				)
-		
+
 		union distinct select c.concept_id
 		from @cdmDatabaseSchema.concept c
 		join @cdmDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
@@ -173,7 +169,7 @@ where condition_concept_id in (
 				756081,
 				37310285
 				)
-		
+
 		union distinct select c.concept_id
 		from @cdmDatabaseSchema.concept c
 		join @cdmDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
@@ -196,7 +192,7 @@ where condition_concept_id in (
 				)
 			and c.invalid_reason is null
 		)
-	
+
 	and condition_start_date >= DATE(2020, 04, 01)
 
 union distinct select distinct person_id
@@ -298,7 +294,7 @@ from (
 			from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
-		-- This is the list of standard concepts that represent those terms	
+		-- This is the list of standard concepts that represent those terms
 			where concept_id in (
 					260125,
 					260139,
@@ -387,7 +383,7 @@ from (
 			from @cdmDatabaseSchema.concept
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
-		-- This is the list of standard concepts that represent those terms	
+		-- This is the list of standard concepts that represent those terms
 			where concept_id in (
 					260125,
 					260139,
@@ -576,7 +572,7 @@ where measurement_concept_id in (
 				,757686
 				,756055
 				)
-		
+
 		union distinct select c.concept_id
 		from @cdmDatabaseSchema.concept c
 		join @cdmDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
@@ -595,10 +591,7 @@ where measurement_concept_id in (
 		where observation_source_concept_id = 45595484
 			and observation_date >= DATE(2020, 04, 01)
 		)
-		
-		
-) 
-;
+		;
 
 
 

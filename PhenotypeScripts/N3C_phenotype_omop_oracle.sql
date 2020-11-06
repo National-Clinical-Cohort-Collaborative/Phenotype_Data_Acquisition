@@ -16,9 +16,9 @@ Script changes between 10-29 & 11-05: simplified script to human-written SQL (ve
 HOW TO RUN:
 You will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
 
-USER NOTES: 
-In OHDSI conventions, we do not usually write tables to the main database schema. 
-OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis. 
+USER NOTES:
+In OHDSI conventions, we do not usually write tables to the main database schema.
+OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis.
 We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdmDatabaseSchema.
 To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
@@ -65,8 +65,8 @@ CREATE TABLE @resultsDatabaseSchema.phenotype_execution (
 
 
 INSERT INTO @resultsDatabaseSchema.n3c_cohort
+-- Phenotype Entry Criteria: A lab confirmed positive test
 SELECT DISTINCT person_id
-FROM (SELECT DISTINCT person_id
 FROM @cdmDatabaseSchema.MEASUREMENT
     WHERE measurement_concept_id IN (SELECT concept_id
 		FROM @cdmDatabaseSchema.CONCEPT
@@ -111,9 +111,9 @@ FROM @cdmDatabaseSchema.MEASUREMENT
 				,757686
 				,756055
 				)
-		
+
 		   UNION
-		
+
 		SELECT c.concept_id
 		FROM @cdmDatabaseSchema.CONCEPT c
 		JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
@@ -150,7 +150,7 @@ FROM @cdmDatabaseSchema.MEASUREMENT
 -- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
 SELECT DISTINCT person_id
 FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
-  WHERE condition_concept_id IN (SELECT concept_id
+    WHERE condition_concept_id IN (SELECT concept_id
 		FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki
 		-- This is the list of standard concepts that represent those terms
@@ -176,7 +176,7 @@ FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 -- The CDC issued guidance on April 1, 2020 that changed COVID coding conventions
 SELECT DISTINCT person_id
 FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
-  WHERE condition_concept_id IN (SELECT concept_id
+    WHERE condition_concept_id IN (SELECT concept_id
 		FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- This is the list of standard concepts that represent those terms
@@ -191,9 +191,9 @@ FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 				756081,
 				37310285
 				)
-		
+
 		   UNION
-		
+
 		SELECT c.concept_id
 		FROM @cdmDatabaseSchema.CONCEPT c
 		JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
@@ -216,7 +216,7 @@ FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
 				)
 			AND c.invalid_reason IS NULL
 		 )
-	
+
 	AND condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
 
    UNION
@@ -323,7 +323,7 @@ FROM (SELECT person_id
 			FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
-		-- This is the list of standard concepts that represent those terms	
+		-- This is the list of standard concepts that represent those terms
 			  WHERE concept_id IN (
 					260125,
 					260139,
@@ -416,7 +416,7 @@ FROM (SELECT person_id
 			FROM @cdmDatabaseSchema.CONCEPT
 		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
 		-- It also includes the OMOP only codes that are on the Phenotype Wiki
-		-- This is the list of standard concepts that represent those terms	
+		-- This is the list of standard concepts that represent those terms
 			  WHERE concept_id IN (
 					260125,
 					260139,
@@ -565,13 +565,13 @@ FROM (SELECT person_id
   UNION
 
 -- 4) ONE or more of the lab tests in the Labs table, regardless of result (unless negative and accompanied by a Z11.59)
--- Patient was assigned code Z11.59 (viral screening code; used per CDC guidance to indicate asymptomatic covid screening) on or after 4/1/2020, 
+-- Patient was assigned code Z11.59 (viral screening code; used per CDC guidance to indicate asymptomatic covid screening) on or after 4/1/2020,
 -- and does NOT also have a record of a positive covid test or a â€œstrong positiveâ€? diagnosis code.
 
 -- We begin by looking for ANY COVID measurement
 SELECT DISTINCT person_id
 FROM @cdmDatabaseSchema.MEASUREMENT
-WHERE measurement_concept_id IN (SELECT concept_id
+          WHERE measurement_concept_id IN (SELECT concept_id
 		FROM @cdmDatabaseSchema.CONCEPT
 		-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
 		    WHERE concept_id IN (
@@ -614,9 +614,9 @@ WHERE measurement_concept_id IN (SELECT concept_id
 				,757686
 				,756055
 				)
-		
+
 		   UNION
-		
+
 		SELECT c.concept_id
 		FROM @cdmDatabaseSchema.CONCEPT c
 		JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
@@ -634,10 +634,7 @@ WHERE measurement_concept_id IN (SELECT concept_id
 		  WHERE observation_source_concept_id = 45595484
 			AND observation_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
 		 )
-		
-		
- ) 
- ;
+		               ;
 
 
 
