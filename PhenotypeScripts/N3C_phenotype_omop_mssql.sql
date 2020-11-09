@@ -1,5 +1,5 @@
 /**
-Change log:
+CHANGE LOG:
 V1.1 - initial commit
 V1.2 - updated possible positive cases (typo in name of concept set name) and added additional NIH VSAC codeset_id
 V1.3 - consolidated to single cohort definition and added N3C COHORT table + labeling statements
@@ -10,26 +10,23 @@ V2.0 - dropping weak diagnosis after May 1, adding asymptomatic test code (Z11.5
 changing logic related to inclusion of qualitative test results
 V2.1 - removed HCPCS/CPT4 concept set and PROCEDURE_OCCURRENCE criteria, removed censoring and fixed inclusion entry event instead
 NOTE: LOINC codes from LOINC release V2.68 remain unsupported in the OHDSI vocabulary as of Phenotype V2.1 release. Issue is raised with OHDSI Vocab team and will be updated in concept sets as soon as CONCEPT table includes this and is pushed to community.
+V2.2 - added back OMOP Extension code (765055), removal of generic LOINC codes and recent modification of faulty use of value_as_concept logic
+Script changes between 10-29 & 11-05: simplified script to human-written SQL (versus ATLAS generated) to enable debugging by individual OMOP sites.
 
-Instructions:
-Cohorts were assembled using OHDSI Atlas (atlas-covid19.ohdsi.org)
-This MS SQL script is the artifact of this ATLAS cohort definition: http://atlas-covid19.ohdsi.org/#/cohortdefinition/1119
-If desired to evaluate feasibility of each cohort, individual cohorts are available:
-1- Lab-confirmed positive cases (http://atlas-covid19.ohdsi.org/#/cohortdefinition/655)
-2- Lab-confirmed negative cases (http://atlas-covid19.ohdsi.org/#/cohortdefinition/656)
-3- Suspected positive cases	(http://atlas-covid19.ohdsi.org/#/cohortdefinition/657)
-4- Possible positive cases (http://atlas-covid19.ohdsi.org/#/cohortdefinition/658)
+HOW TO RUN:
+You will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
 
-To run, you will need to find and replace @cdmDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details
-Harmonization note:
+USER NOTES:
 In OHDSI conventions, we do not usually write tables to the main database schema.
-NOTE: OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis. We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdmDatabaseSchema.
+OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis.
+We built the N3C_COHORT table in this results schema as we know many OMOP analyst do not have write access to their @cdmDatabaseSchema.
+To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
-
-Begin building cohort following OHDSI standard cohort definition process
-
+SCRIPT RELEASE DATE: 11-05-2020
 
 **/
+
+/** Creating the N3C Cohort table **/
 
 --DROP TABLE IF EXISTS @resultsDatabaseSchema.n3c_cohort; -- RUN THIS LINE AFTER FIRST BUILD
 IF OBJECT_ID('@resultsDatabaseSchema.n3c_cohort', 'U') IS NOT NULL           -- Drop temp table if it exists
@@ -45,791 +42,603 @@ IF OBJECT_ID('@resultsDatabaseSchema.phenotype_execution', 'U') IS NOT NULL     
   DROP TABLE @resultsDatabaseSchema.phenotype_execution;
 
 -- Create dest table
+-- Here we need to know when you ran the phenotype, what version you're using and what vocabulary version you've built your OMOP concepts on
 CREATE TABLE @resultsDatabaseSchema.phenotype_execution (
 	run_datetime datetime2 NOT NULL,
 	phenotype_version varchar(50) NOT NULL,
 	vocabulary_version varchar(50) NULL
 );
 
--- OHDSI ATLAS generated cohort logic
-CREATE TABLE #Codesets (
-  codeset_id int NOT NULL,
-  concept_id bigint NOT NULL
-)
-;
 
-INSERT INTO #Codesets (codeset_id, concept_id)
-SELECT 0 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
-( 
-  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (586515,586522,706179,586521,723459,706181,706177,706176,706180,706178,706167,706157,706155,757678,706161,586520,706175,706156,706154,706168,715262,586526,757677,706163,715260,715261,706170,706158,706169,706160,706173,586519,586516,757680,757679,586517,757686,756055)
-UNION  select c.concept_id
-  from @cdmDatabaseSchema.CONCEPT c
-  join @cdmDatabaseSchema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (756055)
-  and c.invalid_reason is null
-
-) I
-) C;
-INSERT INTO #Codesets (codeset_id, concept_id)
-SELECT 2 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
-( 
-  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326,320651)
-
-) I
-) C;
-INSERT INTO #Codesets (codeset_id, concept_id)
-SELECT 3 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
-( 
-  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,320651,4100065)
-UNION  select c.concept_id
-  from @cdmDatabaseSchema.CONCEPT c
-  join @cdmDatabaseSchema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,320651,4100065)
-  and c.invalid_reason is null
-
-) I
-) C;
-INSERT INTO #Codesets (codeset_id, concept_id)
-SELECT 4 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
-( 
-  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060)
-UNION  select c.concept_id
-  from @cdmDatabaseSchema.CONCEPT c
-  join @cdmDatabaseSchema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (756023,756044,756061,756031,37311061,756081,37310285,756039,37311060,756023,756044,756061,756031,37311061,756081,37310285,756039,37311060)
-  and c.invalid_reason is null
-
-) I
-) C;
-INSERT INTO #Codesets (codeset_id, concept_id)
-SELECT 5 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
-( 
-  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (260125,260139,46271075,4307774,4195694,257011,442555,4059022,4059021,256451,4059003,4168213,434490,439676,254761,4048098,37311061,4100065,320136,4038519,312437,4060052,4263848,37311059,37016200,4011766,437663,4141062,4164645,4047610,4260205,4185711,4289517,4140453,4090569,4109381,4330445,255848,4102774,436235,261326)
-
-) I
-) C;
-INSERT INTO #Codesets (codeset_id, concept_id)
-SELECT 6 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
-( 
-  select concept_id from @cdmDatabaseSchema.CONCEPT where concept_id in (45595484)
-
-) I
-) C;
-
-
-with primary_events (event_id, person_id, start_date, end_date, op_start_date, op_end_date, visit_occurrence_id) as
-(
--- Begin Primary Events
-select P.ordinal as event_id, P.person_id, P.start_date, P.end_date, op_start_date, op_end_date, cast(P.visit_occurrence_id as bigint) as visit_occurrence_id
-FROM
-(
-  select E.person_id, E.start_date, E.end_date,
-         row_number() OVER (PARTITION BY E.person_id ORDER BY E.sort_date ASC) ordinal,
-         OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date, cast(E.visit_occurrence_id as bigint) as visit_occurrence_id
-  FROM 
-  (
-  -- Begin Measurement Criteria
-select C.person_id, C.measurement_id as event_id, C.measurement_date as start_date, DATEADD(d,1,C.measurement_date) as END_DATE,
-       C.measurement_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.measurement_date as sort_date
-from 
-(
-  select m.* 
-  FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN #Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
-) C
-
-WHERE C.measurement_date >= DATEFROMPARTS(2020, 01, 01)
-AND ( C.value_as_concept_id in (4126681,45877985,45884084,9191)
-	OR
-	C.value_source_value in ('Positive', 'Present', 'Detected')
-	)
--- End Measurement Criteria
-
-UNION ALL
--- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 01, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 03, 31))
--- End Condition Occurrence Criteria
-
-UNION ALL
--- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
-) C
-
-WHERE C.condition_start_date >= DATEFROMPARTS(2020, 04, 01)
--- End Condition Occurrence Criteria
-
-UNION ALL
-select PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_id, PE.visit_occurrence_id, PE.sort_date FROM (
--- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 01, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 03, 31))
--- End Condition Occurrence Criteria
-
-) PE
-JOIN (
--- Begin Criteria Group
-select 0 as index_id, person_id, event_id
-FROM
-(
-  select E.person_id, E.event_id 
-  FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 01, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 03, 31))
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) E
-  INNER JOIN
-  (
-    -- Begin Correlated Criteria
-SELECT 0 as index_id, p.person_id, p.event_id
-FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 01, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 03, 31))
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) P
-INNER JOIN
-(
-  -- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 5))
-) C
-
-
--- End Condition Occurrence Criteria
-
-) A on A.person_id = P.person_id  AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE AND A.START_DATE >= DATEADD(day,0,P.START_DATE) AND A.START_DATE <= DATEADD(day,0,P.START_DATE)
-GROUP BY p.person_id, p.event_id
-HAVING COUNT(DISTINCT A.TARGET_CONCEPT_ID) >= 2
--- End Correlated Criteria
-
-  ) CQ on E.person_id = CQ.person_id and E.event_id = CQ.event_id
-  GROUP BY E.person_id, E.event_id
-  HAVING COUNT(index_id) = 1
-) G
--- End Criteria Group
-) AC on AC.person_id = pe.person_id and AC.event_id = pe.event_id
-
-UNION ALL
-select PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_id, PE.visit_occurrence_id, PE.sort_date FROM (
--- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 04, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 05, 01))
--- End Condition Occurrence Criteria
-
-) PE
-JOIN (
--- Begin Criteria Group
-select 0 as index_id, person_id, event_id
-FROM
-(
-  select E.person_id, E.event_id 
-  FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 04, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 05, 01))
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) E
-  INNER JOIN
-  (
-    -- Begin Correlated Criteria
-SELECT 0 as index_id, p.person_id, p.event_id
-FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 04, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 05, 01))
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) P
-INNER JOIN
-(
-  -- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 2))
-) C
-
-
--- End Condition Occurrence Criteria
-
-) A on A.person_id = P.person_id  AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE AND A.START_DATE >= DATEADD(day,0,P.START_DATE) AND A.START_DATE <= DATEADD(day,0,P.START_DATE)
-GROUP BY p.person_id, p.event_id
-HAVING COUNT(DISTINCT A.TARGET_CONCEPT_ID) >= 2
--- End Correlated Criteria
-
-  ) CQ on E.person_id = CQ.person_id and E.event_id = CQ.event_id
-  GROUP BY E.person_id, E.event_id
-  HAVING COUNT(index_id) = 1
-) G
--- End Criteria Group
-) AC on AC.person_id = pe.person_id and AC.event_id = pe.event_id
-
-UNION ALL
-select PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_id, PE.visit_occurrence_id, PE.sort_date FROM (
--- Begin Observation Criteria
-select C.person_id, C.observation_id as event_id, C.observation_date as start_date, DATEADD(d,1,C.observation_date) as END_DATE,
-       C.observation_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.observation_date as sort_date
-from 
-(
-  select o.* 
-  FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN #Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
-) C
-
-WHERE C.observation_date >= DATEFROMPARTS(2020, 04, 01)
--- End Observation Criteria
-
-) PE
-JOIN (
--- Begin Criteria Group
-select 0 as index_id, person_id, event_id
-FROM
-(
-  select E.person_id, E.event_id 
-  FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Observation Criteria
-select C.person_id, C.observation_id as event_id, C.observation_date as start_date, DATEADD(d,1,C.observation_date) as END_DATE,
-       C.observation_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.observation_date as sort_date
-from 
-(
-  select o.* 
-  FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN #Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
-) C
-
-WHERE C.observation_date >= DATEFROMPARTS(2020, 04, 01)
--- End Observation Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) E
-  INNER JOIN
-  (
-    -- Begin Correlated Criteria
-SELECT 0 as index_id, p.person_id, p.event_id
-FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Observation Criteria
-select C.person_id, C.observation_id as event_id, C.observation_date as start_date, DATEADD(d,1,C.observation_date) as END_DATE,
-       C.observation_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.observation_date as sort_date
-from 
-(
-  select o.* 
-  FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN #Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
-) C
-
-WHERE C.observation_date >= DATEFROMPARTS(2020, 04, 01)
--- End Observation Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) P
-INNER JOIN
-(
-  select PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_id, PE.visit_occurrence_id, PE.sort_date FROM (
--- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
-) C
-
-WHERE C.condition_start_date >= DATEFROMPARTS(2020, 04, 01)
--- End Condition Occurrence Criteria
-
-) PE
-JOIN (
--- Begin Criteria Group
-select 0 as index_id, person_id, event_id
-FROM
-(
-  select E.person_id, E.event_id 
-  FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
-) C
-
-WHERE C.condition_start_date >= DATEFROMPARTS(2020, 04, 01)
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) E
-  LEFT JOIN
-  (
-    -- Begin Correlated Criteria
-SELECT 0 as index_id, p.person_id, p.event_id
-FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 4))
-) C
-
-WHERE C.condition_start_date >= DATEFROMPARTS(2020, 04, 01)
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) P
-INNER JOIN
-(
-  -- Begin Measurement Criteria
-select C.person_id, C.measurement_id as event_id, C.measurement_date as start_date, DATEADD(d,1,C.measurement_date) as END_DATE,
-       C.measurement_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.measurement_date as sort_date
-from 
-(
-  select m.* 
-  FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN #Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
-) C
-
-WHERE C.value_as_concept_id in (45878583,37079494,1177295,36307756,36309158,36308436,9189)
--- End Measurement Criteria
-
-) A on A.person_id = P.person_id  AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE
-GROUP BY p.person_id, p.event_id
-HAVING COUNT(A.TARGET_CONCEPT_ID) >= 1
--- End Correlated Criteria
-
-  ) CQ on E.person_id = CQ.person_id and E.event_id = CQ.event_id
-  GROUP BY E.person_id, E.event_id
-  HAVING COUNT(index_id) <= 0
-) G
--- End Criteria Group
-) AC on AC.person_id = pe.person_id and AC.event_id = pe.event_id
-
-) A on A.person_id = P.person_id  AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE
-GROUP BY p.person_id, p.event_id
-HAVING COUNT(A.TARGET_CONCEPT_ID) >= 1
--- End Correlated Criteria
-
-UNION ALL
--- Begin Correlated Criteria
-SELECT 1 as index_id, p.person_id, p.event_id
-FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Observation Criteria
-select C.person_id, C.observation_id as event_id, C.observation_date as start_date, DATEADD(d,1,C.observation_date) as END_DATE,
-       C.observation_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.observation_date as sort_date
-from 
-(
-  select o.* 
-  FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN #Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
-) C
-
-WHERE C.observation_date >= DATEFROMPARTS(2020, 04, 01)
--- End Observation Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) P
-INNER JOIN
-(
-  select PE.person_id, PE.event_id, PE.start_date, PE.end_date, PE.target_concept_id, PE.visit_occurrence_id, PE.sort_date FROM (
--- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 01, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 03, 31))
--- End Condition Occurrence Criteria
-
-) PE
-JOIN (
--- Begin Criteria Group
-select 0 as index_id, person_id, event_id
-FROM
-(
-  select E.person_id, E.event_id 
-  FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 01, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 03, 31))
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) E
-  LEFT JOIN
-  (
-    -- Begin Correlated Criteria
-SELECT 0 as index_id, p.person_id, p.event_id
-FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Condition Occurrence Criteria
-SELECT C.person_id, C.condition_occurrence_id as event_id, C.condition_start_date as start_date, COALESCE(C.condition_end_date, DATEADD(day,1,C.condition_start_date)) as end_date,
-       C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.condition_start_date as sort_date
-FROM 
-(
-  SELECT co.* 
-  FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE co
-  JOIN #Codesets codesets on ((co.condition_concept_id = codesets.concept_id and codesets.codeset_id = 3))
-) C
-
-WHERE (C.condition_start_date >= DATEFROMPARTS(2020, 01, 01) and C.condition_start_date <= DATEFROMPARTS(2020, 03, 31))
--- End Condition Occurrence Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) P
-INNER JOIN
-(
-  -- Begin Measurement Criteria
-select C.person_id, C.measurement_id as event_id, C.measurement_date as start_date, DATEADD(d,1,C.measurement_date) as END_DATE,
-       C.measurement_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.measurement_date as sort_date
-from 
-(
-  select m.* 
-  FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN #Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
-) C
-
-WHERE C.value_as_concept_id in (45878583,37079494,1177295,36307756,36309158,36308436,9189)
--- End Measurement Criteria
-
-) A on A.person_id = P.person_id  AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE
-GROUP BY p.person_id, p.event_id
-HAVING COUNT(A.TARGET_CONCEPT_ID) >= 1
--- End Correlated Criteria
-
-  ) CQ on E.person_id = CQ.person_id and E.event_id = CQ.event_id
-  GROUP BY E.person_id, E.event_id
-  HAVING COUNT(index_id) <= 0
-) G
--- End Criteria Group
-) AC on AC.person_id = pe.person_id and AC.event_id = pe.event_id
-
-) A on A.person_id = P.person_id  AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE
-GROUP BY p.person_id, p.event_id
-HAVING COUNT(A.TARGET_CONCEPT_ID) >= 1
--- End Correlated Criteria
-
-UNION ALL
--- Begin Correlated Criteria
-SELECT 2 as index_id, p.person_id, p.event_id
-FROM (SELECT Q.person_id, Q.event_id, Q.start_date, Q.end_date, Q.visit_occurrence_id, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date
-FROM (-- Begin Observation Criteria
-select C.person_id, C.observation_id as event_id, C.observation_date as start_date, DATEADD(d,1,C.observation_date) as END_DATE,
-       C.observation_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.observation_date as sort_date
-from 
-(
-  select o.* 
-  FROM @cdmDatabaseSchema.OBSERVATION o
-JOIN #Codesets codesets on ((o.observation_source_concept_id = codesets.concept_id and codesets.codeset_id = 6))
-) C
-
-WHERE C.observation_date >= DATEFROMPARTS(2020, 04, 01)
--- End Observation Criteria
-) Q
-JOIN @cdmDatabaseSchema.OBSERVATION_PERIOD OP on Q.person_id = OP.person_id 
-  and OP.observation_period_start_date <= Q.start_date and OP.observation_period_end_date >= Q.start_date
-) P
-INNER JOIN
-(
-  -- Begin Measurement Criteria
-select C.person_id, C.measurement_id as event_id, C.measurement_date as start_date, DATEADD(d,1,C.measurement_date) as END_DATE,
-       C.measurement_concept_id as TARGET_CONCEPT_ID, C.visit_occurrence_id,
-       C.measurement_date as sort_date
-from 
-(
-  select m.* 
-  FROM @cdmDatabaseSchema.MEASUREMENT m
-JOIN #Codesets codesets on ((m.measurement_concept_id = codesets.concept_id and codesets.codeset_id = 0))
-) C
-
-WHERE C.value_as_concept_id in (4126681,45877985,45884084,9191)
--- End Measurement Criteria
-
-) A on A.person_id = P.person_id  AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE AND A.START_DATE >= P.OP_START_DATE AND A.START_DATE <= P.OP_END_DATE
-GROUP BY p.person_id, p.event_id
-HAVING COUNT(A.TARGET_CONCEPT_ID) >= 1
--- End Correlated Criteria
-
-  ) CQ on E.person_id = CQ.person_id and E.event_id = CQ.event_id
-  GROUP BY E.person_id, E.event_id
-  HAVING COUNT(index_id) >= 1
-) G
--- End Criteria Group
-) AC on AC.person_id = pe.person_id and AC.event_id = pe.event_id
-
-  ) E
-	JOIN @cdmDatabaseSchema.observation_period OP on E.person_id = OP.person_id and E.start_date >=  OP.observation_period_start_date and E.start_date <= op.observation_period_end_date
-  WHERE DATEADD(day,0,OP.OBSERVATION_PERIOD_START_DATE) <= E.START_DATE AND DATEADD(day,0,E.START_DATE) <= OP.OBSERVATION_PERIOD_END_DATE
-) P
-WHERE P.ordinal = 1
--- End Primary Events
-
-)
-SELECT event_id, person_id, start_date, end_date, op_start_date, op_end_date, visit_occurrence_id
-INTO #qualified_events
-FROM 
-(
-  select pe.event_id, pe.person_id, pe.start_date, pe.end_date, pe.op_start_date, pe.op_end_date, row_number() over (partition by pe.person_id order by pe.start_date ASC) as ordinal, cast(pe.visit_occurrence_id as bigint) as visit_occurrence_id
-  FROM primary_events pe
-  
-) QE
-
-;
-
---- Inclusion Rule Inserts
-
-create table #inclusion_events (inclusion_rule_id bigint,
-	person_id bigint,
-	event_id bigint
-);
-
-with cteIncludedEvents(event_id, person_id, start_date, end_date, op_start_date, op_end_date, ordinal) as
-(
-  SELECT event_id, person_id, start_date, end_date, op_start_date, op_end_date, row_number() over (partition by person_id order by start_date ASC) as ordinal
-  from
-  (
-    select Q.event_id, Q.person_id, Q.start_date, Q.end_date, Q.op_start_date, Q.op_end_date, SUM(coalesce(POWER(cast(2 as bigint), I.inclusion_rule_id), 0)) as inclusion_rule_mask
-    from #qualified_events Q
-    LEFT JOIN #inclusion_events I on I.person_id = Q.person_id and I.event_id = Q.event_id
-    GROUP BY Q.event_id, Q.person_id, Q.start_date, Q.end_date, Q.op_start_date, Q.op_end_date
-  ) MG -- matching groups
-
-)
-select event_id, person_id, start_date, end_date, op_start_date, op_end_date
-into #included_events
-FROM cteIncludedEvents Results
-WHERE Results.ordinal = 1
-;
-
-
-
--- generate cohort periods into #final_cohort
-with cohort_ends (event_id, person_id, end_date) as
-(
-	-- cohort exit dates
-  -- By default, cohort exit at the event's op end date
-select event_id, person_id, op_end_date as end_date from #included_events
-),
-first_ends (person_id, start_date, end_date) as
-(
-	select F.person_id, F.start_date, F.end_date
-	FROM (
-	  select I.event_id, I.person_id, I.start_date, E.end_date, row_number() over (partition by I.person_id, I.event_id order by E.end_date) as ordinal 
-	  from #included_events I
-	  join cohort_ends E on I.event_id = E.event_id and I.person_id = E.person_id and E.end_date >= I.start_date
-	) F
-	WHERE F.ordinal = 1
-)
-select person_id, start_date, end_date
-INTO #cohort_rows
-from first_ends;
-
-with cteEndDates (person_id, end_date) AS -- the magic
-(	
-	SELECT
-		person_id
-		, DATEADD(day,-1 * 0, event_date)  as end_date
-	FROM
-	(
-		SELECT
-			person_id
-			, event_date
-			, event_type
-			, MAX(start_ordinal) OVER (PARTITION BY person_id ORDER BY event_date, event_type ROWS UNBOUNDED PRECEDING) AS start_ordinal 
-			, ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY event_date, event_type) AS overall_ord
-		FROM
-		(
-			SELECT
-				person_id
-				, start_date AS event_date
-				, -1 AS event_type
-				, ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY start_date) AS start_ordinal
-			FROM #cohort_rows
-		
-			UNION ALL
-		
-
-			SELECT
-				person_id
-				, DATEADD(day,0,end_date) as end_date
-				, 1 AS event_type
-				, NULL
-			FROM #cohort_rows
-		) RAWDATA
-	) e
-	WHERE (2 * e.start_ordinal) - e.overall_ord = 0
-),
-cteEnds (person_id, start_date, end_date) AS
-(
-	SELECT
-		 c.person_id
-		, c.start_date
-		, MIN(e.end_date) AS end_date
-	FROM #cohort_rows c
-	JOIN cteEndDates e ON c.person_id = e.person_id AND e.end_date >= c.start_date
-	GROUP BY c.person_id, c.start_date
-),
-final_cohort (person_id, start_date, end_date) AS
-(
-select person_id, min(start_date) as start_date, end_date
-from cteEnds
-group by person_id, end_date
-)
-
---# BEGIN N3C_COHORT table to be retained
-
---SELECT person_id
 INSERT INTO @resultsDatabaseSchema.n3c_cohort
-SELECT DISTINCT
-    person_id
-FROM final_cohort;
+-- Phenotype Entry Criteria: A lab confirmed positive test
+SELECT DISTINCT person_id
+FROM @cdmDatabaseSchema.MEASUREMENT
+WHERE measurement_concept_id IN (
+		SELECT concept_id
+		FROM @cdmDatabaseSchema.CONCEPT
+		-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
+		WHERE concept_id IN (
+				586515
+				,586522
+				,706179
+				,586521
+				,723459
+				,706181
+				,706177
+				,706176
+				,706180
+				,706178
+				,706167
+				,706157
+				,706155
+				,757678
+				,706161
+				,586520
+				,706175
+				,706156
+				,706154
+				,706168
+				,715262
+				,586526
+				,757677
+				,706163
+				,715260
+				,715261
+				,706170
+				,706158
+				,706169
+				,706160
+				,706173
+				,586519
+				,586516
+				,757680
+				,757679
+				,586517
+				,757686
+				,756055
+				)
+
+		UNION
+
+		SELECT c.concept_id
+		FROM @cdmDatabaseSchema.CONCEPT c
+		JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
+		-- Most of the LOINC codes do not have descendants but there is one OMOP Extension code (765055) in use that has descendants which we want to pull
+		-- This statement pulls the descendants of that specific code
+			AND ca.ancestor_concept_id IN (756055)
+			AND c.invalid_reason IS NULL
+		)
+	-- Here we add a date restriction: after January 1, 2020
+	AND measurement_date >= DATEFROMPARTS(2020, 01, 01)
+	AND (
+	-- The value_as_concept field is where we store standardized qualitative results
+	-- The concept ids here represent LOINC or SNOMED codes for standard ways to code a lab that is positive
+		value_as_concept_id IN (
+			45878583
+			,37079494
+			,1177295
+			,36307756
+			,36309158
+			,36308436
+			,9189
+			)
+	-- To be exhaustive, we also look for Positive strings in the value_source_value field
+		OR value_source_value IN (
+			'Positive'
+			,'Present'
+			,'Detected'
+			)
+		)
+
+UNION
+
+-- Phenotype Entry Criteria: ONE or more of the “Strong Positive” diagnosis codes from the ICD-10 or SNOMED tables
+-- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
+SELECT DISTINCT person_id
+FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
+WHERE condition_concept_id IN (
+		SELECT concept_id
+		FROM @cdmDatabaseSchema.CONCEPT
+		-- The list of ICD-10 codes in the Phenotype Wiki
+		-- This is the list of standard concepts that represent those terms
+		WHERE concept_id IN (
+			756023,
+			756044,
+			756061,
+			756031,
+			37311061,
+			756081,
+			37310285,
+			756039,
+			320651,
+			37311060
+			)
+		)
+	-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
+	AND condition_start_date BETWEEN DATEFROMPARTS(2020, 01, 01)
+		AND DATEFROMPARTS(2020, 03, 31)
+
+UNION
+
+-- The CDC issued guidance on April 1, 2020 that changed COVID coding conventions
+SELECT DISTINCT person_id
+FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
+WHERE condition_concept_id IN (
+		SELECT concept_id
+		FROM @cdmDatabaseSchema.CONCEPT
+		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+		-- This is the list of standard concepts that represent those terms
+		WHERE concept_id IN (
+				37311061,
+				37311060,
+				756023,
+				756031,
+				756039,
+				756044,
+				756061,
+				756081,
+				37310285
+				)
+
+		UNION
+
+		SELECT c.concept_id
+		FROM @cdmDatabaseSchema.CONCEPT c
+		JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
+		-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
+			AND ca.ancestor_concept_id IN (
+				756044,
+				37310285,
+				37310283,
+				756061,
+				756081,
+				37310287,
+				756023,
+				756031,
+				37310286,
+				37311061,
+				37310284,
+				756039,
+				37311060,
+				37310254
+				)
+			AND c.invalid_reason IS NULL
+		)
+
+	AND condition_start_date >= DATEFROMPARTS(2020, 04, 01)
+
+UNION
+
+-- 3) TWO or more of the “Weak Positive” diagnosis codes from the ICD-10 or SNOMED tables (below) during the same encounter or on the same date
+-- Here we start looking in the CONDITION_OCCCURRENCE table for visits on the same date
+-- BEFORE 04-01-2020 "WEAK POSITIVE" LOGIC:
+SELECT DISTINCT person_id
+FROM (
+	SELECT person_id
+	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
+	WHERE condition_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+		-- It also includes the OMOP only codes that are on the Phenotype Wiki
+		-- This is the list of standard concepts that represent those terms
+			WHERE concept_id IN (
+					260125,
+					260139,
+					46271075,
+					4307774,
+					4195694,
+					257011,
+					442555,
+					4059022,
+					4059021,
+					256451,
+					4059003,
+					4168213,
+					434490,
+					439676,
+					254761,
+					4048098,
+					37311061,
+					4100065,
+					320136,
+					4038519,
+					312437,
+					4060052,
+					4263848,
+					37311059,
+					37016200,
+					4011766,
+					437663,
+					4141062,
+					4164645,
+					4047610,
+					4260205,
+					4185711,
+					4289517,
+					4140453,
+					4090569,
+					4109381,
+					4330445,
+					255848,
+					4102774,
+					436235,
+					261326,
+					436145,
+					40482061,
+					439857,
+					254677,
+					40479642,
+					256722,
+					4133224,
+					4310964,
+					4051332,
+					4112521,
+					4110484,
+					4112015,
+					4110023,
+					4112359,
+					4110483,
+					4110485,
+					254058,
+					40482069,
+					4256228,
+					37016114,
+					46273719,
+					312940,
+					36716978,
+					37395564,
+					4140438,
+					46271074,
+					319049,
+					314971
+					)
+			)
+		-- This code list is only valid for CDC guidance before 04-01-2020
+		AND condition_start_date BETWEEN DATEFROMPARTS(2020, 01, 01)
+			AND DATEFROMPARTS(2020, 03, 31)
+	-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
+	GROUP BY person_id
+		,visit_occurrence_id
+	HAVING count(*) >= 2
+	) dx_same_encounter
+
+UNION
+
+-- Now we apply logic to look for same visit AND same date
+SELECT DISTINCT person_id
+FROM (
+	SELECT person_id
+	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
+	WHERE condition_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+		-- It also includes the OMOP only codes that are on the Phenotype Wiki
+		-- This is the list of standard concepts that represent those terms
+			WHERE concept_id IN (
+					260125,
+					260139,
+					46271075,
+					4307774,
+					4195694,
+					257011,
+					442555,
+					4059022,
+					4059021,
+					256451,
+					4059003,
+					4168213,
+					434490,
+					439676,
+					254761,
+					4048098,
+					37311061,
+					4100065,
+					320136,
+					4038519,
+					312437,
+					4060052,
+					4263848,
+					37311059,
+					37016200,
+					4011766,
+					437663,
+					4141062,
+					4164645,
+					4047610,
+					4260205,
+					4185711,
+					4289517,
+					4140453,
+					4090569,
+					4109381,
+					4330445,
+					255848,
+					4102774,
+					436235,
+					261326,
+					436145,
+					40482061,
+					439857,
+					254677,
+					40479642,
+					256722,
+					4133224,
+					4310964,
+					4051332,
+					4112521,
+					4110484,
+					4112015,
+					4110023,
+					4112359,
+					4110483,
+					4110485,
+					254058,
+					40482069,
+					4256228,
+					37016114,
+					46273719,
+					312940,
+					36716978,
+					37395564,
+					4140438,
+					46271074,
+					319049,
+					314971
+					)
+			)
+		-- This code list is only valid for CDC guidance before 04-01-2020
+		AND condition_start_date BETWEEN DATEFROMPARTS(2020, 01, 01)
+			AND DATEFROMPARTS(2020, 03, 31)
+	GROUP BY person_id
+		,condition_start_date
+	HAVING count(*) >= 2
+	) dx_same_date
+
+UNION
+
+-- AFTER 04-01-2020 "WEAK POSITIVE" LOGIC:
+-- Here we start looking in the CONDITION_OCCCURRENCE table for visits on the same visit
+
+SELECT DISTINCT person_id
+FROM (
+	SELECT person_id
+	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
+	WHERE condition_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+		-- It also includes the OMOP only codes that are on the Phenotype Wiki
+		-- This is the list of standard concepts that represent those terms
+			WHERE concept_id IN (
+					260125,
+					260139,
+					46271075,
+					4307774,
+					4195694,
+					257011,
+					442555,
+					4059022,
+					4059021,
+					256451,
+					4059003,
+					4168213,
+					434490,
+					439676,
+					254761,
+					4048098,
+					37311061,
+					4100065,
+					320136,
+					4038519,
+					312437,
+					4060052,
+					4263848,
+					37311059,
+					37016200,
+					4011766,
+					437663,
+					4141062,
+					4164645,
+					4047610,
+					4260205,
+					4185711,
+					4289517,
+					4140453,
+					4090569,
+					4109381,
+					4330445,
+					255848,
+					4102774,
+					436235,
+					261326,
+					436145,
+					40482061,
+					439857,
+					254677,
+					40479642,
+					256722,
+					4133224,
+					4310964,
+					4051332,
+					4112521,
+					4110484,
+					4112015,
+					4110023,
+					4112359,
+					4110483,
+					4110485,
+					254058,
+					40482069,
+					4256228,
+					37016114,
+					46273719,
+					312940,
+					36716978,
+					37395564,
+					4140438,
+					46271074,
+					319049,
+					314971,
+					320651
+					)
+			)
+	-- This code list is only valid for CDC guidance before 04-01-2020
+		AND condition_start_date >= DATEFROMPARTS(2020, 04, 01)
+	-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
+		GROUP BY person_id
+		,visit_occurrence_id
+	HAVING count(*) >= 2
+	) dx_same_encounter
+
+UNION
+
+-- Now we apply logic to look for same visit AND same date
+SELECT DISTINCT person_id
+FROM (
+	SELECT person_id
+	FROM @cdmDatabaseSchema.CONDITION_OCCURRENCE
+	WHERE condition_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+		-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+		-- It also includes the OMOP only codes that are on the Phenotype Wiki
+		-- This is the list of standard concepts that represent those term
+			WHERE concept_id IN (
+					260125
+					,260139
+					,46271075
+					,4307774
+					,4195694
+					,257011
+					,442555
+					,4059022
+					,4059021
+					,256451
+					,4059003
+					,4168213
+					,434490
+					,439676
+					,254761
+					,4048098
+					,37311061
+					,4100065
+					,320136
+					,4038519
+					,312437
+					,4060052
+					,4263848
+					,37311059
+					,37016200
+					,4011766
+					,437663
+					,4141062
+					,4164645
+					,4047610
+					,4260205
+					,4185711
+					,4289517
+					,4140453
+					,4090569
+					,4109381
+					,4330445
+					,255848
+					,4102774
+					,436235
+					,261326
+					,320651
+					)
+			)
+		-- This code list is based on CDC Guidance for code use AFTER 04-01-2020
+		AND condition_start_date >= DATEFROMPARTS(2020, 04, 01)
+-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
+		GROUP BY person_id
+		,condition_start_date
+	HAVING count(*) >= 2
+	) dx_same_date
+
+UNION
+
+-- 4) ONE or more of the lab tests in the Labs table, regardless of result (unless negative and accompanied by a Z11.59)
+-- Patient was assigned code Z11.59 (viral screening code; used per CDC guidance to indicate asymptomatic covid screening) on or after 4/1/2020,
+-- and does NOT also have a record of a positive covid test or a “strong positive” diagnosis code.
+
+-- We begin by looking for ANY COVID measurement
+SELECT DISTINCT person_id
+FROM @cdmDatabaseSchema.MEASUREMENT
+WHERE measurement_concept_id IN (
+		SELECT concept_id
+		FROM @cdmDatabaseSchema.CONCEPT
+		-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
+		WHERE concept_id IN (
+				586515
+				,586522
+				,706179
+				,586521
+				,723459
+				,706181
+				,706177
+				,706176
+				,706180
+				,706178
+				,706167
+				,706157
+				,706155
+				,757678
+				,706161
+				,586520
+				,706175
+				,706156
+				,706154
+				,706168
+				,715262
+				,586526
+				,757677
+				,706163
+				,715260
+				,715261
+				,706170
+				,706158
+				,706169
+				,706160
+				,706173
+				,586519
+				,586516
+				,757680
+				,757679
+				,586517
+				,757686
+				,756055
+				)
+
+		UNION
+
+		SELECT c.concept_id
+		FROM @cdmDatabaseSchema.CONCEPT c
+		JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
+		-- Most of the LOINC codes do not have descendants but there is one OMOP Extension code (765055) in use that has descendants which we want to pull
+		-- This statement pulls the descendants of that specific code
+			AND ca.ancestor_concept_id IN (756055)
+			AND c.invalid_reason IS NULL
+		)
+	AND measurement_date >= DATEFROMPARTS(2020, 01, 01)
+	-- existence of Z11.59
+	-- Z11.59 here is being pulled from the source_concept_id
+	-- we want to make extra sure that we're ONLY looking at Z11.59 not the more general SNOMED code that would be in the standard concept id column for this
+	AND person_id NOT IN (
+		SELECT person_id
+		FROM @cdmDatabaseSchema.OBSERVATION
+		WHERE observation_source_concept_id = 45595484
+			AND observation_date >= DATEFROMPARTS(2020, 04, 01)
+		)
+		;
+
+
 
 INSERT INTO @resultsDatabaseSchema.phenotype_execution
 SELECT
     GETDATE() as run_datetime
     ,'2.2' as phenotype_version
     , (SELECT TOP 1 vocabulary_version FROM @cdmDatabaseSchema.vocabulary WHERE vocabulary_id='None') AS VOCABULARY_VERSION;
-
-
-TRUNCATE TABLE #cohort_rows;
-DROP TABLE #cohort_rows;
-
-TRUNCATE TABLE #inclusion_events;
-DROP TABLE #inclusion_events;
-
-TRUNCATE TABLE #qualified_events;
-DROP TABLE #qualified_events;
-
-TRUNCATE TABLE #included_events;
-DROP TABLE #included_events;
-
-TRUNCATE TABLE #Codesets;
-DROP TABLE #Codesets;
