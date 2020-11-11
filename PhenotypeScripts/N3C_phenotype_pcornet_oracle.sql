@@ -254,7 +254,7 @@ DELETE FROM N3C_CONTROL_MAP WHERE CONTROL_PATID NOT IN (SELECT PATID FROM DEMOGR
 DELETE FROM N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM N3C_CASE_COHORT);
 
 --start progressively matching cases to controls. we will do a diff between the results here and what's already in the control_map table later.
-MERGE INTO N3C_CONTROL_MAP conmap USING (
+insert into N3C_CONTROL_MAP (CASE_PATID, BUDDY_NUM, CONTROL_PATID)
 with
 cases_1 as
 (
@@ -531,8 +531,11 @@ from
 	join demographic demog2 on penultimate_map.control_patid = demog2.patid
 )
 
-SELECT patid, control_patid, buddy_num FROM final_map
-) subq
-   ON (conmap.case_patid = subq.patid and conmap.buddy_num = subq.buddy_num)
-   WHEN NOT MATCHED THEN INSERT (conmap.case_patid, conmap.buddy_num, conmap.control_patid)
-     VALUES (subq.patid, subq.buddy_num, subq.control_patid);
+SELECT 
+   patid, buddy_num, control_patid
+FROM 
+   final_map
+where
+   NOT EXISTS(select 1 from N3C_CONTROL_MAP where final_map.case_patid=N3C_CONTROL_MAP.case_patid and final_map.buddy_num=N3C_CONTROL_MAP.buddy_num);
+
+
