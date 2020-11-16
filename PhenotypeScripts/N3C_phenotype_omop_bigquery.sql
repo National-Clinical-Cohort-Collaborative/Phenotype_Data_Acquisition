@@ -458,7 +458,8 @@ from (
 					)
 			)
 	-- This code list is only valid for CDC guidance before 04-01-2020
-		and condition_start_date >= DATE(2020, 04, 01)
+		and condition_start_date between DATE(2020, 04, 01)
+		and DATE(2020, 04, 30)
 	-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		  group by  1, visit_occurrence_id
 	 having count(*) >= 2
@@ -520,7 +521,8 @@ from (
 					)
 			)
 		-- This code list is based on CDC Guidance for code use AFTER 04-01-2020
-		and condition_start_date >= DATE(2020, 04, 01)
+		and condition_start_date between DATE(2020, 04, 01)
+		and DATE(2020, 04, 30)
 -- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		  group by  1, condition_start_date
 	 having count(*) >= 2
