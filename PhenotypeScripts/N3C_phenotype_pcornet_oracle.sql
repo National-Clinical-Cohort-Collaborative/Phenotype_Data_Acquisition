@@ -1,4 +1,6 @@
---TODO: Determine if we can just let these create statements error out on subsequent runs
+--Phenotype 3.0
+--PCORnet
+
 --Create table to hold all cases and controls before matching
 CREATE TABLE N3C_PRE_COHORT (
 	patid			VARCHAR(50)  NOT NULL,
@@ -27,13 +29,27 @@ CREATE TABLE N3C_CASE_COHORT (
 CREATE TABLE N3C_CONTROL_MAP (
     case_patid   VARCHAR(50) NOT NULL,
     buddy_num   INT NOT NULL,
-    control_patid VARCHAR(50) NOT NULL
+    control_patid VARCHAR(50) NOT NULL,
+    case_age    VARCHAR(10),
+    case_sex    VARCHAR(10),
+    case_race   VARCHAR(10),
+    case_ethn   VARCHAR(10),
+    control_age    VARCHAR(10),
+    control_sex    VARCHAR(10),
+    control_race   VARCHAR(10),
+    control_ethn   VARCHAR(10)
+);
+
+--create table to hold all patients
+CREATE TABLE N3C_COHORT (
+    patid VARCHAR(50) NOT NULL
 );
 
 --before beginning, remove any patients from the last run from the PRE cohort and the case table.
 --IMPORTANT: do NOT truncate or drop the control-map table.
 TRUNCATE TABLE N3C_PRE_COHORT;
 TRUNCATE TABLE N3C_CASE_COHORT;
+TRUNCATE TABLE N3C_COHORT_ERP;
 
 --Script to populate the pre-cohort table.
 
@@ -254,7 +270,7 @@ DELETE FROM N3C_CONTROL_MAP WHERE CONTROL_PATID NOT IN (SELECT PATID FROM DEMOGR
 DELETE FROM N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM N3C_CASE_COHORT);
 
 --start progressively matching cases to controls. we will do a diff between the results here and what's already in the control_map table later.
-insert into N3C_CONTROL_MAP (CASE_PATID, BUDDY_NUM, CONTROL_PATID)
+insert into N3C_CONTROL_MAP (CASE_PATID, BUDDY_NUM, CONTROL_PATID, case_age, case_sex, case_race, case_ethn, control_age, control_sex, control_race, control_ethn)
 with
 cases_1 as
 (
@@ -510,7 +526,7 @@ penultimate_map as (
 
 final_map as (
 select
-	penultimate_map.patid,
+	penultimate_map.patid as case_patid,
 	penultimate_map.control_patid,
 	penultimate_map.buddy_num,
 	penultimate_map.map_1_control_patid,
@@ -520,11 +536,11 @@ select
 	floor(months_between(sysdate,demog1.birth_date)/12) as case_age, 
 	demog1.sex as case_sex,
 	demog1.race as case_race,
-	demog1.hispanic as case_hispanic,
-	floor(months_between(sysdate,demog1.birth_date)/12) as control_age, 
+	demog1.hispanic as case_ethn,
+	floor(months_between(sysdate,demog2.birth_date)/12) as control_age, 
 	demog2.sex as control_sex,
 	demog2.race as control_race,
-	demog2.hispanic as control_hispanic
+	demog2.hispanic as control_ethn
 from
 	penultimate_map
 	join demographic demog1 on penultimate_map.patid = demog1.patid
@@ -532,10 +548,26 @@ from
 )
 
 SELECT 
-   patid, buddy_num, control_patid
+   case_patid, 
+   buddy_num, 
+   control_patid,
+   case_age,
+   case_sex,
+   case_race,
+   case_ethn,
+   control_age,
+   control_sex,
+   control_race,
+   control_ethn
 FROM 
    final_map
 where
    NOT EXISTS(select 1 from N3C_CONTROL_MAP where final_map.case_patid=N3C_CONTROL_MAP.case_patid and final_map.buddy_num=N3C_CONTROL_MAP.buddy_num);
 
-
+--populate final table with all members of cohort in a single column
+INSERT INTO N3C_COHORT_ERP 
+    SELECT case_patid
+    FROM N3C_CONTROL_MAP
+    UNION
+    SELECT control_patid
+    FROM N3C_CONTROL_MAP;
