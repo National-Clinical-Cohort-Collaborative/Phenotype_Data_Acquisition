@@ -1,6 +1,4 @@
 --PCORNet 5.1 extraction code for N3C
---Written by Emily Pfaff, UNC Chapel Hill; Harold Lehmann, JHU
---Code written for MS SQL Server
 --This extract purposefully excludes the following PCORnet tables: ENROLLMENT, HARVEST, HASH_TOKEN, PCORNET_TRIAL
 --Assumptions:
 --	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
@@ -24,6 +22,10 @@ select distinct
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE
 FROM @resultsDatabaseSchema.N3C_COHORT;
+
+--case-control map table
+--OUTPUT_FILE: CONTROL_MAP.csv
+SELECT * from @resultsDatabaseSchema.N3C_CONTROL_MAP;
 
 -- pcornet duplicate key validation script
 -- VALIDATION_SCRIPT
@@ -464,7 +466,7 @@ SELECT
    null as RAW_ORDER_DEPT,
    null as RAW_FACILITY_CODE
 FROM @cdmDatabaseSchema.LAB_RESULT_CM JOIN @resultsDatabaseSchema.N3C_COHORT ON LAB_RESULT_CM.PATID = N3C_COHORT.PATID
-WHERE LAB_ORDER_DATE >= DATEFROMPARTS(2018,01,01);
+WHERE LAB_ORDER_DATE >= DATEFROMPARTS(2018,01,01) OR RESULT_DATE >= DATEFROMPARTS(2018,01,01);
 
 --LDS_ADDRESS_HISTORY
 --OUTPUT_FILE: LDS_ADDRESS_HISTORY.csv
