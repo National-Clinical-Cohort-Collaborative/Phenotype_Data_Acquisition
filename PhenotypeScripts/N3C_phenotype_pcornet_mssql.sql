@@ -2,7 +2,6 @@
 --PCORnet
 
 --Create table to hold all cases and controls before matching
---IF OBJECT_ID('@resultsDatabaseSchema..N3C_PRE_COHORT', 'U') IS NULL
 IF OBJECT_ID('N3C_PRE_COHORT', 'U') IS NULL 
 	CREATE TABLE N3C_PRE_COHORT (
 		patid			VARCHAR(50)  NOT NULL,
@@ -20,7 +19,6 @@ IF OBJECT_ID('N3C_PRE_COHORT', 'U') IS NULL
 
 
 --Create table to hold all cases
---IF OBJECT_ID('@resultsDatabaseSchema.N3C_CASE_COHORT', 'U') IS NULL
 IF OBJECT_ID('N3C_CASE_COHORT', 'U') IS NULL
 	CREATE TABLE N3C_CASE_COHORT (
 		patid			VARCHAR(50)  NOT NULL,
@@ -31,8 +29,6 @@ IF OBJECT_ID('N3C_CASE_COHORT', 'U') IS NULL
 	);
 
 --Create table to hold control-case matches
---TODO: Need to add control map to the extract
---IF OBJECT_ID('@resultsDatabaseSchema.N3C_CONTROL_MAP', 'U') IS NULL
 -- DO NOT DROP OR TRUNCATE THIS TABLE
 IF OBJECT_ID('N3C_CONTROL_MAP', 'U') IS NULL
 	CREATE TABLE N3C_CONTROL_MAP (
@@ -50,7 +46,6 @@ IF OBJECT_ID('N3C_CONTROL_MAP', 'U') IS NULL
 	);
 
 --create table to hold all patients
---IF OBJECT_ID('@resultsDatabaseSchema.N3C_COHORT', 'U') IS NULL
 IF OBJECT_ID('N3C_COHORT', 'U') IS NULL
 	CREATE TABLE N3C_COHORT (
 		patid VARCHAR(50) NOT NULL
