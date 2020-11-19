@@ -49,7 +49,7 @@ CREATE TABLE N3C_COHORT (
 --IMPORTANT: do NOT truncate or drop the control-map table.
 TRUNCATE TABLE N3C_PRE_COHORT;
 TRUNCATE TABLE N3C_CASE_COHORT;
-TRUNCATE TABLE N3C_COHORT_ERP;
+TRUNCATE TABLE N3C_COHORT;
 
 --Script to populate the pre-cohort table.
 
@@ -565,7 +565,7 @@ where
    NOT EXISTS(select 1 from N3C_CONTROL_MAP where final_map.case_patid=N3C_CONTROL_MAP.case_patid and final_map.buddy_num=N3C_CONTROL_MAP.buddy_num);
 
 --populate final table with all members of cohort in a single column
-INSERT INTO N3C_COHORT_ERP 
+INSERT INTO N3C_COHORT
     SELECT case_patid
     FROM N3C_CONTROL_MAP
     UNION
