@@ -18,6 +18,7 @@ IF OBJECT_ID('N3C_PRE_COHORT', 'U') IS NULL
 	);
 
 
+
 --Create table to hold all cases
 --IF OBJECT_ID('@resultsDatabaseSchema.N3C_CASE_COHORT', 'U') IS NULL
 IF OBJECT_ID('N3C_CASE_COHORT', 'U') IS NULL
@@ -32,6 +33,7 @@ IF OBJECT_ID('N3C_CASE_COHORT', 'U') IS NULL
 --Create table to hold control-case matches
 --TODO: Need to add control map to the extract
 --IF OBJECT_ID('@resultsDatabaseSchema.N3C_CONTROL_MAP', 'U') IS NULL
+-- DO NOT DROP OR TRUNCATE THIS TABLE
 IF OBJECT_ID('N3C_CONTROL_MAP', 'U') IS NULL
 	CREATE TABLE N3C_CONTROL_MAP (
 		case_patid   VARCHAR(50) NOT NULL,
@@ -54,11 +56,65 @@ IF OBJECT_ID('N3C_COHORT', 'U') IS NULL
 		patid VARCHAR(50) NOT NULL
 	);
 
+-- Create table to hold valid controls before matching
+IF OBJECT_ID('N3C_PRE_CONTROLS', 'U') IS NULL
+	CREATE TABLE N3C_PRE_CONTROLS (
+		patid VARCHAR(50)  NOT NULL,
+		maxenc DATE  NOT NULL,
+		minenc DATE  NOT NULL,
+		daysonhand DATE  NOT NULL
+	);
+
+-- temp table for control query
+IF OBJECT_ID('N3C_PENULTIMATE_MAP', 'U') IS NULL
+	CREATE TABLE N3C_PENULTIMATE_MAP (
+		patid varchar(50) NOT NULL,
+		buddy_num int NOT NULL,
+		control_patid varchar(50) NULL,
+		map_1_patid varchar(50) NULL,
+		map_2_patid varchar(50) NULL,
+		map_3_patid varchar(50) NULL,
+		map_4_patid varchar(50) NULL,
+		map_1_control_patid varchar(50) NULL,
+		map_2_control_patid varchar(50) NULL,
+		map_3_control_patid varchar(50) NULL,
+		map_4_control_patid varchar(50) NULL,
+		map_1_pt_age varchar(20) NULL,
+		map_1_sex varchar(20) NULL,
+		map_1_race varchar(20) NULL,
+		map_1_hispanic varchar(20) NULL
+	);
+
+-- temp table for control query
+IF OBJECT_ID('N3C_FINAL_MAP', 'U') IS NULL
+	CREATE TABLE N3C_FINAL_MAP (
+		case_patid varchar(50) NOT NULL,
+		control_patid varchar(50) NULL,
+		buddy_num int NOT NULL,
+		map_1_control_patid varchar(50) NULL,
+		map_2_control_patid varchar(50) NULL,
+		map_3_control_patid varchar(50) NULL,
+		map_4_control_patid varchar(50) NULL,
+		case_age int NULL,
+		case_sex varchar(100) NULL,
+		case_race varchar(100) NULL,
+		case_ethn varchar(100) NULL,
+		control_age int NULL,
+		control_sex varchar(100) NULL,
+		control_race varchar(100) NULL,
+		control_ethn varchar(100) NULL
+	);
+
+
+
 --before beginning, remove any patients from the last run from the PRE cohort and the case table.
 --IMPORTANT: do NOT truncate or drop the control-map table.
 TRUNCATE TABLE N3C_PRE_COHORT;
 TRUNCATE TABLE N3C_CASE_COHORT;
 TRUNCATE TABLE N3C_COHORT;
+TRUNCATE TABLE N3C_PRE_CONTROLS
+TRUNCATE TABLE N3C_PENULTIMATE_MAP;
+TRUNCATE TABLE N3C_FINAL_MAP;
 
 --Script to populate the pre-cohort table.
 
@@ -207,7 +263,7 @@ covid_lab as
 	SELECT distinct
         lab_result_cm.patid
     FROM 
-		tracs_pcdm_lab_result_cm lab_result_cm
+		lab_result_cm
 	WHERE 
 		lab_result_cm.result_date >= CAST('2020-01-01' as datetime)
         and 
@@ -226,7 +282,7 @@ covid_lab as
 	SELECT distinct
         lab_result_cm.patid
     FROM 
-		tracs_pcdm_lab_result_cm lab_result_cm 
+		lab_result_cm 
 		JOIN covid_pos_list ON LAB_RESULT_CM.RESULT_QUAL = covid_pos_list.word
 	WHERE 
 		lab_result_cm.result_date >= CAST('2020-01-01' as datetime)
@@ -261,7 +317,7 @@ covid_diagnosis as
             diagnosis.dx_date,
             covid_dx_codes.dx_category as orig_dx_category
         FROM 
-			tracs_pcdm_diagnosis diagnosis
+			diagnosis
 			join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
 		WHERE coalesce(dx_date,admit_date) >= CAST('2020-01-01' as datetime)
      ) dxq
@@ -411,7 +467,7 @@ SELECT distinct
         d.race as race
 FROM 
 	cohort c 
-	JOIN tracs_pcdm_demographic d ON c.patid = d.patid;
+	JOIN demographic d ON c.patid = d.patid;
 
 --populate the case table
 INSERT INTO N3C_CASE_COHORT
@@ -434,14 +490,33 @@ WHERE
 DELETE FROM N3C_CONTROL_MAP WHERE CONTROL_PATID IN (SELECT patid FROM N3C_CASE_COHORT);
 
 --remove cases and controls from the mapping table if those people are no longer in the person table (due to merges or other reasons)
-DELETE FROM N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM tracs_pcdm_demographic DEMOGRAPHIC);
-DELETE FROM N3C_CONTROL_MAP WHERE CONTROL_PATID NOT IN (SELECT PATID FROM tracs_pcdm_demographic DEMOGRAPHIC);
+DELETE FROM N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM  DEMOGRAPHIC);
+DELETE FROM N3C_CONTROL_MAP WHERE CONTROL_PATID NOT IN (SELECT PATID FROM  DEMOGRAPHIC);
 
 --remove cases who no longer meet the phenotype definition
 DELETE FROM N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM N3C_CASE_COHORT);
 
---start progressively matching cases to controls. we will do a diff between the results here and what's already in the control_map table later.
+-- all available controls, joined to encounter table to eliminate patients with almost no data
+-- right now we're looking for patients with at least 10 days between their min and max visit dates.
+INSERT INTO N3C_PRE_CONTROLS
+	select
+		npc.patid,
+		max(e.ADMIT_DATE) as maxenc,
+		min(e.ADMIT_DATE) as minenc,
+		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) as daysonhand
+	from
+		n3c_pre_cohort npc 
+		JOIN encounter e ON npc.patid = e.patid
+	where 
+		inc_lab_any = 1 and inc_dx_strong = 0 and inc_lab_pos = 0 and inc_dx_weak = 0 
+		and e.ADMIT_DATE between '2018-01-01' and getdate()
+		and npc.patid not in (SELECT control_patid FROM N3C_CONTROL_MAP)
+	group by
+		npc.patid
+	having
+		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) >= 10;
 
+--start progressively matching cases to controls. we will do a diff between the results here and what's already in the control_map table later.
 with
 cases_1 as
 (
@@ -463,7 +538,6 @@ cases_1 as
 		where 
     			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
 
-
 		UNION
 
 		select
@@ -481,28 +555,6 @@ cases_1 as
 	) subq
 )
 ,
-
--- all available controls, joined to encounter table to eliminate patients with almost no data
---right now we're looking for patients with at least 10 days between their min and max visit dates.
-pre_controls as (
-        select
-			npc.patid,
-			max(e.ADMIT_DATE) as maxenc,
-			min(e.ADMIT_DATE) as minenc,
-			max(e.ADMIT_DATE) - min(e.ADMIT_DATE) as daysonhand
-		from
-			n3c_pre_cohort npc 
-			JOIN tracs_pcdm_encounter e ON npc.patid = e.patid
-		where 
-    	    inc_lab_any = 1 and inc_dx_strong = 0 and inc_lab_pos = 0 and inc_dx_weak = 0 
-    	    and e.ADMIT_DATE between '2018-01-01' and getdate()
-			and npc.patid not in (SELECT control_patid FROM N3C_CONTROL_MAP)
-    	group by
-    	    npc.patid
-    	having
-    	    max(e.ADMIT_DATE) - min(e.ADMIT_DATE) >= 10
-),
-
 controls_1 as
 (
 	select
@@ -519,10 +571,9 @@ controls_1 as
 			ABS(CHECKSUM(NEWID())) as randnum
 		from
 			n3c_pre_cohort npc 
-			JOIN pre_controls pre ON npc.patid = pre.patid
+			JOIN N3C_PRE_CONTROLS pre ON npc.patid = pre.patid
 	) subq
-)
-,
+),
 
 --match cases to controls where all demographic criteria match
 map_1 as
@@ -673,7 +724,8 @@ map_4 as (
 		left outer join controls_4 controls on
 			cases.sex = controls.sex 
 			and cases.join_row_4 = controls.join_row_4
-),
+)
+,
 
 penultimate_map as (
 	select
@@ -698,7 +750,8 @@ penultimate_map as (
 		left outer join map_3 on map_1.patid = map_3.patid and map_1.buddy_num = map_3.buddy_num
 		left outer join map_4 on map_1.patid = map_4.patid and map_1.buddy_num = map_4.buddy_num
 )
-select * into #penultimate_map from penultimate_map;
+INSERT INTO N3C_PENULTIMATE_MAP
+select * FROM penultimate_map;
 
 with
 final_map as (
@@ -719,14 +772,14 @@ select
 	demog2.race as control_race,
 	demog2.hispanic as control_ethn
 from
-	#penultimate_map penultimate_map
-	join tracs_pcdm_demographic demog1 on penultimate_map.patid = demog1.patid
-	left outer join tracs_pcdm_demographic demog2 on penultimate_map.control_patid = demog2.patid
+	N3C_PENULTIMATE_MAP penultimate_map
+	join tdemographic demog1 on penultimate_map.patid = demog1.patid
+	left outer join demographic demog2 on penultimate_map.control_patid = demog2.patid
 )
-select * into #final_map from final_map;
+insert into N3C_FINAL_MAP 
+select * from final_map;
 
 insert into N3C_CONTROL_MAP (CASE_PATID, BUDDY_NUM, CONTROL_PATID, case_age, case_sex, case_race, case_ethn, control_age, control_sex, control_race, control_ethn)
-
 SELECT 
    case_patid, 
    buddy_num, 
@@ -740,7 +793,7 @@ SELECT
    control_race,
    control_ethn
 FROM 
-   #final_map final_map
+   N3C_FINAL_MAP final_map
 where
    NOT EXISTS(select 1 from N3C_CONTROL_MAP where final_map.case_patid=N3C_CONTROL_MAP.case_patid and final_map.buddy_num=N3C_CONTROL_MAP.buddy_num);
 
@@ -750,4 +803,5 @@ INSERT INTO N3C_COHORT
     FROM N3C_CONTROL_MAP
     UNION
     SELECT control_patid
-    FROM N3C_CONTROL_MAP;
+    FROM N3C_CONTROL_MAP
+	where control_patid is not null;
