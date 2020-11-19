@@ -29,7 +29,7 @@ CREATE TABLE N3C_CASE_COHORT (
 CREATE TABLE N3C_CONTROL_MAP (
     case_patid   VARCHAR(50) NOT NULL,
     buddy_num   INT NOT NULL,
-    control_patid VARCHAR(50) NOT NULL,
+    control_patid VARCHAR(50),
     case_age    VARCHAR(10),
     case_sex    VARCHAR(10),
     case_race   VARCHAR(10),
@@ -544,7 +544,7 @@ select
 from
 	penultimate_map
 	join demographic demog1 on penultimate_map.patid = demog1.patid
-	join demographic demog2 on penultimate_map.control_patid = demog2.patid
+	left outer join demographic demog2 on penultimate_map.control_patid = demog2.patid
 )
 
 SELECT 
