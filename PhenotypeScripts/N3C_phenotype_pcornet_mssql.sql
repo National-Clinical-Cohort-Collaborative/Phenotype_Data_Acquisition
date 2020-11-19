@@ -768,7 +768,7 @@ select
 	demog2.hispanic as control_ethn
 from
 	N3C_PENULTIMATE_MAP penultimate_map
-	join tdemographic demog1 on penultimate_map.patid = demog1.patid
+	join demographic demog1 on penultimate_map.patid = demog1.patid
 	left outer join demographic demog2 on penultimate_map.control_patid = demog2.patid
 )
 insert into N3C_FINAL_MAP 
