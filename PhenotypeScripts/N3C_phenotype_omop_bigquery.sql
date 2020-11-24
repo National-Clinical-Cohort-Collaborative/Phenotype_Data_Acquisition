@@ -758,12 +758,19 @@ insert into @resultsDatabaseSchema.n3c_control_cohort  (person_id
 									,sex
 									,hispanic
 									,race )
-select person_id
+select npc.person_id
 		,pt_age
 		,sex
 		,hispanic
 		,race
-from @resultsDatabaseSchema.n3c_pre_cohort
+from @resultsDatabaseSchema.n3c_pre_cohort npc
+join (
+		  select person_id
+		  from @cdmDatabaseSchema.visit_occurrence
+		where visit_start_date > DATE(2018, 01, 01)
+		  group by  1 having DATE_DIFF(cast(max(visit_start_date) as date), cast(min(visit_start_date) as date), DAY) >= 10
+ ) e
+on npc.person_id = e.person_id
 where inc_dx_strong = 0
 	and inc_lab_pos = 0
 	and inc_dx_weak = 0
