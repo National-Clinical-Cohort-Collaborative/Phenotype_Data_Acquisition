@@ -2,7 +2,8 @@
 --PCORnet
 
 --Create table to hold all cases and controls before matching
-CREATE TABLE N3C_PRE_COHORT (
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE N3C_PRE_COHORT (
 	patid			VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
@@ -13,20 +14,33 @@ CREATE TABLE N3C_PRE_COHORT (
     sex                 VARCHAR(20),
     hispanic           VARCHAR(20),
     race                VARCHAR(20)
-);
+)';
+EXCEPTION
+  WHEN OTHERS THEN
+    IF SQLCODE != -955 THEN
+      RAISE;
+    END IF;
+END;
 
 --Create table to hold all cases
-CREATE TABLE N3C_CASE_COHORT (
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE N3C_CASE_COHORT (
     patid			VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
 	inc_lab_any			INT  NOT NULL,
 	inc_lab_pos       INT  NOT NULL
-);
+)';
+EXCEPTION
+  WHEN OTHERS THEN
+    IF SQLCODE != -955 THEN
+      RAISE;
+    END IF;
+END;
 
 --Create table to hold control-case matches
---TODO: Need to add control map to the extract
-CREATE TABLE N3C_CONTROL_MAP (
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE N3C_CONTROL_MAP (
     case_patid   VARCHAR(50) NOT NULL,
     buddy_num   INT NOT NULL,
     control_patid VARCHAR(50),
@@ -38,12 +52,25 @@ CREATE TABLE N3C_CONTROL_MAP (
     control_sex    VARCHAR(10),
     control_race   VARCHAR(10),
     control_ethn   VARCHAR(10)
-);
+)';
+EXCEPTION
+  WHEN OTHERS THEN
+    IF SQLCODE != -955 THEN
+      RAISE;
+    END IF;
+END;
 
 --create table to hold all patients
-CREATE TABLE N3C_COHORT (
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE N3C_COHORT (
     patid VARCHAR(50) NOT NULL
-);
+)';
+EXCEPTION
+  WHEN OTHERS THEN
+    IF SQLCODE != -955 THEN
+      RAISE;
+    END IF;
+END;
 
 --before beginning, remove any patients from the last run from the PRE cohort and the case table.
 --IMPORTANT: do NOT truncate or drop the control-map table.
