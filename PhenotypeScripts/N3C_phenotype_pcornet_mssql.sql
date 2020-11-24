@@ -15,9 +15,8 @@ IF OBJECT_ID('N3C_PRE_COHORT', 'U') IS NULL
 		hispanic           VARCHAR(20),
 		race                VARCHAR(20)
 	);
-
-
-
+	
+	
 --Create table to hold all cases
 IF OBJECT_ID('N3C_CASE_COHORT', 'U') IS NULL
 	CREATE TABLE N3C_CASE_COHORT (
@@ -57,9 +56,23 @@ IF OBJECT_ID('N3C_PRE_CONTROLS', 'U') IS NULL
 		patid VARCHAR(50)  NOT NULL,
 		maxenc DATE  NOT NULL,
 		minenc DATE  NOT NULL,
-		daysonhand DATE  NOT NULL
+		daysonhand DATE  NOT NULL,
+		randnum INT
 	);
+	
 
+-- temp table for initial map
+IF OBJECT_ID('N3C_PRE_MAP', 'U') IS NULL 
+	CREATE TABLE N3C_PRE_MAP (
+		patid			VARCHAR(50)  NOT NULL,
+		pt_age              VARCHAR(20),
+		sex                 VARCHAR(20),
+		hispanic           VARCHAR(20),
+		race                VARCHAR(20),
+		buddy_num	INT,
+		randnum		INT
+	);
+	
 -- temp table for control query
 IF OBJECT_ID('N3C_PENULTIMATE_MAP', 'U') IS NULL
 	CREATE TABLE N3C_PENULTIMATE_MAP (
@@ -108,6 +121,7 @@ TRUNCATE TABLE N3C_PRE_COHORT;
 TRUNCATE TABLE N3C_CASE_COHORT;
 TRUNCATE TABLE N3C_COHORT;
 TRUNCATE TABLE N3C_PRE_CONTROLS;
+TRUNCATE TABLE N3C_PRE_MAP;
 TRUNCATE TABLE N3C_PENULTIMATE_MAP;
 TRUNCATE TABLE N3C_FINAL_MAP;
 
@@ -429,7 +443,7 @@ FROM
  
 --EVERYTHING BELOW HERE IS NEW FOR 3.0
 --populate the pre-cohort table
-INSERT INTO N3C_PRE_COHORT
+INSERT INTO N3C_PRE_COHORT (patid, inc_dx_strong, inc_dx_weak, inc_lab_any, inc_lab_pos, phenotype_version, pt_age, sex, hispanic, race)
 SELECT distinct
     c.patid, 
     inc_dx_strong, 
@@ -463,9 +477,9 @@ SELECT distinct
 FROM 
 	cohort c 
 	JOIN demographic d ON c.patid = d.patid;
-
+	
 --populate the case table
-INSERT INTO N3C_CASE_COHORT
+INSERT INTO N3C_CASE_COHORT (patid, inc_dx_strong, inc_dx_weak, inc_lab_any, inc_lab_pos)
 SELECT 
     patid, 
     inc_dx_strong, 
@@ -493,61 +507,66 @@ DELETE FROM N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM N3C_CASE_
 
 -- all available controls, joined to encounter table to eliminate patients with almost no data
 -- right now we're looking for patients with at least 10 days between their min and max visit dates.
-INSERT INTO N3C_PRE_CONTROLS
+INSERT INTO N3C_PRE_CONTROLS (patid, maxenc, minenc, daysonhand, randnum)
 	select
 		npc.patid,
 		max(e.ADMIT_DATE) as maxenc,
 		min(e.ADMIT_DATE) as minenc,
-		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) as daysonhand
+		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) as daysonhand,
+		ABS(CHECKSUM(NEWID())) as randnum -- random number
 	from
 		n3c_pre_cohort npc 
-		JOIN encounter e ON npc.patid = e.patid
+		JOIN encounter  e ON npc.patid = e.patid
 	where 
 		inc_lab_any = 1 and inc_dx_strong = 0 and inc_lab_pos = 0 and inc_dx_weak = 0 
 		and e.ADMIT_DATE between '2018-01-01' and getdate()
-		and npc.patid not in (SELECT control_patid FROM N3C_CONTROL_MAP)
+		and npc.patid not in (SELECT control_patid FROM N3C_CONTROL_MAP where control_patid is not null)
 	group by
 		npc.patid
 	having
 		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) >= 10;
+
+		
+-- create pre-map table with random nums
+INSERT INTO N3C_PRE_MAP (patid, pt_age, sex, race, hispanic, buddy_num, randnum)
+	select
+		patid,
+		pt_age,
+		sex,
+		race,
+		hispanic,
+		1 as buddy_num,
+		ABS(CHECKSUM(NEWID())) as randnum -- random number
+	from
+		n3c_pre_cohort
+	where 
+    		(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
+
+	UNION
+
+	select
+		patid,
+		pt_age,
+		sex,
+		race,
+		hispanic,
+		2 as buddy_num,
+		ABS(CHECKSUM(NEWID())) as randnum -- random number
+	from
+		n3c_pre_cohort
+	where 
+    		(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
+;
 
 --start progressively matching cases to controls. we will do a diff between the results here and what's already in the control_map table later.
 with
 cases_1 as
 (
 	select
-		subq.*,
+		n3c_pre_map.*,
 		ROW_NUMBER() over(partition by pt_age, sex, race, hispanic order by randnum) as join_row_1 -- most restrictive
 	from
-	(
-		select
-			patid,
-			pt_age,
-			sex,
-			race,
-			hispanic,
-			1 as buddy_num,
-			ABS(CHECKSUM(NEWID())) as randnum -- random number
-		from
-			n3c_pre_cohort
-		where 
-    			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
-
-		UNION
-
-		select
-			patid,
-			pt_age,
-			sex,
-			race,
-			hispanic,
-			2 as buddy_num,
-			ABS(CHECKSUM(NEWID())) as randnum -- random number
-		from
-			n3c_pre_cohort
-		where 
-    			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
-	) subq
+		n3c_pre_map
 )
 ,
 controls_1 as
@@ -563,12 +582,13 @@ controls_1 as
 			npc.sex,
 			npc.race,
 			npc.hispanic,
-			ABS(CHECKSUM(NEWID())) as randnum
+			pre.randnum
 		from
 			n3c_pre_cohort npc 
 			JOIN N3C_PRE_CONTROLS pre ON npc.patid = pre.patid
 	) subq
-),
+)
+,
 
 --match cases to controls where all demographic criteria match
 map_1 as
@@ -687,7 +707,8 @@ cases_4 as
 		map_3
 	where
 		control_patid is null
-),
+)
+,
 
 controls_4 as
 (
@@ -745,8 +766,8 @@ penultimate_map as (
 		left outer join map_3 on map_1.patid = map_3.patid and map_1.buddy_num = map_3.buddy_num
 		left outer join map_4 on map_1.patid = map_4.patid and map_1.buddy_num = map_4.buddy_num
 )
-INSERT INTO N3C_PENULTIMATE_MAP
-select * FROM penultimate_map;
+INSERT INTO N3C_PENULTIMATE_MAP (patid,buddy_num,control_patid,map_1_patid,map_2_patid,map_3_patid,map_4_patid,map_1_control_patid,map_2_control_patid,map_3_control_patid,map_4_control_patid,map_1_pt_age,map_1_sex,map_1_race,map_1_hispanic)
+select patid,buddy_num,control_patid,map_1_patid,map_2_patid,map_3_patid,map_4_patid,map_1_control_patid,map_2_control_patid,map_3_control_patid,map_4_control_patid,map_1_pt_age,map_1_sex,map_1_race,map_1_hispanic FROM penultimate_map;
 
 with
 final_map as (
@@ -771,8 +792,8 @@ from
 	join demographic demog1 on penultimate_map.patid = demog1.patid
 	left outer join demographic demog2 on penultimate_map.control_patid = demog2.patid
 )
-insert into N3C_FINAL_MAP 
-select * from final_map;
+insert into N3C_FINAL_MAP (case_patid,control_patid,buddy_num,map_1_control_patid,map_2_control_patid,map_3_control_patid,map_4_control_patid,case_age,case_sex,case_race,case_ethn,control_age,control_sex,control_race,control_ethn)
+select case_patid,control_patid,buddy_num,map_1_control_patid,map_2_control_patid,map_3_control_patid,map_4_control_patid,case_age,case_sex,case_race,case_ethn,control_age,control_sex,control_race,control_ethn from final_map;
 
 insert into N3C_CONTROL_MAP (CASE_PATID, BUDDY_NUM, CONTROL_PATID, case_age, case_sex, case_race, case_ethn, control_age, control_sex, control_race, control_ethn)
 SELECT 
