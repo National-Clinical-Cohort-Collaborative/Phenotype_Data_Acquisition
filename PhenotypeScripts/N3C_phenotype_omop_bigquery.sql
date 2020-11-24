@@ -17,11 +17,22 @@ CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_pre_cohort  (person_id INT
 		);
 
 
+
+
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_case_cohort  (person_id INT64 not null
-		,inc_dx_strong INT64 not null
-		,inc_dx_weak INT64 not null
-		,inc_lab_any INT64 not null
-		,inc_lab_pos INT64 not null
+		,pt_age STRING
+		,sex STRING
+		,hispanic STRING
+		,race STRING
+		);
+
+
+
+CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_control_cohort  (person_id INT64 not null
+		,pt_age STRING
+		,sex STRING
+		,hispanic STRING
+		,race STRING
 		);
 
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_control_map  (case_person_id INT64 not null
@@ -30,6 +41,8 @@ CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_control_map  (case_person_
 		);
 
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_cohort  (person_id INT64 not null);
+
+DROP TABLE IF EXISTS @resultsDatabaseSchema.final_map;
 
 -- before beginning, remove any patients from the last run
 -- IMPORTANT: do NOT truncate or drop the control-map table.
@@ -725,16 +738,37 @@ from cohort c
 join @cdmDatabaseSchema.person d on c.person_id = d.person_id;
 
 --populate the case table
-insert into @resultsDatabaseSchema.n3c_case_cohort
-select person_id
-	,inc_dx_strong
-	,inc_dx_weak
-	,inc_lab_any
-	,inc_lab_pos
+insert into @resultsDatabaseSchema.n3c_case_cohort (person_id
+									,pt_age
+									,sex
+									,hispanic
+									,race )
+select 	person_id
+		,pt_age
+		,sex
+		,hispanic
+		,race
 from @resultsDatabaseSchema.n3c_pre_cohort
 where inc_dx_strong = 1
 	or inc_lab_pos = 1
 	or inc_dx_weak = 1;
+
+insert into @resultsDatabaseSchema.n3c_control_cohort  (person_id
+									,pt_age
+									,sex
+									,hispanic
+									,race )
+select person_id
+		,pt_age
+		,sex
+		,hispanic
+		,race
+from @resultsDatabaseSchema.n3c_pre_cohort
+where inc_dx_strong = 0
+	and inc_lab_pos = 0
+	and inc_dx_weak = 0
+	and inc_lab_any = 1;
+
 
 -- Now that the pre-cohort and case tables are populated, we start matching cases and controls, and updating the case and control tables as needed.
 -- all cases need two control "buddies". we select on progressively looser demographic criteria until every case has two control matches, or we run out of patients in the control pool.
@@ -768,302 +802,276 @@ from @resultsDatabaseSchema.n3c_control_map
 where case_person_id not in (
 		select person_id
 		from @resultsDatabaseSchema.n3c_case_cohort
+		where case_person_id is not null
 		);
 
--- start progressively matching cases to controls. we will do a diff between the results here and what is already in the control_map table later.
-INSERT INTO @resultsDatabaseSchema.n3c_control_map (
-	case_person_id
-	,buddy_num
-	,control_person_id
-	)
- WITH cases_1
-as (
-	select subq.*
-		,row_number() over (
-			partition by pt_age
-			,sex
-			,race
-			,hispanic order by randnum
-			) as join_row_1 -- most restrictive
-	from (
-		select person_id
-			,pt_age
-			,sex
-			,race
-			,hispanic
-			,1 as buddy_num
-			,rand() as randnum -- random number
-		from @resultsDatabaseSchema.n3c_pre_cohort
-		where (
-				inc_dx_strong = 1
-				or inc_lab_pos = 1
-				or inc_dx_weak = 1
-				)
 
-		union distinct select person_id
-			,pt_age
-			,sex
-			,race
-			,hispanic
-			,2 as buddy_num
-			,rand() as randnum -- random number
-		from @resultsDatabaseSchema.n3c_pre_cohort
-		where (
-				inc_dx_strong = 1
-				or inc_lab_pos = 1
-				or inc_dx_weak = 1
-				)
+insert into @resultsDatabaseSchema.n3c_control_map
+select
+		person_id, 1 as buddy_num, null
+		from @resultsDatabaseSchema.n3c_case_cohort
+		where person_id not in (
+			select person_id
+			from @resultsDatabaseSchema.n3c_control_map
+			where buddy_num = 1
+			)
+
+		union distinct select person_id, 2 as buddy_num, null
+		from @resultsDatabaseSchema.n3c_case_cohort
+		where person_id not in (
+			select person_id
+			from @resultsDatabaseSchema.n3c_control_map
+			where buddy_num = 2
+			)
+;
+
+-- match #1 - age, sex, race, ethnicity
+update @resultsDatabaseSchema.n3c_control_map
+set control_person_id = y.control_pid
+from
+(
+	select cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
+	from
+	(
+		-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by pt_age
+				,sex
+				,race
+				,hispanic order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.pt_age
+				,npc.sex
+				,npc.race
+				,npc.hispanic
+				,cm.buddy_num
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_case_cohort npc
+			join @resultsDatabaseSchema.n3c_control_map cm
+			on npc.person_id = cm.case_person_id
+			and cm.control_person_id is null
 		) subq
-	)
-	,
-	-- all available controls, joined to encounter table to eliminate patients with almost no data
-	-- right now we're looking for patients with at least 10 days between their min and max visit dates.
-pre_controls
-as (
-	select npc.person_id
-	from (
-		select person_id
-		from @resultsDatabaseSchema.n3c_pre_cohort
-		where inc_lab_any = 1
-			and inc_dx_strong = 0
-			and inc_lab_pos = 0
-			and inc_dx_weak = 0
-			and person_id not in (
-				select control_person_id
-				from @resultsDatabaseSchema.n3c_control_map
-				)
-		) npc
-	join (
-		  select person_id
-		  from @cdmDatabaseSchema.visit_occurrence
-		where visit_start_date > DATE(2018, 01, 01)
-		  group by  1 having DATE_DIFF(cast(max(visit_start_date) as date), cast(min(visit_start_date) as date), DAY) >= 10
-		 ) e on npc.person_id = e.person_id
-	)
-	,controls_1
-as (
-	select subq.*
-		,row_number() over (
-			partition by pt_age
-			,sex
-			,race
-			,hispanic order by randnum
-			) as join_row_1
-	from (
-		select npc.person_id
-			,npc.pt_age
-			,npc.sex
-			,npc.race
-			,npc.hispanic
-			,rand() as randnum
-		from @resultsDatabaseSchema.n3c_pre_cohort npc
-		join pre_controls pre on npc.person_id = pre.person_id
+	) cases
+	inner join
+	(
+			-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by pt_age
+				,sex
+				,race
+				,hispanic order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.pt_age
+				,npc.sex
+				,npc.race
+				,npc.hispanic
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_control_cohort npc
+			where npc.person_id not in ( select distinct control_person_id from @resultsDatabaseSchema.n3c_control_map where control_person_id is not null)
+
 		) subq
-	)
-	,
-	-- match cases to controls where all demographic criteria match
-map_1
-as (
-	select cases.*
-		,controls.person_id as control_person_id
-	from cases_1 cases
-	left outer join controls_1 controls on cases.pt_age = controls.pt_age
+
+	) controls
+	on cases.pt_age = controls.pt_age
 		and cases.sex = controls.sex
 		and cases.race = controls.race
 		and cases.hispanic = controls.hispanic
 		and cases.join_row_1 = controls.join_row_1
-	)
-	,
-	-- narrow down to those cases that are missing one or more control buddies
-	-- drop the hispanic criterion first
-cases_2
-as (
-	select map_1.*
-		,row_number() over (
-			partition by pt_age
-			,sex
-			,race order by randnum
-			) as join_row_2
-	from map_1
-	where control_person_id is null -- missing a buddy
-	)
-	,controls_2
-as (
-	select controls_1.*
-		,row_number() over (
-			partition by pt_age
-			,sex
-			,race order by randnum
-			) as join_row_2
-	from controls_1
-	where person_id not in (
-			select control_person_id
-			from map_1
-			where control_person_id is not null
-			) -- doesn't already have a buddy
-	)
-	,map_2
-as (
-	select cases.person_id
-		,cases.pt_age
-		,cases.sex
-		,cases.race
-		,cases.hispanic
-		,cases.buddy_num
-		,cases.randnum
-		,cases.join_row_1
-		,cases.join_row_2
-		,controls.person_id as control_person_id
-	from cases_2 cases
-	left outer join controls_2 controls on cases.pt_age = controls.pt_age
+
+) y
+where control_person_id is null
+and case_person_id = y.case_pid
+and buddy_num = y.bud_num
+;
+
+
+
+
+
+-- match #2 - age, sex, race
+update @resultsDatabaseSchema.n3c_control_map
+set control_person_id = y.control_pid
+from
+(
+	select cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
+	from
+	(
+		-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by pt_age
+				,sex
+				,race
+				 order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.pt_age
+				,npc.sex
+				,npc.race
+				,cm.buddy_num
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_case_cohort npc
+			join @resultsDatabaseSchema.n3c_control_map cm
+			on npc.person_id = cm.case_person_id
+			and cm.control_person_id is null
+		) subq
+	) cases
+	inner join
+	(
+			-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by pt_age
+				,sex
+				,race
+				 order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.pt_age
+				,npc.sex
+				,npc.race
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_control_cohort npc
+			where npc.person_id not in ( select distinct control_person_id from @resultsDatabaseSchema.n3c_control_map where control_person_id is not null)
+
+		) subq
+
+	) controls
+	on cases.pt_age = controls.pt_age
 		and cases.sex = controls.sex
 		and cases.race = controls.race
-		and cases.join_row_2 = controls.join_row_2
-	)
-	,
-	-- narrow down to those cases that are still missing one or more control buddies
-	-- drop the race criterion now
-cases_3
-as (
-	select map_2.*
-		,row_number() over (
-			partition by pt_age
-			,sex order by randnum
-			) as join_row_3
-	from map_2
-	where control_person_id is null
-	)
-	,controls_3
-as (
-	select controls_2.*
-		,row_number() over (
-			partition by pt_age
-			,sex order by randnum
-			) as join_row_3
-	from controls_2
-	where person_id not in (
-			select control_person_id
-			from map_2
-			where control_person_id is not null
-			)
-	)
-	,map_3
-as (
-	select cases.person_id
-		,cases.pt_age
-		,cases.sex
-		,cases.race
-		,cases.hispanic
-		,cases.buddy_num
-		,cases.randnum
-		,cases.join_row_1
-		,cases.join_row_2
-		,cases.join_row_3
-		,controls.person_id as control_person_id
-	from cases_3 cases
-	left outer join controls_3 controls on cases.pt_age = controls.pt_age
+		and cases.join_row_1 = controls.join_row_1
+
+) y
+where control_person_id is null
+and case_person_id = y.case_pid
+and buddy_num = y.bud_num
+;
+
+
+
+
+-- match #3 -- age, sex
+update @resultsDatabaseSchema.n3c_control_map
+set control_person_id = y.control_pid
+from
+(
+	select cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
+	from
+	(
+		-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by pt_age
+				,sex
+				 order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.pt_age
+				,npc.sex
+				,cm.buddy_num
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_case_cohort npc
+			join @resultsDatabaseSchema.n3c_control_map cm
+			on npc.person_id = cm.case_person_id
+			and cm.control_person_id is null
+		) subq
+	) cases
+	inner join
+	(
+			-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by pt_age
+				,sex
+				 order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.pt_age
+				,npc.sex
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_control_cohort npc
+			where npc.person_id not in ( select distinct control_person_id from @resultsDatabaseSchema.n3c_control_map where control_person_id is not null)
+
+		) subq
+
+	) controls
+	on cases.pt_age = controls.pt_age
 		and cases.sex = controls.sex
-		and cases.join_row_3 = controls.join_row_3
-	)
-	,
-	-- narrow down to those cases that are still missing one or more control buddies
-	-- drop the age criterion now
-cases_4
-as (
-	select map_3.*
-		,row_number() over (
-			partition by sex order by randnum
-			) as join_row_4
-	from map_3
-	where control_person_id is null
-	)
-	,controls_4
-as (
-	select controls_3.*
-		,row_number() over (
-			partition by sex order by randnum
-			) as join_row_4
-	from controls_3
-	where person_id not in (
-			select control_person_id
-			from map_3
-			where control_person_id is not null
-			)
-	)
-	,map_4
-as (
-	select cases.person_id
-		,cases.pt_age
-		,cases.sex
-		,cases.race
-		,cases.hispanic
-		,cases.buddy_num
-		,cases.randnum
-		,cases.join_row_1
-		,cases.join_row_2
-		,cases.join_row_3
-		,cases.join_row_4
-		,controls.person_id as control_person_id
-	from cases_4 cases
-	left outer join controls_4 controls on cases.sex = controls.sex
-		and cases.join_row_4 = controls.join_row_4
-	)
-	,penultimate_map
-as (
-	select map_1.person_id
-		,map_1.buddy_num
-		,coalesce(map_1.control_person_id, map_2.control_person_id, map_3.control_person_id, map_4.control_person_id) as control_person_id
-		,map_1.person_id as map_1_person_id
-		,map_2.person_id as map_2_person_id
-		,map_3.person_id as map_3_person_id
-		,map_4.person_id as map_4_person_id
-		,map_1.control_person_id as map_1_control_person_id
-		,map_2.control_person_id as map_2_control_person_id
-		,map_3.control_person_id as map_3_control_person_id
-		,map_4.control_person_id as map_4_control_person_id
-		,map_1.pt_age as map_1_pt_age
-		,map_1.sex as map_1_sex
-		,map_1.race as map_1_race
-		,map_1.hispanic as map_1_hispanic
-	from map_1
-	left outer join map_2 on map_1.person_id = map_2.person_id
-		and map_1.buddy_num = map_2.buddy_num
-	left outer join map_3 on map_1.person_id = map_3.person_id
-		and map_1.buddy_num = map_3.buddy_num
-	left outer join map_4 on map_1.person_id = map_4.person_id
-		and map_1.buddy_num = map_4.buddy_num
-	)
-	,final_map
-as (
-	select penultimate_map.person_id as case_person_id
-		,penultimate_map.control_person_id
-		,penultimate_map.buddy_num
-		,penultimate_map.map_1_control_person_id
-		,penultimate_map.map_2_control_person_id
-		,penultimate_map.map_3_control_person_id
-		,penultimate_map.map_4_control_person_id
-		,demog1.pt_age as case_age
-		,demog1.sex as case_sex
-		,demog1.race as case_race
-		,demog1.hispanic as case_hispanic
-		,demog2.pt_age as control_age
-		,demog2.sex as control_sex
-		,demog2.race as control_race
-		,demog2.hispanic as control_hispanic
-	from penultimate_map
-	join @resultsDatabaseSchema.n3c_pre_cohort demog1 on penultimate_map.person_id = demog1.person_id
-	left join @resultsDatabaseSchema.n3c_pre_cohort demog2 on penultimate_map.control_person_id = demog2.person_id
-	)
- SELECT case_person_id
-	,buddy_num
-	,control_person_id
-from final_map
-where not exists (
-		select 1
-		from @resultsDatabaseSchema.n3c_control_map
-		where final_map.case_person_id = n3c_control_map.case_person_id
-			and final_map.buddy_num = n3c_control_map.buddy_num
-		);
+		and cases.join_row_1 = controls.join_row_1
+
+) y
+where control_person_id is null
+and case_person_id = y.case_pid
+and buddy_num = y.bud_num
+;
+
+
+
+-- match #4 - sex
+update @resultsDatabaseSchema.n3c_control_map
+set control_person_id = y.control_pid
+from
+(
+	select cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
+	from
+	(
+		-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by
+				sex
+				 order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.sex
+				,cm.buddy_num
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_case_cohort npc
+			join @resultsDatabaseSchema.n3c_control_map cm
+			on npc.person_id = cm.case_person_id
+			and cm.control_person_id is null
+		) subq
+	) cases
+	inner join
+	(
+			-- Get cases
+		select subq.*
+			,row_number() over (
+				partition by
+				sex
+				 order by randnum
+				) as join_row_1
+		from (
+			select npc.person_id
+				,npc.sex
+				,rand() as randnum
+			from @resultsDatabaseSchema.n3c_control_cohort npc
+			where npc.person_id not in ( select distinct control_person_id from @resultsDatabaseSchema.n3c_control_map where control_person_id is not null)
+
+		) subq
+
+	) controls
+	on cases.sex = controls.sex
+		and cases.join_row_1 = controls.join_row_1
+
+) y
+where control_person_id is null
+and case_person_id = y.case_pid
+and buddy_num = y.bud_num
+;
+
 
 insert into @resultsDatabaseSchema.n3c_cohort
 select distinct case_person_id as person_id
