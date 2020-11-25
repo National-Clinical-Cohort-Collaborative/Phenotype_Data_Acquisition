@@ -335,26 +335,26 @@ FROM covid_cohort
     inc_lab_any, 
     inc_lab_pos, 
     '3.0' as phenotype_version,
-    case when floor(datediff(month, d.birth_date, SYSDATE)/12) between 0 and 4 then '0-4'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 5 and 9 then '5-9'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 10 and 14 then '10-14'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 15 and 19 then '15-19'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 20 and 24 then '20-24'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 25 and 29 then '25-29'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 30 and 34 then '30-34'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 35 and 39 then '35-39'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 40 and 44 then '40-44'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 45 and 49 then '45-49'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 50 and 54 then '50-54'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 55 and 59 then '55-59'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 60 and 64 then '60-64'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 65 and 69 then '65-69'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 70 and 74 then '70-74'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 75 and 79 then '75-79'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) between 80 and 84 then '80-84'
-		when floor(datediff(month, d.birth_date, SYSDATE)/12) between 85 and 89 then '85-89'
-        when floor(datediff(month, d.birth_date, SYSDATE)/12) >= 90 then '90+'
-        end as pt_age,
+    case when floor(months_between(sysdate,d.birth_date)/12) between 0 and 4 then '0-4'
+        when floor(months_between(sysdate,d.birth_date)/12) between 5 and 9 then '5-9'
+        when floor(months_between(sysdate,d.birth_date)/12) between 10 and 14 then '10-14'
+        when floor(months_between(sysdate,d.birth_date)/12) between 15 and 19 then '15-19'
+        when floor(months_between(sysdate,d.birth_date)/12) between 20 and 24 then '20-24'
+        when floor(months_between(sysdate,d.birth_date)/12) between 25 and 29 then '25-29'
+        when floor(months_between(sysdate,d.birth_date)/12) between 30 and 34 then '30-34'
+        when floor(months_between(sysdate,d.birth_date)/12) between 35 and 39 then '35-39'
+        when floor(months_between(sysdate,d.birth_date)/12) between 40 and 44 then '40-44'
+        when floor(months_between(sysdate,d.birth_date)/12) between 45 and 49 then '45-49'
+        when floor(months_between(sysdate,d.birth_date)/12) between 50 and 54 then '50-54'
+        when floor(months_between(sysdate,d.birth_date)/12) between 55 and 59 then '55-59'
+        when floor(months_between(sysdate,d.birth_date)/12) between 60 and 64 then '60-64'
+        when floor(months_between(sysdate,d.birth_date)/12) between 65 and 69 then '65-69'
+        when floor(months_between(sysdate,d.birth_date)/12) between 70 and 74 then '70-74'
+        when floor(months_between(sysdate,d.birth_date)/12) between 75 and 79 then '75-79'
+        when floor(months_between(sysdate,d.birth_date)/12) between 80 and 84 then '80-84'
+	when floor(months_between(sysdate,d.birth_date)/12) between 85 and 89 then '85-89'
+        when floor(months_between(sysdate,d.birth_date)/12) >= 90 then '90+'
+        end AS pt_age,
         d.sex as sex,
         d.hispanic as hispanic,
         d.race as race
@@ -598,11 +598,11 @@ INSERT INTO @resultsDatabaseSchema.N3C_FINAL_MAP (case_patid,control_patid,buddy
 	penultimate_map.map_2_control_patid,
 	penultimate_map.map_3_control_patid,
 	penultimate_map.map_4_control_patid,
-	floor(datediff(month, demog1.birth_date, SYSDATE)/12) as case_age, 
+	floor(months_between(sysdate, demog1.birth_date)/12) as case_age, 
 	demog1.sex as case_sex,
 	demog1.race as case_race,
 	demog1.hispanic as case_ethn,
-	floor(datediff(month ,demog2.birth_date, SYSDATE)/12) as control_age, 
+	floor(months_between(sysdate, demog2.birth_date)/12) as control_age, 
 	demog2.sex as control_sex,
 	demog2.race as control_race,
 	demog2.hispanic as control_ethn

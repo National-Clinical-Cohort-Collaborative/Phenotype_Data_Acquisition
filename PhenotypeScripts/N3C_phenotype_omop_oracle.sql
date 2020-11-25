@@ -722,61 +722,61 @@ AS (SELECT covid_cohort.person_id
 	,inc_lab_pos
 	,'3.0' AS phenotype_version
 	,CASE
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 0
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 0
 				AND 4
 			THEN '0-4'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 5
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 5
 				AND 9
 			THEN '5-9'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 10
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 10
 				AND 14
 			THEN '10-14'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 15
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 15
 				AND 19
 			THEN '15-19'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 20
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 20
 				AND 24
 			THEN '20-24'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 25
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 25
 				AND 29
 			THEN '25-29'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 30
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 30
 				AND 34
 			THEN '30-34'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 35
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 35
 				AND 39
 			THEN '35-39'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 40
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 40
 				AND 44
 			THEN '40-44'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 45
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 45
 				AND 49
 			THEN '45-49'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 50
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 50
 				AND 54
 			THEN '50-54'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 55
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 55
 				AND 59
 			THEN '55-59'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 60
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 60
 				AND 64
 			THEN '60-64'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 65
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 65
 				AND 69
 			THEN '65-69'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 70
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 70
 				AND 74
 			THEN '70-74'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 75
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 75
 				AND 79
 			THEN '75-79'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 80
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 80
 				AND 84
 			THEN '80-84'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) BETWEEN 85
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 85
 				AND 89
 			THEN '85-89'
-		WHEN datediff(year, d.birth_datetime, SYSDATE) >= 90
+		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) >= 90
 			THEN '90+'
 		END AS pt_age
 	,d.gender_concept_id AS sex
