@@ -1,14 +1,24 @@
---OMOP v5.3.1 extraction code for N3C
---Written by Kristin Kostka and Robert Miller, OHDSI
---Code written for MS SQL Server
---This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH
---Currently this script extracts the derived tables for DRUG_ERA, DOSE_ERA, CONDITION_ERA as well
---Assumptions:
---	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
---	2. You are extracting data with a lookback period to 1-1-2018
---  3. You have existing tables for each of these extracted tables. If you do not, create a shell table so it can extract an empty table.
+/**
+OMOP v5.3.1 extraction code for N3C
+Author: Kristin Kostka (OHDSI), Robert Miller (Tufts)
 
--- To run, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
+HOW TO RUN:
+If you are not using the R or Python exporters, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
+
+
+USER NOTES: 
+This extract pulls the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH, DRUG_ERA, CONDITION_ERA
+As an OMOP site, you are expected to be populating derived tables (OBSERVATION_PERIOD, DRUG_ERA, CONDITION_ERA)
+Please refer to the OMOP site instructions for assistance on how to generate these tables.
+
+
+SCRIPT ASSUMPTIONS:
+1. You have already built the N3C_COHORT table (with that name) prior to running this extract
+2. You are extracting data with a lookback period to 1-1-2018
+3. You have existing tables for each of these extracted tables. If you do not, at a minimum, you MUST create a shell table so it can extract an empty table. Failure to create shells for missing table will result in ingestion problems.
+ 
+RELEASE DATE: 12-01-2020
+**/
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
@@ -27,10 +37,6 @@ select
    CAST(CURRENT_DATE as TIMESTAMP) as RUN_DATE,
    CAST( DATEADD(day,CAST(-@dataLatencyNumDays as int),CURRENT_DATE) as TIMESTAMP) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day,CAST(@daysBetweenSubmissions as int),CURRENT_DATE) as TIMESTAMP) as NEXT_SUBMISSION_DATE;
-
-
-
-
 
 --VALIDATION_SCRIPT
 --OUTPUT_FILE: EXTRACT_VALIDATION.csv
@@ -153,17 +159,6 @@ INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
 ON x.person_id = n3c.person_id
 AND x.drug_era_start_date > TO_DATE(TO_CHAR(2018,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
 GROUP BY x.drug_era_id
-HAVING COUNT(*) > 1
-
-UNION
-SELECT
-	'DOSE_ERA' TABLE_NAME
-	,COUNT(*) DUP_COUNT
-FROM @cdmDatabaseSchema.DOSE_ERA x
-INNER JOIN @resultsDatabaseSchema.N3C_COHORT n3c
-ON x.person_id = n3c.person_id
-AND x.dose_era_start_date > TO_DATE(TO_CHAR(2018,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
-GROUP BY x.dose_era_id
 HAVING COUNT(*) > 1
 
 UNION
@@ -466,9 +461,6 @@ JOIN (
  ON pr.PROVIDER_ID = a.PROVIDER_ID
 ;
 
---Note: it has yet to be decided if Era tables will be constructured downstream in Palantir platform.
--- If it is decided that eras will be reconstructed, these three tables will be omitted.
-
 --DRUG_ERA
 --OUTPUT_FILE: DRUG_ERA.csv
 SELECT
@@ -483,21 +475,6 @@ FROM @cdmDatabaseSchema.DRUG_ERA dre
 JOIN @resultsDatabaseSchema.N3C_COHORT n
   ON DRE.PERSON_ID = N.PERSON_ID
 WHERE DRUG_ERA_START_DATE >= TO_DATE(TO_CHAR(2018,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD');
-
---DOSE_ERA
---OUTPUT_FILE: DOSE_ERA.csv
-
-SELECT
-   DOSE_ERA_ID,
-   n.PERSON_ID,
-   DRUG_CONCEPT_ID,
-   UNIT_CONCEPT_ID,
-   DOSE_VALUE,
-   CAST(DOSE_ERA_START_DATE as TIMESTAMP) as DOSE_ERA_START_DATE,
-   CAST(DOSE_ERA_END_DATE as TIMESTAMP) as DOSE_ERA_END_DATE
-FROM @cdmDatabaseSchema.DOSE_ERA y JOIN @resultsDatabaseSchema.N3C_COHORT n ON y.PERSON_ID = N.PERSON_ID
-WHERE y.DOSE_ERA_START_DATE >= TO_DATE(TO_CHAR(2018,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD');
-
 
 --CONDITION_ERA
 --OUTPUT_FILE: CONDITION_ERA.csv
@@ -568,8 +545,6 @@ SELECT
 
 UNION
 
---OMOP does not have PERSON_ID for Location, Care Site and Provider tables so we need to determine the applicability of this check
---We could re-engineer the cohort table to include the JOIN variables
 select
    'LOCATION' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.LOCATION l
@@ -632,13 +607,7 @@ UNION
 select
    'DRUG_ERA' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.DRUG_ERA de JOIN @resultsDatabaseSchema.N3C_COHORT n ON de.PERSON_ID = n.PERSON_ID AND DRUG_ERA_START_DATE >= TO_DATE(TO_CHAR(2018,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')) as ROW_COUNT
-   /**
-UNION
 
-select
-   'DOSE_ERA' as TABLE_NAME,
-   (select count(*) from DOSE_ERA ds JOIN @resultsDatabaseSchema.N3C_COHORT n ON ds.PERSON_ID = n.PERSON_ID AND DOSE_ERA_START_DATE >= DATEFROMPARTS(2018,01,01)) as ROW_COUNT
-   **/
 UNION
 
 select
