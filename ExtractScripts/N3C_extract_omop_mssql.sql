@@ -645,3 +645,11 @@ select
    'CONDITION_ERA' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.CONDITION_ERA JOIN @resultsDatabaseSchema.N3C_COHORT ON CONDITION_ERA.PERSON_ID = N3C_COHORT.PERSON_ID AND CONDITION_ERA_START_DATE >= DATEFROMPARTS(2018,01,01)) as ROW_COUNT
 ) s;
+
+
+--n3c_control_map
+--OUTPUT_FILE: N3C_CONTROL_MAP.csv
+SELECT *
+FROM @resultsDatabaseSchema.N3C_CONTROL_MAP;
+
+

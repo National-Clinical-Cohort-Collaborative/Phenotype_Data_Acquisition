@@ -582,3 +582,11 @@ union distinct select
    'CONDITION_ERA' as table_name,
    (select count(*) from @cdmDatabaseSchema.condition_era join @resultsDatabaseSchema.n3c_cohort on condition_era.person_id = n3c_cohort.person_id and condition_era_start_date >= DATE(2018, 01, 01)) as row_count
 ) s;
+
+
+--n3c_control_map
+--OUTPUT_FILE: N3C_CONTROL_MAP.csv
+select *
+from @resultsDatabaseSchema.n3c_control_map;
+
+
