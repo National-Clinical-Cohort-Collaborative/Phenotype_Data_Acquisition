@@ -1,5 +1,21 @@
 /**
 N3C Phenotype 3.0 - OMOP MSSQL
+Author: Robert Miller (Tufts), Emily Pfaff (UNC)
+
+HOW TO RUN:
+If you are not using the R or Python exporters, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
+
+USER NOTES:
+In OHDSI conventions, we do not usually write tables to the main database schema.
+OHDSI uses @resultsDatabaseSchema as a results schema build cohort tables for specific analysis.
+Here we will build five tables in this script (N3C_PRE_COHORT, N3C_CASE_COHORT, N3C_CONTROL_COHORT, N3C_CONTROL_MAP, N3C_COHORT).
+Each table is assembled in the results schema as we know some OMOP analysts do not have write access to their @cdmDatabaseSchema.
+If you have read/write to your cdmDatabaseSchema, you would use the same schema name for both.
+
+To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
+
+SCRIPT RELEASE DATE: 12-01-2020
+
 **/
 
 
@@ -108,6 +124,14 @@ AS (
 					,586517
 					,757686
 					,756055
+					,36659631
+					,36661377
+					,36661378
+					,36661372
+					,36661373
+					,36661374
+					,36661370
+					,36661371
 					)
 
 			UNION
@@ -126,24 +150,26 @@ AS (
 			-- The value_as_concept field is where we store standardized qualitative results
 			-- The concept ids here represent LOINC or SNOMED codes for standard ways to code a lab that is positive
 			value_as_concept_id IN (
-				4126681
-				,45877985
-				,45884084
-				,9191
-				,4181412
-				,45879438
+				4126681 -- Detected
+				,45877985 -- Detected
+				,45884084 -- Positive
+				,9191 --- Positive 
+				,4181412 -- Present
+				,45879438 -- Present
+				,45881802 -- Reactive
 				)
 			-- To be exhaustive, we also look for Positive strings in the value_source_value field
 			OR value_source_value IN (
 				'Positive'
 				,'Present'
 				,'Detected'
+				,'Reactive'
 				)
 			)
 	)
 	,
 	-- UNION
-	-- Phenotype Entry Criteria: ONE or more of the “Strong Positive” diagnosis codes from the ICD-10 or SNOMED tables
+	-- Phenotype Entry Criteria: ONE or more of the Strong Positive diagnosis codes from the ICD-10 or SNOMED tables
 	-- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
 dx_strong
 AS (
@@ -221,9 +247,9 @@ AS (
 	)
 	,
 	-- UNION
-	-- 3) TWO or more of the “Weak Positive” diagnosis codes from the ICD-10 or SNOMED tables (below) during the same encounter or on the same date
+	-- 3) TWO or more of the Weak Positive diagnosis codes from the ICD-10 or SNOMED tables (below) during the same encounter or on the same date
 	-- Here we start looking in the CONDITION_OCCCURRENCE table for visits on the same date
-	-- BEFORE 04-01-2020 "WEAK POSITIVE" LOGIC:
+	-- BEFORE 04-01-2020 WEAK POSITIVE LOGIC:
 dx_weak
 AS (
 	SELECT DISTINCT person_id
@@ -412,7 +438,7 @@ AS (
 
 	UNION
 
-	-- AFTER 04-01-2020 "WEAK POSITIVE" LOGIC:
+	-- AFTER 04-01-2020 WEAK POSITIVE LOGIC:
 	-- Here we start looking in the CONDITION_OCCCURRENCE table for visits on the same visit
 	SELECT DISTINCT person_id
 	FROM (
@@ -575,7 +601,6 @@ AS (
 	)
 	,
 	-- UNION
-	-- ERP: Changed this comment to reflect new logic
 	-- 4) ONE or more of the lab tests in the Labs table, regardless of result
 	-- We begin by looking for ANY COVID measurement
 covid_lab
@@ -625,6 +650,14 @@ AS (
 					,586517
 					,757686
 					,756055
+					,36659631
+					,36661377
+					,36661378
+					,36661372
+					,36661373
+					,36661374
+					,36661370
+					,36661371
 					)
 
 			UNION
@@ -640,19 +673,6 @@ AS (
 		AND measurement_date >= DATEFROMPARTS(2020, 01, 01)
 	)
 	,
-	/* ERP: Getting rid of this criterion
-	-- existence of Z11.59
-	-- Z11.59 here is being pulled from the source_concept_id
-	-- we want to make extra sure that we're ONLY looking at Z11.59 not the more general SNOMED code that would be in the standard concept id column for this
-	AND person_id NOT IN (
-		SELECT person_id
-		FROM @cdmDatabaseSchema.OBSERVATION
-		WHERE observation_source_concept_id = 45595484
-			AND observation_date >= DATEFROMPARTS(2020, 04, 01)
-		)
-		;
-
-*/
 covid_cohort
 AS (
 	SELECT DISTINCT person_id
@@ -697,7 +717,6 @@ AS (
 	LEFT OUTER JOIN covid_lab ON covid_cohort.person_id = covid_lab.person_id
 	LEFT OUTER JOIN covid_lab_pos ON covid_cohort.person_id = covid_lab_pos.person_id
 	)
--- ERP: changed name of table
 INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT
 -- populate the pre-cohort table
 SELECT DISTINCT c.person_id
@@ -817,9 +836,9 @@ WHERE inc_dx_strong = 0
 
 
 -- Now that the pre-cohort and case tables are populated, we start matching cases and controls, and updating the case and control tables as needed.
--- all cases need two control "buddies". we select on progressively looser demographic criteria until every case has two control matches, or we run out of patients in the control pool.
--- first handle instances where someone who was in the control group in the prior run is now a case
--- just delete both the case and the control from the mapping table. the case will repopulate automatically with a replaced control.
+-- all cases need two control buddies. We select on progressively looser demographic criteria until every case has two control matches, or we run out of patients in the control pool.
+-- First handle instances where someone who was in the control group in the prior run is now a case
+-- just delete both the case and the control from the mapping table. The case will repopulate automatically with a replaced control.
 DELETE
 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
 WHERE CONTROL_PERSON_ID IN (
@@ -827,7 +846,7 @@ WHERE CONTROL_PERSON_ID IN (
 		FROM @resultsDatabaseSchema.N3C_CASE_COHORT
 		);
 
--- remove cases and controls from the mapping table if those people are no longer in the person table (due to merges or other reasons)
+-- Remove cases and controls from the mapping table if those people are no longer in the person table (due to merges or other reasons)
 DELETE
 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
 WHERE CASE_person_id NOT IN (
@@ -842,7 +861,7 @@ WHERE CONTROL_person_id NOT IN (
 		FROM @cdmDatabaseSchema.person
 		);
 
--- remove cases who no longer meet the phenotype definition
+-- Remove cases who no longer meet the phenotype definition
 DELETE
 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
 WHERE CASE_person_id NOT IN (
@@ -873,7 +892,7 @@ SELECT
 			)
 ;
 
--- match #1 - age, sex, race, ethnicity
+-- Match #1 - age, sex, race, ethnicity
 UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
 SET control_person_id = y.control_pid
 FROM
@@ -942,7 +961,7 @@ AND buddy_num = y.bud_num
 
 
 
--- match #2 - age, sex, race
+-- Match #2 - age, sex, race
 UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
 SET control_person_id = y.control_pid
 FROM
@@ -1007,7 +1026,7 @@ AND buddy_num = y.bud_num
 
 
 
--- match #3 -- age, sex
+-- Match #3 -- age, sex
 UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
 SET control_person_id = y.control_pid
 FROM
@@ -1066,7 +1085,7 @@ AND buddy_num = y.bud_num
 
 
 
--- match #4 - sex
+-- Match #4 - sex
 UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
 SET control_person_id = y.control_pid
 FROM
