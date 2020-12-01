@@ -35,6 +35,10 @@ select
    CAST( DATEADD(day, -@dataLatencyNumDays, GETDATE()) as date) as UPDATE_DATE,	--change integer based on your site's data latency
    CAST( DATEADD(day, @daysBetweenSubmissions, GETDATE()) as date) as NEXT_SUBMISSION_DATE
  FROM @resultsDatabaseSchema.N3C_COHORT;
+	
+--case-control map table
+--OUTPUT_FILE: CONTROL_MAP.csv
+SELECT * from @resultsDatabaseSchema.N3C_CONTROL_MAP;
    
 -- ACT duplicate key validation script
 -- VALIDATION_SCRIPT
