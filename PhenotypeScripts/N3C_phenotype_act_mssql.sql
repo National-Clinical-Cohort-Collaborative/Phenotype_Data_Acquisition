@@ -26,7 +26,7 @@
 -- PATIENT_NUM
 -- PATIENT_NUM, BIRTH_DATE
 
--- It ran in 12sec  against approx 175k mart yielding approx 21k cases/42k controls on Oracle
+-- It ran in 12sec  against approx 175kpt mart yielding approx 21k cases/42k controls on Oracle
 -- This script assumes you have coded your COVID lab values per the ACT guidance 
 -- https://github.com/shyamvis/ACT-COVID-Ontology/blob/master/ontology/ExampleStepsForMappingLabs.md
 -- This script SELECTed ICD10CM directly from the fact table. If your ICD10CM prefix is not ICD10CM: 
@@ -34,24 +34,24 @@
 
 
 --Create table to hold all cases and controls before matching
-IF OBJECT_ID('N3C_PRE_COHORT', 'U') IS NULL 
- CREATE TABLE N3C_PRE_COHORT (
-	patid			VARCHAR(50)  NOT NULL,
+IF OBJECT_ID('@resultsDatabaseSchema.N3C_PRE_COHORT', 'U') IS NULL 
+ CREATE TABLE @resultsDatabaseSchema.N3C_PRE_COHORT (
+	patid			    VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
-	inc_lab_any				INT  NOT NULL,
-	inc_lab_pos       INT  NOT NULL,
-	phenotype_version 		VARCHAR(10),
+	inc_lab_any			INT  NOT NULL,
+	inc_lab_pos         INT  NOT NULL,
+	phenotype_version 	VARCHAR(10),
 	pt_age              VARCHAR(20),
     sex                 VARCHAR(20),
-    hispanic           VARCHAR(20),
+    hispanic            VARCHAR(20),
     race                VARCHAR(20),
-    current_age  int
+    current_age         INT
 );
 
 --Create table to hold all cases
-IF OBJECT_ID('N3C_CASE_COHORT', 'U') IS NULL
-CREATE TABLE N3C_CASE_COHORT (
+IF OBJECT_ID('@resultsDatabaseSchema.N3C_CASE_COHORT', 'U') IS NULL
+CREATE TABLE @resultsDatabaseSchema.N3C_CASE_COHORT (
     patid			VARCHAR(50)  NOT NULL,
 	inc_dx_strong		INT  NOT NULL,
 	inc_dx_weak			INT  NOT NULL,
@@ -62,8 +62,8 @@ CREATE TABLE N3C_CASE_COHORT (
 
 --Create table to hold control-case matches
 -- DO NOT DROP OR TRUNCATE THIS TABLE
-IF OBJECT_ID('N3C_CONTROL_MAP', 'U') IS NULL
-CREATE TABLE N3C_CONTROL_MAP (
+IF OBJECT_ID('@resultsDatabaseSchema.N3C_CONTROL_MAP', 'U') IS NULL
+CREATE TABLE @resultsDatabaseSchema.N3C_CONTROL_MAP (
     case_patid   VARCHAR(50) NOT NULL,
     buddy_num   INT NOT NULL,
     control_patid VARCHAR(50),
@@ -85,8 +85,8 @@ CREATE TABLE N3C_COHORT (
 
 --before beginning, remove any patients from the last run from the PRE cohort and the case table.
 --IMPORTANT: do NOT truncate or drop the control-map table.
-TRUNCATE TABLE N3C_PRE_COHORT;
-TRUNCATE TABLE N3C_CASE_COHORT;
+TRUNCATE TABLE @resultsDatabaseSchema.N3C_PRE_COHORT;
+TRUNCATE TABLE @resultsDatabaseSchema.N3C_CASE_COHORT;
 TRUNCATE TABLE N3C_COHORT;
 
 
@@ -125,11 +125,11 @@ SELECT 'LOINC:95429-7 POSITIVE' AS LOINC UNION
 SELECT 'LOINC:95521-1 POSITIVE' AS LOINC UNION
 SELECT 'LOINC:95522-9 POSITIVE' AS LOINC UNION
 --codes in ACT ontology and your concept_dimension table
-SELECT DISTINCT concept_cd COVID_LOINC_CODE FROM CONCEPT_DIMENSION CD
+SELECT DISTINCT concept_cd COVID_LOINC_CODE FROM @cdmDatabaseSchema.CONCEPT_DIMENSION CD
                         WHERE CONCEPT_PATH LIKE '\ACT\UMLS_C0031437\SNOMED_3947185011\UMLS_C0022885\UMLS_C1335447\%' --PCR POS
                                 OR CONCEPT_PATH LIKE '\ACT\UMLS_C0031437\SNOMED_3947185011\UMLS_C0022885\ACT_LOCAL_LAB_ANY_POSITIVE\%' --ANTIBODY POS 
         
-);
+)LPC;
 
 
 --all covid labs - PCR and Antibody
@@ -162,9 +162,9 @@ SELECT 'LOINC:95429-7' AS LOINC UNION
 SELECT 'LOINC:95521-1' AS LOINC UNION
 SELECT 'LOINC:95522-9' AS LOINC UNION
 --codes in ACT ontology and your concept_dimension table
-SELECT DISTINCT concept_cd LOINC FROM CONCEPT_DIMENSION CD
+SELECT DISTINCT concept_cd LOINC FROM @cdmDatabaseSchema.CONCEPT_DIMENSION CD
                 WHERE CONCEPT_PATH LIKE '\ACT\UMLS_C0031437\SNOMED_3947185011\UMLS_C0022885\%' 
-);
+)LC;
 
 -- Diagnosis ICD-10 codes from phenotype doc
 IF OBJECT_ID(N'tempdb..#COVID_DX_CODES') IS NOT NULL DROP TABLE #COVID_DX_CODES
@@ -194,7 +194,7 @@ FROM
 	SELECT 'ICD10CM:R43.2' AS DX_CODE,	'dx_weak_positive' AS DX_CATEGORY  UNION
 	SELECT 'ICD10CM:R07.1' AS DX_CODE,	'dx_weak_positive' AS DX_CATEGORY  UNION
 	SELECT 'ICD10CM:R68.83' AS DX_CODE,	'dx_weak_positive' AS DX_CATEGORY 
-);
+)DC;
 
 --patients who have tested positive since Jan 2020
 IF OBJECT_ID(N'tempdb..#COVID_LAB_POS') IS NOT NULL DROP TABLE #COVID_LAB_POS
@@ -203,11 +203,11 @@ INTO #COVID_LAB_POS
 FROM (
 SELECT 
     DISTINCT OBS.PATIENT_NUM AS PATIENT_NUM
-    FROM OBSERVATION_FACT OBS
+    FROM @cdmDatabaseSchema.OBSERVATION_FACT OBS
     	WHERE OBS.START_DATE >= CAST('2020-01-01' as datetime) AND  
             EXISTS (SELECT 1 FROM #COVID_LAB_POS_CODES CLC
                         WHERE CLC.LOINC = OBS.CONCEPT_CD)
-);
+)LP;
 
 --all patients who have a covid lab (any result) since Jan 2020
 IF OBJECT_ID(N'tempdb..#COVID_LAB') IS NOT NULL DROP TABLE #COVID_LAB
@@ -216,11 +216,11 @@ INTO #COVID_LAB
 FROM (
 SELECT 
     DISTINCT OBS.PATIENT_NUM AS PATIENT_NUM
-    FROM OBSERVATION_FACT OBS
+    FROM @cdmDatabaseSchema.OBSERVATION_FACT OBS
     	WHERE  OBS.START_DATE >= CAST('2020-01-01' as datetime) AND  
             EXISTS (SELECT 1 FROM #COVID_LAB_CODES CLC
                         WHERE CLC.LOINC = OBS.CONCEPT_CD)
-);
+)L;
 
 -- patients with covid related diagnosis since start_date
 IF OBJECT_ID(N'tempdb..#COVID_DIAGNOSIS') IS NOT NULL DROP TABLE #COVID_DIAGNOSIS
@@ -237,16 +237,16 @@ FROM (
 			when dxq.dx in ('ICD10CM:B97.29','ICD10CM:B97.21') and start_date >= CAST('2020-04-01' as datetime) then 'dx_weak_positive'
 			else dxq.orig_DX_CATEGORY
 		end AS DX_CATEGORY        
-    FROM (SELECT observation_fact.patient_num,
-            observation_fact.encounter_num,
-            observation_fact.concept_cd AS dx,
-            observation_fact.start_date,
+    FROM (SELECT @cdmDatabaseSchema.OBSERVATION_FACT.patient_num,
+            @cdmDatabaseSchema.OBSERVATION_FACT.encounter_num,
+            @cdmDatabaseSchema.OBSERVATION_FACT.concept_cd AS dx,
+            @cdmDatabaseSchema.OBSERVATION_FACT.start_date,
             #covid_dx_codes.DX_CATEGORY AS orig_DX_CATEGORY
-        FROM observation_fact
-           join #covid_dx_codes on observation_fact.concept_cd like #covid_dx_codes.dx_code
-          WHERE TRUNC(start_date) >= CAST('2020-01-01' as datetime)
+        FROM @cdmDatabaseSchema.OBSERVATION_FACT
+           join #covid_dx_codes on @cdmDatabaseSchema.OBSERVATION_FACT.concept_cd like #covid_dx_codes.dx_code
+          WHERE CAST(start_date as date) >= CAST('2020-01-01' as datetime)
      ) dxq
- );
+ )D;
  
 -- patients with strong positive DX
 IF OBJECT_ID(N'tempdb..#DX_STRONG') IS NOT NULL DROP TABLE #DX_STRONG
@@ -257,7 +257,7 @@ FROM (
         patient_num
     FROM #covid_diagnosis
       WHERE DX_CATEGORY='dx_strong_positive'           
- );
+ )DS;
  
 -- patients with two different weak DX in same encounter and/or on same date included
 IF OBJECT_ID(N'tempdb..#DX_WEAK') IS NOT NULL DROP TABLE #DX_WEAK
@@ -296,7 +296,7 @@ FROM (
         having
             count(*) >= 2
      ) dx_same_date
- );
+ )DW;
  
 IF OBJECT_ID(N'tempdb..#COVID_COHORT_1') IS NOT NULL DROP TABLE #COVID_COHORT_1
 SELECT *
@@ -307,7 +307,7 @@ FROM (
     SELECT DISTINCT patient_num FROM #dx_weak
       UNION
     SELECT DISTINCT patient_num FROM #covid_lab
- );
+ )C1;
  
 IF OBJECT_ID(N'tempdb..#COHORT') IS NOT NULL DROP TABLE #COHORT
 SELECT *
@@ -318,12 +318,12 @@ FROM (
 	case when #dx_weak.patient_num is not null then 1 else 0 end AS inc_dx_weak,
 	case when #covid_lab.patient_num is not null then 1 else 0 end AS inc_lab_any,        --CHANGE: name of this flag
 	case when #covid_lab_pos.patient_num is not null then 1 else 0 end AS inc_lab_pos     --CHANGE: new flag
-FROM covid_cohort_1
-	left outer join #dx_strong on #covid_cohort_1.patient_num = dx_strong.patient_num
-	left outer join #dx_weak on #covid_cohort_1.patient_num = dx_weak.patient_num
-	left outer join #covid_lab on #covid_cohort_1.patient_num = covid_lab.patient_num
-	left outer join #covid_lab_pos on #covid_cohort_1.patient_num = covid_lab_pos.patient_num          
- );
+FROM #covid_cohort_1
+	left outer join #dx_strong on #covid_cohort_1.patient_num = #dx_strong.patient_num
+	left outer join #dx_weak on #covid_cohort_1.patient_num = #dx_weak.patient_num
+	left outer join #covid_lab on #covid_cohort_1.patient_num = #covid_lab.patient_num
+	left outer join #covid_lab_pos on #covid_cohort_1.patient_num = #covid_lab_pos.patient_num          
+ )C;
  
  --IF ethnicity_cd exists in your patient_dimension table edit
 IF OBJECT_ID(N'tempdb..#DEMOGRAPHICS') IS NOT NULL DROP TABLE #DEMOGRAPHICS
@@ -331,59 +331,59 @@ SELECT *
 INTO #DEMOGRAPHICS 
 FROM (
  SELECT p.patient_num, p.race_cd AS race_cd, p.birth_date AS birth_date, p.sex_cd AS sex_cd, 
-  floor(months_between(getdate(),birth_date)/12) AS current_age,
-  --p.ethnicity_cd AS ethnicity_cd from patient_dimension p;
+  floor(datediff(month, d.birth_date, getdate())/12) AS current_age,
+  --p.ethnicity_cd AS ethnicity_cd from patient_dimension p; use this if all demographics are in patient_dimension
   obs.concept_cd AS ethnicity_cd from patient_dimension p
- left outer join observation_fact obs on obs.patient_num = p.patient_num and concept_cd like 'DEM|HISP:%'
- );
+ left outer join @cdmDatabaseSchema.OBSERVATION_FACT obs on obs.patient_num = p.patient_num and concept_cd like 'DEM|HISP:%'
+ )DEM;
  
 --EVERYTHING BELOW HERE IS NEW FOR 3.0
 --populate the pre-cohort table
-INSERT INTO N3C_PRE_COHORT (patid, inc_dx_strong, inc_dx_weak, inc_lab_any,	inc_lab_pos, phenotype_version,
+INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT (patid, inc_dx_strong, inc_dx_weak, inc_lab_any,	inc_lab_pos, phenotype_version,
 		pt_age,	sex, hispanic, race, current_age)
 SELECT DISTINCT
-    c.patient_num as patid, 
+    cast(c.patient_num as varchar(50)) as patid, 
     inc_dx_strong, 
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
     '3.0' AS phenotype_version,
-    case when floor(months_between(getdate(),d.birth_date)/12) between 0 and 4 then '0-4'
-        when floor(months_between(getdate(),d.birth_date)/12) between 5 and 9 then '5-9'
-        when floor(months_between(getdate(),d.birth_date)/12) between 10 and 14 then '10-14'
-        when floor(months_between(getdate(),d.birth_date)/12) between 15 and 19 then '15-19'
-        when floor(months_between(getdate(),d.birth_date)/12) between 20 and 24 then '20-24'
-        when floor(months_between(getdate(),d.birth_date)/12) between 25 and 29 then '25-29'
-        when floor(months_between(getdate(),d.birth_date)/12) between 30 and 34 then '30-34'
-        when floor(months_between(getdate(),d.birth_date)/12) between 35 and 39 then '35-39'
-        when floor(months_between(getdate(),d.birth_date)/12) between 40 and 44 then '40-44'
-        when floor(months_between(getdate(),d.birth_date)/12) between 45 and 49 then '45-49'
-        when floor(months_between(getdate(),d.birth_date)/12) between 50 and 54 then '50-54'
-        when floor(months_between(getdate(),d.birth_date)/12) between 55 and 59 then '55-59'
-        when floor(months_between(getdate(),d.birth_date)/12) between 60 and 64 then '60-64'
-        when floor(months_between(getdate(),d.birth_date)/12) between 65 and 69 then '65-69'
-        when floor(months_between(getdate(),d.birth_date)/12) between 70 and 74 then '70-74'
-        when floor(months_between(getdate(),d.birth_date)/12) between 75 and 79 then '75-79'
-        when floor(months_between(getdate(),d.birth_date)/12) between 80 and 84 then '80-84'
-	when floor(months_between(getdate(),d.birth_date)/12) between 85 and 89 then '85-89'
-        when floor(months_between(getdate(),d.birth_date)/12) >= 90 then '90+'
-        end AS pt_age,
-        d.sex_cd AS sex,
-        d.ethnicity_cd AS hispanic, 
-        d.race_cd AS race,
-        d.current_age AS current_age
+    case when floor(datediff(month, d.birth_date, getdate())/12) between 0 and 4 then '0-4'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 5 and 9 then '5-9'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 10 and 14 then '10-14'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 15 and 19 then '15-19'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 20 and 24 then '20-24'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 25 and 29 then '25-29'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 30 and 34 then '30-34'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 35 and 39 then '35-39'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 40 and 44 then '40-44'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 45 and 49 then '45-49'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 50 and 54 then '50-54'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 55 and 59 then '55-59'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 60 and 64 then '60-64'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 65 and 69 then '65-69'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 70 and 74 then '70-74'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 75 and 79 then '75-79'
+        when floor(datediff(month, d.birth_date, getdate())/12) between 80 and 84 then '80-84'
+		when floor(datediff(month, d.birth_date, getdate())/12) between 85 and 89 then '85-89'
+        when floor(datediff(month, d.birth_date, getdate())/12) >= 90 then '90+'
+    end as pt_age,
+    d.sex_cd AS sex,
+    d.ethnicity_cd AS hispanic, 
+    d.race_cd AS race,
+    d.current_age AS current_age
 FROM #cohort c JOIN #demographics d ON c.patient_num = d.patient_num;
 
 --populate the case table
-INSERT INTO N3C_CASE_COHORT
+INSERT INTO @resultsDatabaseSchema.N3C_CASE_COHORT
 SELECT 
-    patient_num as patid, 
+    patid, 
     inc_dx_strong, 
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos
 FROM 
-    N3C_PRE_COHORT
+    @resultsDatabaseSchema.N3C_PRE_COHORT
 WHERE
     inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1;
 
@@ -396,15 +396,15 @@ WHERE
 --first handle instances where someone who was in the control group in the prior run is now a case
 --just delete both the case and the control from the mapping table. the case will repopulate automatically 
 --with a replaced control.
-DELETE FROM N3C_CONTROL_MAP WHERE CONTROL_patid IN (SELECT patid FROM N3C_CASE_COHORT);
+DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_patid IN (SELECT patid FROM @resultsDatabaseSchema.N3C_CASE_COHORT);
 
 --remove cases and controls from the mapping table if those people are no longer in the person table 
 --(due to merges or other reasons)
-DELETE FROM N3C_CONTROL_MAP WHERE CASE_patid NOT IN (SELECT patient_num FROM patient_dimension);
-DELETE FROM N3C_CONTROL_MAP WHERE CONTROL_patid NOT IN (SELECT patient_num FROM patient_dimension);
+DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CASE_patid NOT IN (SELECT patient_num FROM patient_dimension);
+DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_patid NOT IN (SELECT patient_num FROM patient_dimension);
 
 --remove cases who no longer meet the phenotype definition
-DELETE FROM N3C_CONTROL_MAP WHERE CASE_patid NOT IN (SELECT patid FROM N3C_CASE_COHORT);
+DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CASE_patid NOT IN (SELECT patid FROM @resultsDatabaseSchema.N3C_CASE_COHORT);
 
 --start progressively matching cases to controls. we will do a diff between the results here and 
 --what's already in the control_map table later.
@@ -426,7 +426,7 @@ FROM (
 			1 AS buddy_num,
 			ABS(CHECKSUM(NEWID())) as randnum -- random number
 		from
-			n3c_pre_cohort
+			@resultsDatabaseSchema.N3C_PRE_COHORT
 		where 
     			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
 
@@ -442,13 +442,13 @@ FROM (
 			2 AS buddy_num,
 			ABS(CHECKSUM(NEWID())) as randnum -- random number
 		from
-			n3c_pre_cohort
+			@resultsDatabaseSchema.N3C_PRE_COHORT
 		where 
     			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
 	) subq
-);
+)C1;
 
--- all available controls, joined to encounter table to eliminate patients with almost no data
+--all available controls, joined to encounter table to eliminate patients with almost no data
 --right now we're looking for patients with at least 10 days between their min and max visit dates.
 IF OBJECT_ID(N'tempdb..#PRE_CONTROLS') IS NOT NULL DROP TABLE #PRE_CONTROLS
 SELECT *
@@ -458,18 +458,20 @@ FROM (
 			npc.patid,
 			max(e.START_DATE) AS maxenc,
 			min(e.START_DATE) AS minenc,
-			max(e.START_DATE) - min(e.START_DATE) AS daysonhand
-		from
-			n3c_pre_cohort npc JOIN visit_dimension e ON npc.patid = to_char(e.patient_num)
+            datediff(dd,min(e.START_DATE),max(e.START_DATE)) AS daysonhand
+            
+        from
+			@resultsDatabaseSchema.N3C_PRE_COHORT npc JOIN visit_dimension e ON npc.patid = cast(e.patient_num as varchar(50))
+            LEFT JOIN N3C.CONTROL_MAP CM ON NPC.patid = cm.control_patid
 		where 
     	    inc_lab_any = 1 and inc_dx_strong = 0 and inc_lab_pos = 0 and inc_dx_weak = 0 
-    	    and e.START_DATE between '01-JAN-2018' and getdate()
-	    and npc.patid not in (SELECT control_patid FROM N3C_CONTROL_MAP)
+    	    and e.START_DATE between '20180101' and getdate()
+            --and npc.patid not in (SELECT control_patid FROM @resultsDatabaseSchema.N3C_CONTROL_MAP)
     	group by
     	    npc.patid
     	having
-    	    max(e.START_DATE) - min(e.START_DATE) >= 10
-);
+    	   DATEDIFF(dd,min(e.START_DATE),max(e.START_DATE)) >= 10
+)P;
 
 IF OBJECT_ID(N'tempdb..#CONTROLS_1') IS NOT NULL DROP TABLE #CONTROLS_1
 SELECT *
@@ -488,9 +490,9 @@ FROM (
 			npc.hispanic,
 			ABS(CHECKSUM(NEWID())) as randnum
 		from
-			n3c_pre_cohort npc JOIN #pre_controls pre ON npc.patid = pre.patid
+			@resultsDatabaseSchema.N3C_PRE_COHORT npc JOIN #pre_controls pre ON npc.patid = pre.patid
 	) subq
-);
+)C1;
 
 --match cases to controls where all patient_dimension criteria match
 IF OBJECT_ID(N'tempdb..#MAP_1') IS NOT NULL DROP TABLE #MAP_1 SELECT * INTO #MAP_1  FROM (
@@ -499,13 +501,13 @@ IF OBJECT_ID(N'tempdb..#MAP_1') IS NOT NULL DROP TABLE #MAP_1 SELECT * INTO #MAP
 		controls.patid AS control_patid
 	from
 		#cases_1 cases
-		left outer join controls_1 controls on 
+		left outer join #controls_1 controls on 
 			cases.pt_age = controls.pt_age
 			and cases.sex = controls.sex 
 			and cases.race = controls.race
 			and cases.hispanic = controls.hispanic
 			and cases.join_row_1 = controls.join_row_1
- );  
+ )M1;  
  
  
 --narrow down to those cases that are missing one or more control buddies
@@ -518,7 +520,7 @@ IF OBJECT_ID(N'tempdb..#CASES_2') IS NOT NULL DROP TABLE #CASES_2 SELECT * INTO 
 		#map_1
 	where
 		control_patid is null -- missing a buddy
-); 
+)C2; 
 
 IF OBJECT_ID(N'tempdb..#CONTROLS_2') IS NOT NULL DROP TABLE #CONTROLS_2 SELECT * INTO #CONTROLS_2  FROM (
 	SELECT
@@ -528,7 +530,7 @@ IF OBJECT_ID(N'tempdb..#CONTROLS_2') IS NOT NULL DROP TABLE #CONTROLS_2 SELECT *
 		#controls_1
 	where
 		patid NOT in (SELECT control_patid from #map_1 where control_patid is not null) -- doesn't already have a buddy
- );  
+ )C2;  
  
  IF OBJECT_ID(N'tempdb..#MAP_2') IS NOT NULL DROP TABLE #MAP_2 SELECT * INTO #MAP_2  FROM (
 	SELECT
@@ -549,19 +551,19 @@ IF OBJECT_ID(N'tempdb..#CONTROLS_2') IS NOT NULL DROP TABLE #CONTROLS_2 SELECT *
 			and cases.sex = controls.sex 
 			and cases.race = controls.race
 			and cases.join_row_2 = controls.join_row_2
- );  
+ )M2;  
 
 --narrow down to those cases that are still missing one or more control buddies
 --drop the race criterion now
 IF OBJECT_ID(N'tempdb..#CASES_3') IS NOT NULL DROP TABLE #CASES_3 SELECT * INTO #CASES_3  FROM (
 	SELECT
-		map_2.*,
+		#map_2.*,
 		ROW_NUMBER() over(partition by pt_age, sex order by randnum) AS join_row_3
 	from
 		#map_2
 	where
 		control_patid is null
- );  
+ )C3;  
  
  IF OBJECT_ID(N'tempdb..#CONTROLS_3') IS NOT NULL DROP TABLE #CONTROLS_3 SELECT * INTO #CONTROLS_3  FROM (
 	SELECT
@@ -571,7 +573,7 @@ IF OBJECT_ID(N'tempdb..#CASES_3') IS NOT NULL DROP TABLE #CASES_3 SELECT * INTO 
 		#controls_2
 	where
 		patid NOT in (SELECT control_patid from #map_2 where control_patid is not null)
- );  
+ )C3;  
  
  IF OBJECT_ID(N'tempdb..#MAP_3') IS NOT NULL DROP TABLE #MAP_3 SELECT * INTO #MAP_3  FROM (
 	SELECT
@@ -592,7 +594,7 @@ IF OBJECT_ID(N'tempdb..#CASES_3') IS NOT NULL DROP TABLE #CASES_3 SELECT * INTO 
 			cases.pt_age = controls.pt_age
 			and cases.sex = controls.sex 
 			and cases.join_row_3 = controls.join_row_3
- ); 
+ )M3; 
 
 --narrow down to those cases that are still missing one or more control buddies
 --drop the age criterion now
@@ -604,7 +606,7 @@ IF OBJECT_ID(N'tempdb..#CASES_3') IS NOT NULL DROP TABLE #CASES_3 SELECT * INTO 
 		#map_3
 	where
 		control_patid is null
- );  
+ )C4;  
  
  IF OBJECT_ID(N'tempdb..#CONTROLS_4') IS NOT NULL DROP TABLE #CONTROLS_4 SELECT * INTO #CONTROLS_4  FROM (
 	SELECT
@@ -614,7 +616,7 @@ IF OBJECT_ID(N'tempdb..#CASES_3') IS NOT NULL DROP TABLE #CASES_3 SELECT * INTO 
 		#controls_3
 	where
 		patid NOT in (SELECT control_patid from #map_3 where control_patid is not null)
- );  
+ )C4;  
  
  IF OBJECT_ID(N'tempdb..#MAP_4') IS NOT NULL DROP TABLE #MAP_4 SELECT * INTO #MAP_4  FROM (
 	SELECT
@@ -635,10 +637,9 @@ IF OBJECT_ID(N'tempdb..#CASES_3') IS NOT NULL DROP TABLE #CASES_3 SELECT * INTO 
 		left outer join #controls_4 controls on
 			cases.sex = controls.sex 
 			and cases.join_row_4 = controls.join_row_4
- );  
+ )M4;  
  
  IF OBJECT_ID(N'tempdb..#penultimate_map') IS NOT NULL DROP TABLE #penultimate_map SELECT * INTO #penultimate_map  FROM (
- AS (
 	SELECT
 		#map_1.patid,
 		#map_1.buddy_num,
@@ -660,7 +661,7 @@ IF OBJECT_ID(N'tempdb..#CASES_3') IS NOT NULL DROP TABLE #CASES_3 SELECT * INTO 
 		left outer join #map_2 on #map_1.patid = #map_2.patid and #map_1.buddy_num = #map_2.buddy_num
 		left outer join #map_3 on #map_1.patid = #map_3.patid and #map_1.buddy_num = #map_3.buddy_num
 		left outer join #map_4 on #map_1.patid = #map_4.patid and #map_1.buddy_num = #map_4.buddy_num
- );  
+ )P;  
  
 IF OBJECT_ID(N'tempdb..#FINAL_MAP') IS NOT NULL DROP TABLE #FINAL_MAP SELECT * INTO #FINAL_MAP  FROM (
 SELECT
@@ -681,11 +682,11 @@ SELECT
 	demog2.hispanic AS control_ethn
 from
 	#penultimate_map
-	join N3C_PRE_COHORT demog1 on #penultimate_map.patid = demog1.patid
-	left join N3C_PRE_COHORT demog2 on #penultimate_map.control_patid = demog2.patid
-);
+	left join @resultsDatabaseSchema.N3C_PRE_COHORT demog1 on #penultimate_map.patid = demog1.patid
+	left join @resultsDatabaseSchema.N3C_PRE_COHORT demog2 on #penultimate_map.control_patid = demog2.patid
+)F;
 
-insert into N3C_CONTROL_MAP (CASE_patid, BUDDY_NUM, CONTROL_patid, case_age, case_sex, case_race, 
+insert into @resultsDatabaseSchema.N3C_CONTROL_MAP (CASE_patid, BUDDY_NUM, CONTROL_patid, case_age, case_sex, case_race, 
 case_ethn, control_age, control_sex, control_race, control_ethn)
 SELECT 
    case_patid, 
@@ -702,13 +703,12 @@ SELECT
 FROM 
    #final_map
 where
-   NOT EXISTS(SELECT 1 from N3C_CONTROL_MAP where #final_map.case_patid=N3C_CONTROL_MAP.case_patid and #final_map.buddy_num=N3C_CONTROL_MAP.buddy_num);
+   NOT EXISTS (SELECT 1 from @resultsDatabaseSchema.N3C_CONTROL_MAP where #final_map.case_patid=@resultsDatabaseSchema.N3C_CONTROL_MAP.case_patid and #final_map.buddy_num=@resultsDatabaseSchema.N3C_CONTROL_MAP.buddy_num);
    
 --populate final table with all members of cohort in a single column
-INSERT INTO N3C_COHORT
+INSERT INTO @resultsDatabaseSchema.N3C_COHORT
     SELECT case_patid
-    FROM N3C_CONTROL_MAP
+    FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
     UNION
     SELECT control_patid
-    FROM N3C_CONTROL_MAP;
-
+    FROM @resultsDatabaseSchema.N3C_CONTROL_MAP;
