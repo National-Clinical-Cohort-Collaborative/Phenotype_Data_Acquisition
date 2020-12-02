@@ -14,7 +14,7 @@ SELECT distinct '@siteAbbrev' as SITE_ABBREV,
    '@cdmVersion' as CDM_VERSION,
    null AS VOCABULARY_VERSION, -- hardwired null for pcornet
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
-   phenotype_version as N3C_PHENOTYPE_VERSION,
+   (SELECT  phenotype_version FROM @resultsDatabaseSchema.N3C_PRE_COHORT  WHERE ROWNUM <= 1) as N3C_PHENOTYPE_VERSION,
    '@shiftDateYN' as SHIFT_DATE_YN, --if shifting dates prior to submission say Y, else N
    '@maxNumShiftDays' as MAX_NUM_SHIFT_DAYS, --maximum number of days that you are shifting dates, write UNKNOWN if you do not know, NA if not shifting
    CAST(SYSDATE as date) as RUN_DATE,

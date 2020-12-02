@@ -75,7 +75,7 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE TABLE @resultsDatabaseSchema.N3C_PRE_CONTROLS  (patid VARCHAR(50)  NOT NULL,
 		maxenc DATE  NOT NULL,
 		minenc DATE  NOT NULL,
-		daysonhand DATE  NOT NULL,
+		daysonhand INT  NOT NULL,
 		randnum INT
 	)';
 EXCEPTION
@@ -190,7 +190,7 @@ covid_lab as
 (SELECT distinct
         lab_result_cm.patid
     FROM @cdmDatabaseSchema.lab_result_cm
-	  WHERE lab_result_cm.result_date >= CAST('2020-01-01' as TIMESTAMP)
+	  WHERE lab_result_cm.result_date >= CAST(to_date('2020-01-01','YYYY-MM-DD') as TIMESTAMP)
         and 
         (
             lab_result_cm.lab_loinc in (SELECT loinc FROM covid_loinc  )
@@ -207,7 +207,7 @@ covid_lab as
         lab_result_cm.patid
     FROM @cdmDatabaseSchema.lab_result_cm 
 		JOIN covid_pos_list ON LAB_RESULT_CM.RESULT_QUAL = covid_pos_list.word
-	  WHERE lab_result_cm.result_date >= CAST('2020-01-01' as TIMESTAMP)
+	  WHERE lab_result_cm.result_date >= CAST(to_date('2020-01-01','YYYY-MM-DD') as TIMESTAMP)
         and 
         (
             lab_result_cm.lab_loinc in (SELECT loinc FROM covid_loinc  )
@@ -224,8 +224,8 @@ covid_diagnosis as
         coalesce(dx_date,admit_date) as best_dx_date,  -- use for later queries
         -- custom dx_category for one ICD-10 code, see phenotype doc
 		case
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < CAST('2020-04-01' as TIMESTAMP)   then 'dx_strong_positive'
-			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= CAST('2020-04-01' as TIMESTAMP)  then 'dx_weak_positive'
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) < CAST(to_date('2020-04-01','YYYY-MM-DD') as TIMESTAMP)   then 'dx_strong_positive'
+			when dx in ('B97.29','B97.21') and coalesce(dx_date,admit_date) >= CAST(to_date('2020-04-01','YYYY-MM-DD') as TIMESTAMP)  then 'dx_weak_positive'
 			else dxq.orig_dx_category
 		end as dx_category        
     FROM (SELECT diagnosis.patid,
@@ -236,7 +236,7 @@ covid_diagnosis as
             covid_dx_codes.dx_category as orig_dx_category
         FROM @cdmDatabaseSchema.diagnosis
 			join covid_dx_codes on diagnosis.dx like covid_dx_codes.dx_code
-		  WHERE coalesce(dx_date,admit_date) >= CAST('2020-01-01' as TIMESTAMP)
+		  WHERE coalesce(dx_date,admit_date) >= CAST(to_date('2020-01-01','YYYY-MM-DD') as TIMESTAMP)
       ) dxq
   ),
  
@@ -273,7 +273,7 @@ dx_weak as
         FROM (SELECT distinct
                 patid, encounterid, dx
             FROM covid_diagnosis
-              WHERE dx_category='dx_weak_positive' and best_dx_date <= CAST('2020-05-01' as TIMESTAMP)
+              WHERE dx_category='dx_weak_positive' and best_dx_date <= CAST(to_date('2020-05-01','YYYY-MM-DD') as TIMESTAMP)
          ) subq
         group by
             patid,
@@ -291,7 +291,7 @@ dx_weak as
         FROM (SELECT distinct
                 patid, best_dx_date, dx
             FROM covid_diagnosis
-              WHERE dx_category='dx_weak_positive' and best_dx_date <= CAST('2020-05-01' as TIMESTAMP)
+              WHERE dx_category='dx_weak_positive' and best_dx_date <= CAST(to_date('2020-05-01','YYYY-MM-DD') as TIMESTAMP)
          ) subq
         group by
             patid,
@@ -392,11 +392,12 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_CONTROLS (patid, maxenc, minenc, days
 		max(e.ADMIT_DATE) as maxenc,
 		min(e.ADMIT_DATE) as minenc,
 		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) as daysonhand,
-		ABS(CHECKSUM(SYS_GUID())) as randnum -- random number
+		--ABS(CHECKSUM(SYS_GUID())) as randnum -- random number
+		dbms_random.random as randnum
 	FROM @resultsDatabaseSchema.n3c_pre_cohort npc 
 		JOIN @cdmDatabaseSchema.encounter  e ON npc.patid = e.patid
 	  WHERE inc_lab_any = 1 and inc_dx_strong = 0 and inc_lab_pos = 0 and inc_dx_weak = 0 
-		and e.ADMIT_DATE between '2018-01-01' and SYSDATE
+		and e.ADMIT_DATE between to_date('2018-01-01','YYYY-MM-DD') and SYSDATE
 		and npc.patid not in (SELECT control_patid FROM @resultsDatabaseSchema.N3C_CONTROL_MAP   WHERE control_patid is not null )
 	group by
 		npc.patid
@@ -412,7 +413,8 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_MAP (patid, pt_age, sex, race, hispan
 		race,
 		hispanic,
 		1 as buddy_num,
-		ABS(CHECKSUM(SYS_GUID())) as randnum -- random number
+		--ABS(CHECKSUM(SYS_GUID())) as randnum -- random number
+		dbms_random.random as randnum
 	FROM @resultsDatabaseSchema.n3c_pre_cohort
 	    WHERE (inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
 
@@ -424,7 +426,8 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_MAP (patid, pt_age, sex, race, hispan
 		race,
 		hispanic,
 		2  buddy_num,
-		ABS(CHECKSUM(SYS_GUID()))  randnum -- random number
+		--ABS(CHECKSUM(SYS_GUID()))  randnum -- random number
+		dbms_random.random as randnum
 	FROM @resultsDatabaseSchema.n3c_pre_cohort
 	  WHERE (inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
    ;
