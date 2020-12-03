@@ -462,7 +462,7 @@ FROM (
             
         from
 			@resultsDatabaseSchema.N3C_PRE_COHORT npc JOIN visit_dimension e ON npc.patid = cast(e.patient_num as varchar(50))
-            LEFT JOIN N3C.CONTROL_MAP CM ON NPC.patid = cm.control_patid
+            LEFT JOIN @resultsDatabaseSchema.N3C_CONTROL_MAP CM ON NPC.patid = cm.control_patid
 		where 
     	    inc_lab_any = 1 and inc_dx_strong = 0 and inc_lab_pos = 0 and inc_dx_weak = 0 
     	    and e.START_DATE between '20180101' and getdate()
