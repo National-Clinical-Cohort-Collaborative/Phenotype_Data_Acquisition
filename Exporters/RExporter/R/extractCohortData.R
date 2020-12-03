@@ -34,6 +34,11 @@ runExtraction  <- function(connectionDetails,
                            ...
                            )
 {
+  # workaround to avoid scientific notation
+  # save current scipen value
+  scipen_val <- getOption("scipen")
+  # temporarily change scipen setting (restored at end of f())
+  options(scipen=999)
 
   # create output dir if it doesn't already exist
   if (!file.exists(file.path(outputFolder)))
@@ -105,6 +110,9 @@ runExtraction  <- function(connectionDetails,
   # Disconnect from database
   DatabaseConnector::disconnect(conn)
 
+  # restore original scipen value
+  options(scipen=scipen_val)
+
 }
 
 
@@ -139,7 +147,7 @@ executeChunkAndromeda <- function(conn,
                                          ,andromedaTableName = "tmp")
 
   write.table(andr$tmp, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE, na="")
-  
+
   Andromeda::close(andr)
 
 

@@ -1,14 +1,24 @@
---OMOP v5.3.1 extraction code for N3C
---Written by Kristin Kostka and Robert Miller, OHDSI
---Code written for MS SQL Server
---This extract purposefully excludes the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH
---Currently this script extracts the derived tables for DRUG_ERA, DOSE_ERA, CONDITION_ERA as well
---Assumptions:
---	1. You have already built the N3C_COHORT table (with that name) prior to running this extract
---	2. You are extracting data with a lookback period to 1-1-2018
---  3. You have existing tables for each of these extracted tables. If you do not, create a shell table so it can extract an empty table.
+/**
+OMOP v5.3.1 extraction code for N3C
+Author: Kristin Kostka (OHDSI), Robert Miller (Tufts)
 
--- To run, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
+HOW TO RUN:
+If you are not using the R or Python exporters, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
+
+
+USER NOTES: 
+This extract pulls the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH, DRUG_ERA, CONDITION_ERA
+As an OMOP site, you are expected to be populating derived tables (OBSERVATION_PERIOD, DRUG_ERA, CONDITION_ERA)
+Please refer to the OMOP site instructions for assistance on how to generate these tables.
+
+
+SCRIPT ASSUMPTIONS:
+1. You have already built the N3C_COHORT table (with that name) prior to running this extract
+2. You are extracting data with a lookback period to 1-1-2018
+3. You have existing tables for each of these extracted tables. If you do not, at a minimum, you MUST create a shell table so it can extract an empty table. Failure to create shells for missing table will result in ingestion problems.
+ 
+RELEASE DATE: 12-01-2020
+**/
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
@@ -19,18 +29,14 @@ select
    '@contactEmail' as contact_email,
    '@cdmName' as cdm_name,
    '@cdmVersion' as cdm_version,
-   (SELECT  vocabulary_version from @resultsDatabaseSchema.phenotype_execution LIMIT 1) as vocabulary_version,
+   (SELECT  vocabulary_version from @resultsDatabaseSchema.n3c_pre_cohort LIMIT 1) as vocabulary_version,
    'Y' as n3c_phenotype_yn,
-   (SELECT  phenotype_version from @resultsDatabaseSchema.phenotype_execution LIMIT 1) as n3c_phenotype_version,
+   (SELECT  phenotype_version from @resultsDatabaseSchema.n3c_pre_cohort LIMIT 1) as n3c_phenotype_version,
    '@shiftDateYN' as shift_date_yn,
    '@maxNumShiftDays' as max_num_shift_days,
    cast(CURRENT_DATE() as datetime) as run_date,
    cast( DATE_ADD(cast(CURRENT_DATE() as date), interval -@dataLatencyNumDays DAY) as datetime) as update_date,	--change integer based on your site's data latency
    cast( DATE_ADD(cast(CURRENT_DATE() as date), interval @daysBetweenSubmissions DAY) as datetime) as next_submission_date;
-
-
-
-
 
 --VALIDATION_SCRIPT
 --OUTPUT_FILE: EXTRACT_VALIDATION.csv
@@ -132,15 +138,6 @@ and x.drug_era_start_date > DATE(2018, 01, 01)
   group by  x.drug_era_id
  having count(*) > 1
 
-union distinct select 'DOSE_ERA' table_name
-	, count(*) dup_count
-  from @cdmDatabaseSchema.dose_era x
-inner join @resultsDatabaseSchema.n3c_cohort n3c
-on x.person_id = n3c.person_id
-and x.dose_era_start_date > DATE(2018, 01, 01)
-  group by  x.dose_era_id
- having count(*) > 1
-
 union distinct select 'CONDITION_ERA' table_name
 	, count(*) dup_count
   from @cdmDatabaseSchema.condition_era x
@@ -148,7 +145,7 @@ inner join @resultsDatabaseSchema.n3c_cohort n3c
 on x.person_id = n3c.person_id
 and x.condition_era_start_date > DATE(2018, 01, 01)
   group by  x.condition_era_id
- having count(*) > 1              ;
+ having count(*) > 1             ;
 
 --PERSON
 --OUTPUT_FILE: PERSON.csv
@@ -435,9 +432,6 @@ join (
  on pr.provider_id = a.provider_id
 ;
 
---Note: it has yet to be decided if Era tables will be constructured downstream in Palantir platform.
--- If it is decided that eras will be reconstructed, these three tables will be omitted.
-
 --DRUG_ERA
 --OUTPUT_FILE: DRUG_ERA.csv
 select
@@ -452,21 +446,6 @@ from @cdmDatabaseSchema.drug_era dre
 join @resultsDatabaseSchema.n3c_cohort n
   on dre.person_id = n.person_id
 where drug_era_start_date >= DATE(2018, 01, 01);
-
---DOSE_ERA
---OUTPUT_FILE: DOSE_ERA.csv
-
-select
-   dose_era_id,
-   n.person_id,
-   drug_concept_id,
-   unit_concept_id,
-   dose_value,
-   cast(dose_era_start_date as datetime) as dose_era_start_date,
-   cast(dose_era_end_date as datetime) as dose_era_end_date
-from @cdmDatabaseSchema.dose_era y join @resultsDatabaseSchema.n3c_cohort n on y.person_id = n.person_id
-where y.dose_era_start_date >= DATE(2018, 01, 01);
-
 
 --CONDITION_ERA
 --OUTPUT_FILE: CONDITION_ERA.csv
@@ -571,14 +550,16 @@ union distinct select
 union distinct select
    'DRUG_ERA' as table_name,
    (select count(*) from @cdmDatabaseSchema.drug_era de join @resultsDatabaseSchema.n3c_cohort n on de.person_id = n.person_id and drug_era_start_date >= DATE(2018, 01, 01)) as row_count
-   /**
-UNION
 
-select
-   'DOSE_ERA' as TABLE_NAME,
-   (select count(*) from DOSE_ERA ds JOIN @resultsDatabaseSchema.N3C_COHORT n ON ds.PERSON_ID = n.PERSON_ID AND DOSE_ERA_START_DATE >= DATEFROMPARTS(2018,01,01)) as ROW_COUNT
-   **/
 union distinct select
    'CONDITION_ERA' as table_name,
    (select count(*) from @cdmDatabaseSchema.condition_era join @resultsDatabaseSchema.n3c_cohort on condition_era.person_id = n3c_cohort.person_id and condition_era_start_date >= DATE(2018, 01, 01)) as row_count
 ) s;
+
+
+--n3c_control_map
+--OUTPUT_FILE: N3C_CONTROL_MAP.csv
+select *
+from @resultsDatabaseSchema.n3c_control_map;
+
+
