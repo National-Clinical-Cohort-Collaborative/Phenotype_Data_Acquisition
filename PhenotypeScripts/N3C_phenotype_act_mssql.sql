@@ -711,4 +711,5 @@ INSERT INTO @resultsDatabaseSchema.N3C_COHORT
     FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
     UNION
     SELECT control_patid as patient_num
-    FROM @resultsDatabaseSchema.N3C_CONTROL_MAP;
+    FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+    WHERE control_patid is not null;
