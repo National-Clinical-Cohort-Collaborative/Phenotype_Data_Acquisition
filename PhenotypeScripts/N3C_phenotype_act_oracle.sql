@@ -747,11 +747,12 @@ where
    
 --populate final table with all members of cohort in a single column
 INSERT INTO @resultsDatabaseSchema.N3C_COHORT
-    SELECT case_patid
+    SELECT case_patid a patient_num
     FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
     UNION
-    SELECT control_patid
-    FROM @resultsDatabaseSchema.N3C_CONTROL_MAP;
+    SELECT control_patid as patient_num
+    FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+   WHERE control_patid is not null;
     
 
 DROP TABLE @resultsDatabaseSchema.N3C_TMP_CASES_1;
