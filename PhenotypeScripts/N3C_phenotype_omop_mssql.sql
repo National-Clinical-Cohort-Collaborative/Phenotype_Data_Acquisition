@@ -243,6 +243,7 @@ AS (
 					)
 				AND c.invalid_reason IS NULL
 			)
+
 		AND condition_start_date >= DATEFROMPARTS(2020, 04, 01)
 	)
 	,
@@ -338,6 +339,7 @@ AS (
 			AND condition_start_date BETWEEN DATEFROMPARTS(2020, 01, 01)
 				AND DATEFROMPARTS(2020, 03, 31)
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
+
 		GROUP BY person_id
 			,visit_occurrence_id
 		HAVING count(*) >= 2
@@ -670,6 +672,7 @@ AS (
 				AND ca.ancestor_concept_id IN (756055)
 				AND c.invalid_reason IS NULL
 			)
+
 		AND measurement_date >= DATEFROMPARTS(2020, 01, 01)
 	)
 	,

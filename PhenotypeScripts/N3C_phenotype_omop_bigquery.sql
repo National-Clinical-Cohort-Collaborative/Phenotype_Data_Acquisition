@@ -159,7 +159,7 @@ as (
 	)
 	,
 	-- UNION
-	-- Phenotype Entry Criteria: ONE or more of the “Strong Positive�? diagnosis codes from the ICD-10 or SNOMED tables
+	-- Phenotype Entry Criteria: ONE or more of the “Strong Positive�? diagnosis codes from the ICD-10 or SNOMED tables
 	-- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
 dx_strong
 as (
@@ -228,6 +228,7 @@ as (
 					)
 				and c.invalid_reason is null
 			)
+
 		and condition_start_date >= DATE(2020, 04, 01)
 	)
 	,
@@ -639,6 +640,7 @@ as (
 				and ca.ancestor_concept_id in (756055)
 				and c.invalid_reason is null
 			)
+
 		and measurement_date >= DATE(2020, 01, 01)
 	)
 	,
@@ -794,7 +796,6 @@ where inc_dx_strong = 0
 	and inc_lab_pos = 0
 	and inc_dx_weak = 0
 	and inc_lab_any = 1;
-
 
 -- Now that the pre-cohort and case tables are populated, we start matching cases and controls, and updating the case and control tables as needed.
 -- all cases need two control buddies. We select on progressively looser demographic criteria until every case has two control matches, or we run out of patients in the control pool.

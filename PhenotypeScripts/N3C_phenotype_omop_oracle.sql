@@ -201,7 +201,7 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT
 	 )
 	,
 	-- UNION
-	-- Phenotype Entry Criteria: ONE or more of the “Strong Positive�? diagnosis codes from the ICD-10 or SNOMED tables
+	-- Phenotype Entry Criteria: ONE or more of the â€œStrong Positiveâ€? diagnosis codes from the ICD-10 or SNOMED tables
 	-- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
 dx_strong
 AS (SELECT DISTINCT person_id
@@ -272,6 +272,7 @@ AS (SELECT DISTINCT person_id
 					)
 				AND c.invalid_reason IS NULL
 			 )
+
 		AND condition_start_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(04,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
 	 )
 	,
@@ -364,6 +365,7 @@ AS (SELECT DISTINCT person_id
 			AND condition_start_date BETWEEN TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
 				AND TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(03,'00')||'-'||TO_CHAR(31,'00'), 'YYYY-MM-DD')
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
+
 		GROUP BY person_id
 			,visit_occurrence_id
 		HAVING count(*) >= 2
@@ -688,6 +690,7 @@ AS (SELECT DISTINCT person_id
 				AND ca.ancestor_concept_id IN (756055)
 				AND c.invalid_reason IS NULL
 			 )
+
 		AND measurement_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
 	 )
 	,
@@ -837,6 +840,7 @@ FROM @resultsDatabaseSchema.N3C_PRE_COHORT npc
 JOIN (SELECT person_id
 		FROM @cdmDatabaseSchema.visit_occurrence
 		  WHERE visit_start_date > TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
+
 		GROUP BY person_id
 		HAVING (CAST(max(visit_start_date) AS DATE) - CAST(min(visit_start_date) AS DATE)) >= 10
  ) e
