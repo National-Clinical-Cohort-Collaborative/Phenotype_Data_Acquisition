@@ -56,7 +56,7 @@ IF OBJECT_ID('@resultsDatabaseSchema.N3C_PRE_CONTROLS', 'U') IS NULL
 		patid VARCHAR(50)  NOT NULL,
 		maxenc DATE  NOT NULL,
 		minenc DATE  NOT NULL,
-		daysonhand DATE  NOT NULL,
+		daysonhand INT  NOT NULL,
 		randnum INT
 	);
 	
@@ -512,7 +512,7 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_CONTROLS (patid, maxenc, minenc, days
 		npc.patid,
 		max(e.ADMIT_DATE) as maxenc,
 		min(e.ADMIT_DATE) as minenc,
-		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) as daysonhand,
+		datediff(day, min(e.ADMIT_DATE), max(e.ADMIT_DATE)) as daysonhand,
 		ABS(CHECKSUM(NEWID())) as randnum -- random number
 	from
 		@resultsDatabaseSchema.n3c_pre_cohort npc 
@@ -524,7 +524,7 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_CONTROLS (patid, maxenc, minenc, days
 	group by
 		npc.patid
 	having
-		max(e.ADMIT_DATE) - min(e.ADMIT_DATE) >= 10;
+		datediff(day, min(e.ADMIT_DATE), max(e.ADMIT_DATE)) >= 10;
 
 		
 -- create pre-map table with random nums
