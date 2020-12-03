@@ -838,7 +838,7 @@ select
 		person_id, 1 as buddy_num, null
 		from @resultsDatabaseSchema.n3c_case_cohort
 		where person_id not in (
-			select person_id
+			select case_person_id
 			from @resultsDatabaseSchema.n3c_control_map
 			where buddy_num = 1
 			)
@@ -846,7 +846,7 @@ select
 		union distinct select person_id, 2 as buddy_num, null
 		from @resultsDatabaseSchema.n3c_case_cohort
 		where person_id not in (
-			select person_id
+			select case_person_id
 			from @resultsDatabaseSchema.n3c_control_map
 			where buddy_num = 2
 			)

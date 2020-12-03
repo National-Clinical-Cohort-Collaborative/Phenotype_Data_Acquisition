@@ -869,7 +869,7 @@ SELECT
 		person_id, 1 as buddy_num, NULL
 		FROM @resultsDatabaseSchema.n3c_case_cohort
 		WHERE person_id NOT IN (
-			SELECT person_id
+			SELECT case_person_id
 			FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
 			WHERE buddy_num = 1
 			)
@@ -879,7 +879,7 @@ SELECT
 		SELECT person_id, 2 as buddy_num, NULL
 		FROM @resultsDatabaseSchema.n3c_case_cohort
 		WHERE person_id NOT IN (
-			SELECT person_id
+			SELECT case_person_id
 			FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
 			WHERE buddy_num = 2
 			)
