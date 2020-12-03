@@ -87,7 +87,7 @@ CREATE TABLE N3C_COHORT (
 --IMPORTANT: do NOT truncate or drop the control-map table.
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_PRE_COHORT;
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_CASE_COHORT;
-TRUNCATE TABLE N3C_COHORT;
+TRUNCATE TABLE @resultsDatabaseSchema.N3C_COHORT;
 
 
 
@@ -461,7 +461,7 @@ FROM (
             datediff(dd,min(e.START_DATE),max(e.START_DATE)) AS daysonhand
             
         from
-			@resultsDatabaseSchema.N3C_PRE_COHORT npc JOIN visit_dimension e ON npc.patid = cast(e.patient_num as varchar(50))
+			@resultsDatabaseSchema.N3C_PRE_COHORT npc JOIN @cdmDatabaseSchema.visit_dimension e ON npc.patid = cast(e.patient_num as varchar(50))
             LEFT JOIN @resultsDatabaseSchema.N3C_CONTROL_MAP CM ON NPC.patid = cm.control_patid
 		where 
     	    inc_lab_any = 1 and inc_dx_strong = 0 and inc_lab_pos = 0 and inc_dx_weak = 0 
