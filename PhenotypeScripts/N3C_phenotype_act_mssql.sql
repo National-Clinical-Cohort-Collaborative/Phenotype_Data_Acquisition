@@ -80,7 +80,7 @@ CREATE TABLE @resultsDatabaseSchema.N3C_CONTROL_MAP (
 --create table to hold all patients
 IF OBJECT_ID('N3C_COHORT', 'U') IS NULL
 CREATE TABLE N3C_COHORT (
-    patid VARCHAR(50) NOT NULL
+    patient_num VARCHAR(50) NOT NULL
 );
 
 --before beginning, remove any patients from the last run from the PRE cohort and the case table.
@@ -707,8 +707,8 @@ where
    
 --populate final table with all members of cohort in a single column
 INSERT INTO @resultsDatabaseSchema.N3C_COHORT
-    SELECT case_patid
+    SELECT case_patid as patient_num
     FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
     UNION
-    SELECT control_patid
+    SELECT control_patid as patient_num
     FROM @resultsDatabaseSchema.N3C_CONTROL_MAP;
