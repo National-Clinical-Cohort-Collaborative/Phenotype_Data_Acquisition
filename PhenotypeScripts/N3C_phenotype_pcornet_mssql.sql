@@ -788,7 +788,7 @@ select
 	demog2.race as control_race,
 	demog2.hispanic as control_ethn
 from
-	N3C_PENULTIMATE_MAP penultimate_map
+	@resultsDatabaseSchema.N3C_PENULTIMATE_MAP penultimate_map
 	join @cdmDatabaseSchema.demographic demog1 on penultimate_map.patid = demog1.patid
 	left outer join @cdmDatabaseSchema.demographic demog2 on penultimate_map.control_patid = demog2.patid
 )
