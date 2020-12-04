@@ -747,7 +747,7 @@ where
    
 --populate final table with all members of cohort in a single column
 INSERT INTO @resultsDatabaseSchema.N3C_COHORT
-    SELECT case_patid a patient_num
+    SELECT case_patid as patient_num
     FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
     UNION
     SELECT control_patid as patient_num
