@@ -648,4 +648,16 @@ WHERE NOT EXISTS
 )
 ;
 
+---------------------------------------------------------------------------------------------------------
+-- 9. Populate cohort table with all members of cohort
+---------------------------------------------------------------------------------------------------------
+INSERT INTO :TNX_SCHEMA.n3c_cohort
+SELECT DISTINCT case_patient_id
+FROM data_a.n3c_control_map
+UNION
+SELECT DISTINCT control_patient_id
+FROM data_a.n3c_control_map
+WHERE control_patient_id IS NOT NULL
+;
+
 COMMIT;
