@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.0 - OMOP MSSQL
+N3C Phenotype 3.0 - OMOP Oracle
 Author: Robert Miller (Tufts), Emily Pfaff (UNC)
 
 HOW TO RUN:
