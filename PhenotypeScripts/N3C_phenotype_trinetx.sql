@@ -1,6 +1,7 @@
 ---------------------------------------------------------------------------------------------------------
 -- 1. Create tables if it does not exist in current schema
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'START PHENO SCRIPT' as log_entry;
 CREATE TABLE IF NOT EXISTS :TNX_SCHEMA.n3c_cohort (
 	patient_id		VARCHAR(200)
 );
@@ -102,6 +103,7 @@ CREATE TABLE IF NOT EXISTS data_a.n3c_control_map (
 ---------------------------------------------------------------------------------------------------------
 -- 2. Update pheno version table
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'UPDATING PHENO VERSION TABLE' as log_entry;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
 INSERT INTO :TNX_SCHEMA.n3c_pheno_version
 SELECT '3.0';
@@ -109,6 +111,7 @@ SELECT '3.0';
 ---------------------------------------------------------------------------------------------------------
 -- 3. Clear out existing tables
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'TRUNCATING TABLES' as log_entry;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_cohort;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pre_cohort;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_case_cohort;
@@ -118,7 +121,20 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_penultimate_map;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_final_map;
 
 ---------------------------------------------------------------------------------------------------------
--- 4. Insert patients into table
+-- 4. Create deduplicated patient table for reference
+---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'CREATING n3c_dedup_patients' as log_entry;
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_dedup_patients
+CREATE TABLE :TNX_SCHEMA.n3c_dedup_patients AS
+SELECT pt.*
+FROM :TNX_SCHEMA.patient pt
+	JOIN (
+		SELECT source_id, patient_id, RANK() OVER(PARTITION BY patient_id ORDER BY batch_id DESC) AS rnk FROM :TNX_SCHEMA.patient
+	) ptDedupFilter ON ptDedupFilter.patient_id = pt.patient_id AND ptDedupFilter.source_id = pt.source_id AND ptDedupFilter.rnk = 1
+;
+
+---------------------------------------------------------------------------------------------------------
+-- 5. Insert patients into table
 -- 	Change Log:
 --		5/11/20  - Updated handling for B97.21
 --				 - Added new codes for phenotype v1.4
@@ -129,6 +145,7 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_final_map;
 --		9/17/20  - Update to v2.2 - Remove some LOINC codes
 --		11/18/20 - Update to v3.0
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_pre_cohort' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_pre_cohort
 SELECT 
 	results.patient_id
@@ -365,15 +382,16 @@ FROM (
 	) pt_list
 	GROUP BY patient_id
 ) results
-	LEFT JOIN :TNX_SCHEMA.patient pat on pat.patient_id = results.patient_id
+	LEFT JOIN :TNX_SCHEMA.n3c_dedup_patients pat on pat.patient_id = results.patient_id
 	LEFT JOIN :TNX_SCHEMA.mapping map_sx ON map_sx.provider_code = ('DEM|GENDER:' || pat.gender)
 	LEFT JOIN :TNX_SCHEMA.mapping map_rc ON map_rc.provider_code = ('DEM|RACE:' || pat.race)
 	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('DEM|ETHNICITY:' || pat.ethnicity)
 ;
 
 ---------------------------------------------------------------------------------------------------------
--- 5. Create Case Cohort
+-- 6. Create Case Cohort
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_case_cohort' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_case_cohort
 SELECT
 	patient_id
@@ -388,8 +406,9 @@ WHERE inc_dx_strong = 1
 ;
 
 ---------------------------------------------------------------------------------------------------------
--- 6. Removals from n3c_control_map
+-- 7. Removals from n3c_control_map
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING DELETE FROM n3c_control_map' as log_entry;
 -- Remove if someone who was in the control group is now a case
 DELETE FROM data_a.n3c_control_map WHERE control_patient_id IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_case_cohort);
 
@@ -401,8 +420,9 @@ DELETE FROM data_a.n3c_control_map WHERE control_patient_id NOT IN (SELECT patie
 DELETE FROM data_a.n3c_control_map WHERE case_patient_id NOT IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_case_cohort);
 
 ---------------------------------------------------------------------------------------------------------
--- 7. Create Additional Control Tables
+-- 8. Create Additional Control Tables
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_pre_controls' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_pre_controls
 SELECT
 	c.patient_id
@@ -421,6 +441,7 @@ GROUP BY c.patient_id
 HAVING DATEDIFF(day, min(e.start_date), max(e.start_date)) >= 10
 ;
 
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_pre_map' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_pre_map
 SELECT
 	c.patient_id
@@ -440,13 +461,14 @@ WHERE c.inc_dx_strong = 1
 DELETE FROM :TNX_SCHEMA.n3c_pre_map WHERE (patient_id, buddy_num) IN (SELECT case_patient_id, buddy_num FROM data_a.n3c_control_map where control_patient_id IS NOT NULL);
 
 ---------------------------------------------------------------------------------------------------------
--- 8. Buddy Match
+-- 9. Buddy Match
 --	- Now that the pre-cohort and case tables are populated, we start matching cases and controls, 
 --	  and updating the case and control tables as needed.
 --	- All cases need two control "buddies". 
 --	- We select on progressively looser demographic criteria until every case has two control matches,
 --	  or we run out of patients in the control pool.
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_penultimate_map' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_penultimate_map
 WITH
 cases_1 AS (
@@ -600,6 +622,7 @@ FROM map_1
 	LEFT OUTER JOIN map_4 ON map_4.patient_id = map_1.patient_id AND map_4.buddy_num = map_1.buddy_num
 ;
 
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_final_map' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_final_map
 SELECT
 	pen.patient_id
@@ -618,13 +641,14 @@ SELECT
 	, COALESCE(map_et.mt_code, control_pt.ethnicity) AS ethnicity 	--Use mapped value if available
 	, COALESCE(map_rc.mt_code, control_pt.race)  AS race   			--Use mapped value if available
 FROM :TNX_SCHEMA.n3c_penultimate_map pen
-	JOIN :TNX_SCHEMA.patient case_pt on case_pt.patient_id = pen.patient_id
-	LEFT JOIN :TNX_SCHEMA.patient control_pt on control_pt.patient_id = pen.control_patient_id
+	JOIN :TNX_SCHEMA.n3c_dedup_patients case_pt on case_pt.patient_id = pen.patient_id
+	LEFT JOIN :TNX_SCHEMA.n3c_dedup_patients control_pt on control_pt.patient_id = pen.control_patient_id
 	LEFT JOIN :TNX_SCHEMA.mapping map_sx ON map_sx.provider_code = ('DEM|GENDER:' || control_pt.gender)
 	LEFT JOIN :TNX_SCHEMA.mapping map_rc ON map_rc.provider_code = ('DEM|RACE:' || control_pt.race)
 	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('DEM|ETHNICITY:' || control_pt.ethnicity)
 ;
 
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_control_map' as log_entry;
 INSERT INTO data_a.n3c_control_map
 SELECT
 	case_patient_id
@@ -649,8 +673,9 @@ WHERE NOT EXISTS
 ;
 
 ---------------------------------------------------------------------------------------------------------
--- 9. Populate cohort table with all members of cohort
+-- 10. Populate cohort table with all members of cohort
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_cohort' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_cohort
 SELECT DISTINCT case_patient_id
 FROM data_a.n3c_control_map
@@ -660,4 +685,5 @@ FROM data_a.n3c_control_map
 WHERE control_patient_id IS NOT NULL
 ;
 
+SELECT CURRENT_TIMESTAMP as date_time, 'DONE WITH PHENO SCRIPT' as log_entry;
 COMMIT;
