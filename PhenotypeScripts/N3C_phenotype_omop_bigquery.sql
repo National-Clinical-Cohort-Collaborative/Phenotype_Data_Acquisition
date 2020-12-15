@@ -64,6 +64,7 @@ DROP TABLE IF EXISTS @resultsDatabaseSchema.final_map;
 -- IMPORTANT: do NOT truncate or drop the control-map table.
 DELETE FROM @resultsDatabaseSchema.n3c_pre_cohort WHERE True;
 DELETE FROM @resultsDatabaseSchema.n3c_case_cohort WHERE True;
+DELETE FROM @resultsDatabaseSchema.n3c_control_cohort WHERE True;
 DELETE FROM @resultsDatabaseSchema.n3c_cohort WHERE True;
 
 -- Phenotype Entry Criteria: A lab confirmed positive test

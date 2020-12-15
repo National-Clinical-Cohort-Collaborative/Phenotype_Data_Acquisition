@@ -18,6 +18,7 @@ SCRIPT RELEASE DATE: 12-01-2020
 
 **/
 
+
 BEGIN
   EXECUTE IMMEDIATE 'CREATE TABLE @resultsDatabaseSchema.N3C_PRE_COHORT  (person_id INT NOT NULL
 		,inc_dx_strong INT NOT NULL
@@ -83,6 +84,7 @@ EXCEPTION
     END IF;
 END;
 
+
 BEGIN
   EXECUTE IMMEDIATE 'CREATE TABLE @resultsDatabaseSchema.n3c_cohort  (person_id INT NOT NULL)';
 EXCEPTION
@@ -105,6 +107,7 @@ END;
 -- before beginning, remove any patients from the last run
 -- IMPORTANT: do NOT truncate or drop the control-map table.
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_PRE_COHORT;
+TRUNCATE TABLE @resultsDatabaseSchema.N3C_CONTROL_COHORT;
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_CASE_COHORT;
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_COHORT;
 
@@ -201,7 +204,7 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT
 	 )
 	,
 	-- UNION
-	-- Phenotype Entry Criteria: ONE or more of the â€œStrong Positiveâ€? diagnosis codes from the ICD-10 or SNOMED tables
+	-- Phenotype Entry Criteria: ONE or more of the Strong Positive diagnosis codes from the ICD-10 or SNOMED tables
 	-- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
 dx_strong
 AS (SELECT DISTINCT person_id
@@ -631,7 +634,7 @@ AS (SELECT DISTINCT person_id
 	  WHERE measurement_concept_id IN (SELECT concept_id
 			FROM @cdmDatabaseSchema.CONCEPT
 			-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
-			  WHERE concept_id IN (
+			    WHERE concept_id IN (
 					586515
 					,586522
 					,706179
@@ -742,8 +745,7 @@ AS (SELECT covid_cohort.person_id
 	,inc_lab_any
 	,inc_lab_pos
 	,'3.0' AS phenotype_version
-	,CASE
-		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 0
+	WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 0
 				AND 4
 			THEN '0-4'
 		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 5
@@ -810,7 +812,7 @@ AS (SELECT covid_cohort.person_id
 FROM cohort c
 JOIN @cdmDatabaseSchema.person d ON c.person_id = d.person_id ;
 
---Populate the case table
+--populate the case table
 INSERT INTO @resultsDatabaseSchema.N3C_CASE_COHORT (person_id
 									,pt_age
 									,sex
@@ -831,16 +833,15 @@ INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_COHORT  (person_id
 									,sex
 									,hispanic
 									,race )
-SELECT npc.person_id
+SELECT DISTINCT npc.person_id
 		,pt_age
 		,sex
 		,hispanic
 		,race
 FROM @resultsDatabaseSchema.N3C_PRE_COHORT npc
-JOIN (SELECT person_id
+JOIN (SELECT DISTINCT person_id
 		FROM @cdmDatabaseSchema.visit_occurrence
 		  WHERE visit_start_date > TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
-
 		GROUP BY person_id
 		HAVING (CAST(max(visit_start_date) AS DATE) - CAST(min(visit_start_date) AS DATE)) >= 10
  ) e
@@ -883,30 +884,12 @@ WHERE CASE_person_id NOT IN (SELECT person_id
 		 );
 
 
-INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
-SELECT person_id, 1 as buddy_num, NULL
-		FROM @resultsDatabaseSchema.n3c_case_cohort
-		    WHERE person_id NOT IN (SELECT case_person_id
-			FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
-			  WHERE buddy_num = 1
-			 )
-
-		   UNION
-
-		SELECT person_id, 2   buddy_num, NULL
-		FROM @resultsDatabaseSchema.n3c_case_cohort
-		  WHERE person_id NOT IN (SELECT case_person_id
-			FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
-			  WHERE buddy_num = 2
-			 )
-   ;
-
 -- Match #1 - age, sex, race, ethnicity
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
-(SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
-	FROM (SELECT subq.*
+INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
+SELECT cases.person_id as case_person_id
+	,cases.buddy_num
+	,controls.person_id as control_person_id
+FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
 				PARTITION BY pt_age
 				,sex
@@ -918,12 +901,26 @@ FROM
 				,npc.sex
 				,npc.race
 				,npc.hispanic
-				,cm.buddy_num
+				,missing.buddy_num
 				,DBMS_RANDOM.VALUE AS randnum
 			FROM @resultsDatabaseSchema.n3c_case_cohort npc
-			JOIN @resultsDatabaseSchema.N3C_CONTROL_MAP cm
-			ON npc.person_id = cm.case_person_id
-			AND cm.control_person_id IS NULL
+			JOIN (SELECT person_id, 1 as buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						    WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 1
+							 )
+
+						   UNION
+
+						SELECT person_id, 2  buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						 WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 2
+							 )
+			 ) missing
+			ON npc.person_id = missing.person_id
 		 ) subq
 	 ) cases
 	INNER JOIN
@@ -951,23 +948,18 @@ FROM
 		AND cases.race = controls.race
 		AND cases.hispanic = controls.hispanic
 		AND cases.join_row_1 = controls.join_row_1
-
- ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
-;
+ ;
 
 
 
 
 
 -- Match #2 - age, sex, race
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
-(SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
-	FROM (SELECT subq.*
+INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
+SELECT cases.person_id as case_person_id
+	,cases.buddy_num
+	,controls.person_id as control_person_id
+FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
 				PARTITION BY pt_age
 				,sex
@@ -978,12 +970,26 @@ FROM
 				,npc.pt_age
 				,npc.sex
 				,npc.race
-				,cm.buddy_num
+				,missing.buddy_num
 				,DBMS_RANDOM.VALUE AS randnum
 			FROM @resultsDatabaseSchema.n3c_case_cohort npc
-			JOIN @resultsDatabaseSchema.N3C_CONTROL_MAP cm
-			ON npc.person_id = cm.case_person_id
-			AND cm.control_person_id IS NULL
+			JOIN (SELECT person_id, 1 as buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						    WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 1
+							 )
+
+						   UNION
+
+						SELECT person_id, 2  buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						 WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 2
+							 )
+			 ) missing
+			ON npc.person_id = missing.person_id
 		 ) subq
 	 ) cases
 	INNER JOIN
@@ -1009,22 +1015,19 @@ FROM
 		AND cases.sex = controls.sex
 		AND cases.race = controls.race
 		AND cases.join_row_1 = controls.join_row_1
+ ;
 
- ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
-;
 
 
 
 
 -- Match #3 -- age, sex
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
-(SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
-	FROM (SELECT subq.*
+
+INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
+SELECT cases.person_id as case_person_id
+	,cases.buddy_num
+	,controls.person_id as control_person_id
+FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
 				PARTITION BY pt_age
 				,sex
@@ -1033,12 +1036,26 @@ FROM
 		FROM (SELECT npc.person_id
 				,npc.pt_age
 				,npc.sex
-				,cm.buddy_num
+				,missing.buddy_num
 				,DBMS_RANDOM.VALUE AS randnum
 			FROM @resultsDatabaseSchema.n3c_case_cohort npc
-			JOIN @resultsDatabaseSchema.N3C_CONTROL_MAP cm
-			ON npc.person_id = cm.case_person_id
-			AND cm.control_person_id IS NULL
+			JOIN (SELECT person_id, 1 as buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						    WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 1
+							 )
+
+						   UNION
+
+						SELECT person_id, 2  buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						 WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 2
+							 )
+			 ) missing
+			ON npc.person_id = missing.person_id
 		 ) subq
 	 ) cases
 	INNER JOIN
@@ -1061,21 +1078,21 @@ FROM
 	ON cases.pt_age = controls.pt_age
 		AND cases.sex = controls.sex
 		AND cases.join_row_1 = controls.join_row_1
+ ;
 
- ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
-;
+
+
+
 
 
 
 -- Match #4 - sex
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
-(SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
-	FROM (SELECT subq.*
+
+INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
+SELECT cases.person_id as case_person_id
+	,cases.buddy_num
+	,controls.person_id as control_person_id
+FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
 				PARTITION BY
 				sex
@@ -1083,12 +1100,26 @@ FROM
 				) AS join_row_1
 		FROM (SELECT npc.person_id
 				,npc.sex
-				,cm.buddy_num
+				,missing.buddy_num
 				,DBMS_RANDOM.VALUE AS randnum
 			FROM @resultsDatabaseSchema.n3c_case_cohort npc
-			JOIN @resultsDatabaseSchema.N3C_CONTROL_MAP cm
-			ON npc.person_id = cm.case_person_id
-			AND cm.control_person_id IS NULL
+			JOIN (SELECT person_id, 1 as buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						    WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 1
+							 )
+
+						   UNION
+
+						SELECT person_id, 2  buddy_num
+						FROM @resultsDatabaseSchema.n3c_case_cohort
+						 WHERE person_id NOT IN (SELECT case_person_id
+							FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+							  WHERE buddy_num = 2
+							 )
+			 ) missing
+			ON npc.person_id = missing.person_id
 		 ) subq
 	 ) cases
 	INNER JOIN
@@ -1109,12 +1140,11 @@ FROM
 	 ) controls
 	ON cases.sex = controls.sex
 		AND cases.join_row_1 = controls.join_row_1
+ ;
 
- ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
-;
+
+
+
 
 
 INSERT INTO @resultsDatabaseSchema.N3C_COHORT
@@ -1125,4 +1155,5 @@ FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
 
 SELECT DISTINCT control_person_id
 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
+
     WHERE control_person_id IS NOT NULL   ;

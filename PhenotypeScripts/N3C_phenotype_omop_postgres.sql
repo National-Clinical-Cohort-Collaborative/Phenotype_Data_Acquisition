@@ -64,6 +64,7 @@ DROP TABLE IF EXISTS @resultsDatabaseSchema.final_map;
 -- IMPORTANT: do NOT truncate or drop the control-map table.
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_PRE_COHORT;
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_CASE_COHORT;
+TRUNCATE TABLE @resultsDatabaseSchema.N3C_CONTROL_COHORT;
 TRUNCATE TABLE @resultsDatabaseSchema.N3C_COHORT;
 
 -- Phenotype Entry Criteria: A lab confirmed positive test
