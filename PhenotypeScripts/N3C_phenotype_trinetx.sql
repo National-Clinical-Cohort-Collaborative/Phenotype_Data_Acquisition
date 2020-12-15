@@ -124,7 +124,7 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_final_map;
 -- 4. Create deduplicated patient table for reference
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'CREATING n3c_dedup_patients' as log_entry;
-DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_dedup_patients
+DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_dedup_patients;
 CREATE TABLE :TNX_SCHEMA.n3c_dedup_patients AS
 SELECT pt.*
 FROM :TNX_SCHEMA.patient pt
