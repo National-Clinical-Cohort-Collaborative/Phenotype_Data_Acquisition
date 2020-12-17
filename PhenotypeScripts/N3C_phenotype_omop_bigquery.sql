@@ -26,9 +26,9 @@ CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_pre_cohort  (person_id INT
 		,inc_lab_pos INT64 not null
 		,phenotype_version STRING
 		,pt_age STRING
-		,sex STRING
-		,hispanic STRING
-		,race STRING
+		,sex INT64
+		,hispanic INT64
+		,race INT64
 		,vocabulary_version STRING
 		);
 
@@ -37,18 +37,18 @@ CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_pre_cohort  (person_id INT
 
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_case_cohort  (person_id INT64 not null
 		,pt_age STRING
-		,sex STRING
-		,hispanic STRING
-		,race STRING
+		,sex INT64
+		,hispanic INT64
+		,race INT64
 		);
 
 
 
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_control_cohort  (person_id INT64 not null
 		,pt_age STRING
-		,sex STRING
-		,hispanic STRING
-		,race STRING
+		,sex INT64
+		,hispanic INT64
+		,race INT64
 		);
 
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_control_map  (case_person_id INT64 not null
