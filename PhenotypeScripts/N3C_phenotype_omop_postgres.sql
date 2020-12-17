@@ -861,7 +861,7 @@ FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
 WHERE CASE_person_id NOT IN (
 		SELECT person_id
 		FROM @resultsDatabaseSchema.N3C_CASE_COHORT
-		WHERE case_person_id IS NOT NULL
+		WHERE person_id IS NOT NULL
 		);
 
 
