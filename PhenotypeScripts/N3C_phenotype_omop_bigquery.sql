@@ -830,7 +830,7 @@ from @resultsDatabaseSchema.n3c_control_map
 where case_person_id not in (
 		select person_id
 		from @resultsDatabaseSchema.n3c_case_cohort
-		where case_person_id is not null
+		where person_id is not null
 		);
 
 
