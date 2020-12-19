@@ -30,14 +30,14 @@ You can (optionally) use our Python Data Exporter to run the N3C data extract sc
 
 
 *   Python 3.x
-*   Oracle or MS SqlServer
-*   If you are using MS SqlServer, you will need to have package pyodbc installed (pip install pyodbc)
+*   Oracle, MS SqlServer, or Google BigQuery
+*   If you are using MS SqlServer or Google BigQuery, you will need to have package pyodbc installed (pip install pyodbc)
 *   If you are using Oracle, you will need to have package cx_Oracle installed (pip install cx_Oracle) as well as the Oracle client libraries.  [More information about cx_Oracle installation](https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html)
 *   To use the sftp feature, you may need to install paramiko:  python -m pip install paramiko
 *   You should have already copied one of the [extract SQL files](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/ExtractScripts) and [phenotype SQL file](https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/tree/master/PhenotypeScripts) to a local directory.
+*	Google BigQuery requires installation of Simba ODBC drivers (https://cloud.google.com/bigquery/providers/simba-drivers)
 
 **Running the Exporter**
-
 
 
 1. Copy or download the contents of this folder to your local system. To make it easy, use the same directory where your extract SQL and phenotype SQL files are located.
@@ -57,8 +57,11 @@ python db_exp.py --config config.ini --database oracle --phenotype N3C_phenotype
 *   --config (config file name)  See file "config_example.ini"
 *   --phenotype (phenotype SQL file name)
 *   --extract (extract SQL file name)
-*   --database (oracle or mssql)
+*   --database (oracle, mssql, or bigquery)
 *   --output_dir (output directory for export)   Output directory must have a sub-directory "datafiles".
+*   --storedata Stores all data files in local DBMS
+*   --storevocab Stores current vocabulary files in local DBMS
+*   --nocsv Runs extract script but does not write CSV. If --storedata, data stored only in local DBMS.
 *   --zip
 *   --sftp
 *   --debug
@@ -81,3 +84,4 @@ Once you run the exporter, your files will be output in the following directory 
 **Bug Reports/Enhancement Requests/Contributions**
 
 We would love to hear from you about this script, as we hope to continue to improve and enhance it. We also welcome contributions, if there’s a cool feature you’ve added locally. Please feel free to open an issue or create a pull request as needed!
+
