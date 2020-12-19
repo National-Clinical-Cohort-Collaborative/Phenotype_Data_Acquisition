@@ -20,6 +20,14 @@ service_name =
 user = xxxxx
 pwd = xxxxx
 
+[bigquery]
+; assumes OAuthMechanism = 0 (Service Account IAM)
+; config parms from Simba documentation
+oauthserviceacctemail = Service account email
+oauthpvtkeypath = Path to Service account json key file
+projectid = GBQ project for storing all data sets/schemas
+driver = Logical name of Simbal ODBC drivers odbc.ini(Mac/Linxu); ODBC Database Admininstrator(windows) eg: Simba ODBC Driver for Google BigQuery
+
 ; for zip file creation
 ; and for sql parameters
 [site]

@@ -218,12 +218,12 @@ select
    cast(condition_end_datetime as datetime) as condition_end_datetime,
    condition_type_concept_id,
    condition_status_concept_id,
-   null as stop_reason,
+   cast(null as string) as stop_reason,
    visit_occurrence_id,
-   null as visit_detail_id,
+   cast(null as int64) as visit_detail_id,
    condition_source_value,
    condition_source_concept_id,
-   null as condition_status_source_value
+   cast(null as string) as condition_status_source_value
 from @cdmDatabaseSchema.condition_occurrence co
 join @resultsDatabaseSchema.n3c_cohort n
   on co.person_id = n.person_id
@@ -240,16 +240,16 @@ select
    cast(drug_exposure_end_date as datetime) as drug_exposure_end_date,
    cast(drug_exposure_end_datetime as datetime) as drug_exposure_end_datetime,
    drug_type_concept_id,
-   null as stop_reason,
+   cast(null as string) as stop_reason,
    refills,
    quantity,
    days_supply,
-   null as sig,
+   cast(null as string) as sig,
    route_concept_id,
    lot_number,
    provider_id,
    visit_occurrence_id,
-   null as visit_detail_id,
+   cast(null as int64) as visit_detail_id,
    drug_source_value,
    drug_source_concept_id,
    route_source_value,
@@ -272,10 +272,10 @@ select
    quantity,
    provider_id,
    visit_occurrence_id,
-   null as visit_detail_id,
+   cast(null as int64) as visit_detail_id,
    procedure_source_value,
    procedure_source_concept_id,
-   null as modifier_source_value
+   cast(null as string) as modifier_source_value
 from @cdmDatabaseSchema.procedure_occurrence po
 join @resultsDatabaseSchema.n3c_cohort n
   on po.person_id = n.person_id
@@ -289,7 +289,7 @@ select
    measurement_concept_id,
    cast(measurement_date as datetime) as measurement_date,
    cast(measurement_datetime as datetime) as measurement_datetime,
-   null as measurement_time,
+   cast(null as string) as measurement_time,
    measurement_type_concept_id,
    operator_concept_id,
    value_as_number,
@@ -299,11 +299,11 @@ select
    range_high,
    provider_id,
    visit_occurrence_id,
-   null as visit_detail_id,
+   cast(null as int64) as visit_detail_id,
    measurement_source_value,
    measurement_source_concept_id,
-   null as unit_source_value,
-   null as value_source_value
+   cast(null as string) as unit_source_value,
+   cast(null as string) as value_source_value
 from @cdmDatabaseSchema.measurement m
 join @resultsDatabaseSchema.n3c_cohort n
   on m.person_id = n.person_id
@@ -325,11 +325,11 @@ select
    unit_concept_id,
    provider_id,
    visit_occurrence_id,
-   null as visit_detail_id,
+   cast(null as int64) as visit_detail_id,
    observation_source_value,
    observation_source_concept_id,
-   null as unit_source_value,
-   null as qualifier_source_value
+   cast(null as string) as unit_source_value,
+   cast(null as string) as qualifier_source_value
 from @cdmDatabaseSchema.observation o
 join @resultsDatabaseSchema.n3c_cohort n
   on o.person_id = n.person_id
@@ -343,7 +343,7 @@ select
 	cast(death_datetime as datetime) as death_datetime,
 	death_type_concept_id,
 	cause_concept_id,
-	null as cause_source_value,
+	cast(null as string) as cause_source_value,
 	cause_source_concept_id
 from @cdmDatabaseSchema.death d
 join @resultsDatabaseSchema.n3c_cohort n
@@ -354,13 +354,13 @@ where d.death_date >= DATE(2020, 01, 01);
 --OUTPUT_FILE: LOCATION.csv
 select
    l.location_id,
-   null as address_1, -- to avoid identifying information
-   null as address_2, -- to avoid identifying information
+   cast(null as string) as address_1, -- to avoid identifying information
+   cast(null as string) as address_2, -- to avoid identifying information
    city,
    state,
    zip,
    county,
-   null as location_source_value
+   cast(null as string) as location_source_value
 from @cdmDatabaseSchema.location l
 join (
         select distinct p.location_id
@@ -377,9 +377,9 @@ select
    cs.care_site_id,
    care_site_name,
    place_of_service_concept_id,
-   null as location_id,
-   null as care_site_source_value,
-   null as place_of_service_source_value
+   cast(null as int64) as location_id,
+   cast(null as string) as care_site_source_value,
+   cast(null as string) as place_of_service_source_value
 from @cdmDatabaseSchema.care_site cs
 join (
         select distinct care_site_id
@@ -394,14 +394,14 @@ join (
 --OUTPUT_FILE: PROVIDER.csv
 select
    pr.provider_id,
-   null as provider_name, -- to avoid accidentally identifying sites
-   null as npi, -- to avoid accidentally identifying sites
-   null as dea, -- to avoid accidentally identifying sites
+   cast(null as string) as provider_name, -- to avoid accidentally identifying sites
+   cast(null as string) as npi, -- to avoid accidentally identifying sites
+   cast(null as string) as dea, -- to avoid accidentally identifying sites
    specialty_concept_id,
    care_site_id,
-   null as year_of_birth,
+   cast(null as int64) as year_of_birth,
    gender_concept_id,
-   null as provider_source_value, -- to avoid accidentally identifying sites
+   cast(null as string) as provider_source_value, -- to avoid accidentally identifying sites
    specialty_source_value,
    specialty_source_concept_id,
    gender_source_value,
