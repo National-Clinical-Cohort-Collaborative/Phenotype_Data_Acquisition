@@ -745,7 +745,7 @@ AS (SELECT covid_cohort.person_id
 	,inc_lab_any
 	,inc_lab_pos
 	,'3.0' AS phenotype_version
-	CASE
+	,CASE
 	WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 0
 				AND 4
 			THEN '0-4'
