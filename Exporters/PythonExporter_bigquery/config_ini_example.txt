@@ -1,0 +1,63 @@
+; do not use quotes for values
+; comments start with a semi-colon (;)
+
+; database connections
+[mssql]
+host = xxxxx
+database  = xxxxx
+port = xxxxx
+user = xxxxx
+pwd = xxxxx
+; you may need to change driver for your site, example: SQL Server Native Client 11.0
+driver = SQL Server
+
+[oracle]
+host = xxxxx
+port = xxxxx
+; provide SID or Service Name
+sid = 
+service_name = 
+user = xxxxx
+pwd = xxxxx
+
+[bigquery]
+; assumes OAuthMechanism = 0 (Service Account IAM)
+; config parms from Simba documentation
+oauthserviceacctemail = Service account email
+oauthpvtkeypath = Path to Service account json key file
+projectid = GBQ project for storing all data sets/schemas
+driver = Logical name of Simbal ODBC drivers odbc.ini(Mac/Linxu); ODBC Database Admininstrator(windows) eg: Simba ODBC Driver for Google BigQuery
+
+; for zip file creation
+; and for sql parameters
+[site]
+results_database_schema = xxxxx
+cdm_database_schema = xxxxx
+; site abbreviation (example: UNC)
+site_abbrev = xxxxx
+site_name = xxxxx
+contact_name = xxxxx
+contact_email = xxxxx
+; cdm name (pcornet, omop, act)
+cdm_name = xxxxx
+cdm_version = xxxxxx
+vocabulary_version = xxxxx
+; set below to Y or N
+n3c_phenotype_yn = xxxxx
+data_latency_num_days = xxxxx
+days_between_submissions = xxxxx
+; set below to Y or N
+shift_date_yn = X
+; set below to number of days, UNKNOWN if shifting and not known, NA if not shifting
+max_num_shift_days = NA
+
+[sftp]
+; host examples:
+; sftp.dev.cdmh.ncats.io
+; sftp.cdmh.ncats.io
+host = xxxxx
+port = 22
+user = xxxxx
+keyfile = xxxxx
+; directory on sftp server
+remote_dir = incoming
