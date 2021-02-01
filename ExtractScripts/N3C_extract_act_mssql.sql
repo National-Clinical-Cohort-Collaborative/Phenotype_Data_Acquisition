@@ -146,10 +146,10 @@ n3c_concept_dimension as
 -- new 02.01.2021 correction to map covid ontology nonstandard codes
 covid_standard_codes as 
 (
-  select distinct concept_cd, concept_path  
+  select distinct concept_cd, concept_path, name_char  
     from n3c_concept_dimension 
     where concept_path like '\ACT\UMLS_C0031437\SNOMED_3947185011\%' 
-        and nvl(substr(concept_cd,0, instr(concept_cd,':')), concept_cd) in (
+        and isnull(substring(concept_cd, 0, charindex(':', concept_cd)+1), concept_cd) in (
             'ACT|LOCAL:',
             'ACT|LOCAL|LAB:',
             'ATC:',
@@ -199,6 +199,12 @@ covid_nonstandard_codes_mapped as
         p.path_element
     from covid_nonstandard_parents p
     inner join covid_standard_codes s on s.concept_path = p.parent
+   union
+    select concept_cd, concept_cd, name_char, concept_path, concept_path,
+	 substring(concept_path,
+	      len(concept_path) - charindex('\',reverse(concept_path),2)+2,
+	      charindex('\',reverse(concept_path),2)-2) as path_element 
+    from covid_standard_codes
 )
 med_standard_codes as
 (
