@@ -16,6 +16,7 @@
 -- prefix is not a valid ICD10CM code do not include that prefix
 -- Sites that use adapter mapping will need to create a concept_dimension table that links your adapter_mapping 'table'
 -- to concept_dimension where the shrine path becomes the concept_path
+-- 2.1.2021 FIx to add local codes to standard codes for covid ontology
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
@@ -142,6 +143,63 @@ n3c_concept_dimension as
 (
     select * from @cdmDatabaseSchema.concept_dimension
 ),
+-- new 02.01.2021 correction to map covid ontology nonstandard codes
+covid_standard_codes as 
+(
+  select distinct concept_cd, concept_path  
+    from n3c_concept_dimension 
+    where concept_path like '\ACT\UMLS_C0031437\SNOMED_3947185011\%' 
+        and nvl(substr(concept_cd,0, instr(concept_cd,':')), concept_cd) in (
+            'ACT|LOCAL:',
+            'ACT|LOCAL|LAB:',
+            'ATC:',
+            'CPT4:',
+            'DEM|VITAL STATUS:',
+            'ICD9CM:',
+            'ICD10CM:',
+            'ICD10PCS:',
+            'LOINC:',
+            'NDC:',
+            'NUI:',
+            'RXNORM:',
+            'SNOMED:',
+            'UMLS:',
+            'DRG:',
+            'HCPCS:')
+),
+covid_nonstandard_codes as --local codes
+(
+    select * from n3c_concept_dimension 
+        where concept_path like '\ACT\UMLS_C0031437\SNOMED_3947185011\%' and
+            (concept_cd not in (select concept_cd from covid_standard_codes))
+    --order by concept_path
+),
+covid_nonstandard_parents as 
+(
+    select 
+        concept_cd, 
+        name_char, 
+        substring(concept_path,
+			      len(concept_path) - charindex('\',reverse(concept_path),2)+2,
+			      charindex('\',reverse(concept_path),2)-2
+		) as path_element,
+        substring(concept_path,1,len(concept_path)-charindex('\',reverse(concept_path),2)+1) as parent,
+        concept_path 
+    from covid_nonstandard_codes
+),
+-- map local codes to codes that are standard in the ACT Ontology
+covid_nonstandard_codes_mapped as  
+(
+    select 
+        s.concept_cd act_standard_code, 
+        p.concept_cd local_concept_cd, 
+        p.name_char, 
+        p.parent parent_concept_path,
+        s.concept_path concept_path, 
+        p.path_element
+    from covid_nonstandard_parents p
+    inner join covid_standard_codes s on s.concept_path = p.parent
+)
 med_standard_codes as
 (
 select concept_path, concept_cd, name_char from n3c_concept_dimension where concept_path like '\ACT\Medications\%'  and
@@ -375,7 +433,9 @@ select * from dx_nonstandard_codes_mapped
 union
 select * from px_nonstandard_codes_mapped
 union
-select * from dem_nonstandard_codes_mapped;
+select * from dem_nonstandard_codes_mapped
+union
+select * from covid_nonstandard_codes_mapped;
 
 
 --OBSERVATION_FACT TABLE
@@ -502,3 +562,34 @@ select
    'CONCEPT_DIMENSION' as TABLE_NAME,
    (select count(*) from @cdmDatabaseSchema.CONCEPT_DIMENSION) as ROW_COUNT
  ) x;
+ 
+ 
+ /* Test code block - for testing nostandard code maps
+ --add_test_nonstandard_codes 
+n3c_concept_dimension as 
+(select CONCEPT_PATH, CONCEPT_CD, NAME_CHAR, 'TEST' CONCEPT_BLOB, 
+sysdate UPDATE_DATE, sysdate DOWNLOAD_DATE, sysdate IMPORT_DATE, 
+'TEST' SOURCESYSTEM_CD, 20210130 UPLOAD_ID from n3c_concept_dimension_orig
+union
+select '\ACT\UMLS_C0031437\SNOMED_3947185011\UMLS_C0022885\ACT_LOCAL_LAB_ANY_POSITIVE\LOINC_94503-0 POSITIVE\TEST_LOCAL_POS\',
+'TEST:LOCAL POS', 'Test Local Positive',
+ 'TEST' CONCEPT_BLOB, 
+sysdate UPDATE_DATE, sysdate DOWNLOAD_DATE, sysdate IMPORT_DATE, 
+'TEST' SOURCESYSTEM_CD, 20210130 UPLOAD_ID 
+from dual
+union 
+select '\ACT\UMLS_C0031437\SNOMED_3947185011\UMLS_C0242656\UMLS_C0013227\UMLS_C0003451\ACT|LOCAL|MED_REMDESIVIR\TESTREMDESIVIR\',
+'TEST:REMDESIVIR', 'Test Local Positive',
+ 'TEST' CONCEPT_BLOB, 
+sysdate UPDATE_DATE, sysdate DOWNLOAD_DATE, sysdate IMPORT_DATE, 
+'TEST' SOURCESYSTEM_CD, 20210130 UPLOAD_ID
+from dual
+union 
+select '\ACT\UMLS_C0031437\SNOMED_3947185011\UMLS_C0242656\UMLS_C0013227\NUI_N0000029127\C03CB01\TESTATC\',
+'TEST:ATCC03CB01', 'Test ATC',
+ 'TEST' CONCEPT_BLOB, 
+sysdate UPDATE_DATE, sysdate DOWNLOAD_DATE, sysdate IMPORT_DATE, 
+'TEST' SOURCESYSTEM_CD, 20210130 UPLOAD_ID
+from dual
+),
+*/
