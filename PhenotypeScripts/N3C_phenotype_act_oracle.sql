@@ -466,7 +466,9 @@ FROM (
 			@resultsDatabaseSchema.N3C_PRE_COHORT
 		where 
     			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
-
+			 --BUDDY-SAVER
+			 and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=1 and case_patid is not null and control_patid is not null)				     
+	
 
 		UNION
 
@@ -482,6 +484,9 @@ FROM (
 			@resultsDatabaseSchema.N3C_PRE_COHORT
 		where 
     			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
+			 --BUDDY-SAVER
+			 and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=2 and case_patid is not null and control_patid is not null)				     
+		
 	) subq
 )C1;
 
