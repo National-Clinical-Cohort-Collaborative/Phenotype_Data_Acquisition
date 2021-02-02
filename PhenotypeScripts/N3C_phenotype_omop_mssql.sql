@@ -343,7 +343,7 @@ AS (
 
 		GROUP BY person_id
 			,visit_occurrence_id
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_encounter
 
 	UNION
@@ -436,7 +436,7 @@ AS (
 				AND DATEFROMPARTS(2020, 03, 31)
 		GROUP BY person_id
 			,condition_start_date
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_date
 
 	UNION
@@ -532,7 +532,7 @@ AS (
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,visit_occurrence_id
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_encounter
 
 	UNION
@@ -599,7 +599,7 @@ AS (
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,condition_start_date
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_date
 	)
 	,
