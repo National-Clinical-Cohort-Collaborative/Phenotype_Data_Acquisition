@@ -433,7 +433,7 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_MAP (patid, pt_age, sex, race, hispan
 	FROM @resultsDatabaseSchema.n3c_pre_cohort
 	  WHERE (inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
 	  --BUDDY-SAVER
-	  and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=1 and case_patid is not null and control_patid is not null)	  
+	  and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=2 and case_patid is not null and control_patid is not null)	  
    ;
 
 --start progressively matching cases to controls. we will do a diff between the results here and what's already in the control_map table later.
