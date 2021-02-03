@@ -132,7 +132,8 @@ TRUNCATE TABLE @resultsDatabaseSchema.N3C_FINAL_MAP;
 WITH 
 covid_loinc  AS 
 (
-	SELECT '94307-6' as loinc    UNION	
+	SELECT '95209-3' as loinc    UNION
+	SELECT '94307-6' as loinc    UNION
 	SELECT '94308-4' as loinc     UNION 
 	SELECT '94309-2' as loinc     UNION 
 	SELECT '94311-8' as loinc     UNION 
@@ -214,6 +215,8 @@ covid_pos_list as
 -- Note that Z11.59 has been removed
 covid_dx_codes as
 (
+	SELECT 'J12.82' as dx_code,	'dx_strong_positive' as dx_category    UNION
+	SELECT 'M35.81' as dx_code,	'dx_strong_positive' as dx_category    UNION
 	SELECT 'B97.21' as dx_code,	'dx_strong_positive' as dx_category    UNION 
 	SELECT 'B97.29'  dx_code,	'dx_strong_positive' as dx_category     UNION 
 	SELECT 'U07.1'  dx_code,	'dx_strong_positive' as dx_category     UNION 
