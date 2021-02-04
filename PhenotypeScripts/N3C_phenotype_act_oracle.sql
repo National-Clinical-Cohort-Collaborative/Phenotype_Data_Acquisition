@@ -316,7 +316,7 @@ FROM (
         FROM (SELECT DISTINCT
                 patient_num, encounter_num, dx
             FROM @resultsDatabaseSchema.N3C_TMP_covid_diagnosis
-              WHERE DX_CATEGORY='dx_weak_positive' and best_dx_date <= '01-MAY-2020'
+              WHERE DX_CATEGORY='DX_WEAK_POSITIVE' and best_dx_date <= '01-MAY-2020'
          ) subq
         group by
             patient_num,
@@ -334,7 +334,7 @@ FROM (
         FROM (SELECT DISTINCT
                 patient_num, best_dx_date, dx
             FROM @resultsDatabaseSchema.N3C_TMP_covid_diagnosis
-              WHERE DX_CATEGORY='dx_weak_positive' and best_dx_date <= '01-MAY-2020'
+              WHERE DX_CATEGORY='DX_WEAK_POSITIVE' and best_dx_date <= '01-MAY-2020'
          ) subq
         group by
             patient_num,
