@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.1 - OMOP MSSQL
+N3C Phenotype 3.1 - OMOP Redshift
 Author: Robert Miller (Tufts), Emily Pfaff (UNC)
 
 HOW TO RUN:
