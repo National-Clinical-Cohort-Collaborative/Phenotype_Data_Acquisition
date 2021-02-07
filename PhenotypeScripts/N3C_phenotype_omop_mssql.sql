@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.0 - OMOP MSSQL
+N3C Phenotype 3.1 - OMOP MSSQL
 Author: Robert Miller (Tufts), Emily Pfaff (UNC)
 
 HOW TO RUN:
@@ -14,7 +14,7 @@ If you have read/write to your cdmDatabaseSchema, you would use the same schema 
 
 To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
-SCRIPT RELEASE DATE: 12-01-2020
+SCRIPT RELEASE DATE: By 14 February 2020
 
 **/
 
@@ -133,6 +133,10 @@ AS (
 					,36661374
 					,36661370
 					,36661371
+					,723479
+					,723474
+					,757685
+					,723476
 					)
 
 			UNION
@@ -191,11 +195,25 @@ AS (
 					,37310285
 					,756039
 					,320651
-					,37311060
 					)
 			)
 		-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
 		AND condition_start_date BETWEEN DATEFROMPARTS(2020, 01, 01)
+			AND DATEFROMPARTS(2020, 03, 31)
+
+	UNION
+	-- the one condition code that maps to an observation (3731160)
+		SELECT DISTINCT person_id
+	FROM @cdmDatabaseSchema.OBSERVATION
+	WHERE observation_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+			-- The list of ICD-10 codes in the Phenotype Wiki
+			-- This is the list of standard concepts that represent those terms
+			WHERE concept_id IN (37311060)
+			)
+		-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
+		AND observation_date BETWEEN DATEFROMPARTS(2020, 01, 01)
 			AND DATEFROMPARTS(2020, 03, 31)
 
 	UNION
@@ -210,7 +228,6 @@ AS (
 			-- This is the list of standard concepts that represent those terms
 			WHERE concept_id IN (
 					37311061
-					,37311060
 					,756023
 					,756031
 					,756039
@@ -239,13 +256,36 @@ AS (
 					,37311061
 					,37310284
 					,756039
-					,37311060
 					,37310254
 					)
 				AND c.invalid_reason IS NULL
 			)
 
 		AND condition_start_date >= DATEFROMPARTS(2020, 04, 01)
+	
+	UNION
+
+	-- the one condition code that maps to an observation (3731160)
+	SELECT DISTINCT person_id
+	FROM @cdmDatabaseSchema.OBSERVATION
+	WHERE observation_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+			-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+			-- This is the list of standard concepts that represent those terms
+			WHERE concept_id IN (37311060)
+
+			UNION
+
+			SELECT c.concept_id
+			FROM @cdmDatabaseSchema.CONCEPT c
+			JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
+				-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
+				AND ca.ancestor_concept_id IN (37311060)
+				AND c.invalid_reason IS NULL
+			)
+
+		AND observation_date >= DATEFROMPARTS(2020, 04, 01)
 	)
 	,
 	-- UNION
