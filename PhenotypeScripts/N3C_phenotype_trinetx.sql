@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS data_a.n3c_control_map (
 SELECT CURRENT_TIMESTAMP as date_time, 'UPDATING PHENO VERSION TABLE' as log_entry;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
 INSERT INTO :TNX_SCHEMA.n3c_pheno_version
-SELECT '3.0';
+SELECT '3.1';
 
 ---------------------------------------------------------------------------------------------------------
 -- 3. Clear out existing tables
@@ -136,14 +136,15 @@ FROM :TNX_SCHEMA.patient pt
 ---------------------------------------------------------------------------------------------------------
 -- 5. Insert patients into table
 -- 	Change Log:
---		5/11/20  - Updated handling for B97.21
+--		05/11/20 - Updated handling for B97.21
 --				 - Added new codes for phenotype v1.4
--- 		5/29/20  - Added new codes for phenotype v1.5
---		6/08/20  - Added new codes for phenotype v1.6
---		7/13/20  - Update to v2.0
---		8/11/20  - Update to v2.1
---		9/17/20  - Update to v2.2 - Remove some LOINC codes
+-- 		05/29/20 - Added new codes for phenotype v1.5
+--		06/08/20 - Added new codes for phenotype v1.6
+--		07/13/20 - Update to v2.0
+--		08/11/20 - Update to v2.1
+--		09/17/20 - Update to v2.2 - Remove some LOINC codes
 --		11/18/20 - Update to v3.0
+--		02/09/21 - Update to v3.1
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_pre_cohort' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_pre_cohort
@@ -192,7 +193,7 @@ FROM (
 		WHERE dx.date >= '2020-01-01'
 		AND 
 		(	-- Strong DX List
-			mp.mt_code IN ('UMLS:ICD10CM:U07.1')
+			mp.mt_code IN ('UMLS:ICD10CM:U07.1', 'UMLS:ICD10CM:J12.82', 'UMLS:ICD10CM:M35.81')
 			-- special handling for B97.21 & B97.29
 			OR (mp.mt_code IN ('UMLS:ICD10CM:B97.21', 'UMLS:ICD10CM:B97.29') AND dx.date < '2020-04-01')
 		)
@@ -360,6 +361,7 @@ FROM (
 					,'UMLS:LNC:94822-4'
 					,'UMLS:LNC:94845-5'
 					,'UMLS:LNC:95125-1'
+					,'UMLS:LNC:95209-3'
 					,'UMLS:LNC:95406-5'
 					,'UMLS:LNC:95409-9'
 					,'UMLS:LNC:95410-7'
