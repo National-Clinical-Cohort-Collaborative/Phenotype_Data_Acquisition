@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.0 - OMOP GBQ
+N3C Phenotype 3.1 - OMOP GBQ
 Author: Robert Miller (Tufts), Emily Pfaff (UNC)
 
 HOW TO RUN:
@@ -14,7 +14,7 @@ If you have read/write to your cdmDatabaseSchema, you would use the same schema 
 
 To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
-SCRIPT RELEASE DATE: 12-01-2020
+SCRIPT RELEASE DATE: By 14 February 2020
 
 **/
 
@@ -69,7 +69,7 @@ DELETE FROM @resultsDatabaseSchema.n3c_cohort WHERE True;
 
 -- Phenotype Entry Criteria: A lab confirmed positive test
 INSERT INTO @resultsDatabaseSchema.n3c_pre_cohort
--- Populate the pre-cohort table
+-- populate the pre-cohort table
  WITH covid_lab_pos
 as (
 	select distinct person_id
@@ -125,6 +125,10 @@ as (
 					,36661374
 					,36661370
 					,36661371
+					,723479
+					,723474
+					,757685
+					,723476
 					)
 
 			union distinct select c.concept_id
@@ -160,7 +164,7 @@ as (
 	)
 	,
 	-- UNION
-	-- Phenotype Entry Criteria: ONE or more of the “Strong Positive�? diagnosis codes from the ICD-10 or SNOMED tables
+	-- Phenotype Entry Criteria: ONE or more of the Strong Positive diagnosis codes from the ICD-10 or SNOMED tables
 	-- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
 dx_strong
 as (
@@ -181,11 +185,23 @@ as (
 					,37310285
 					,756039
 					,320651
-					,37311060
 					)
 			)
 		-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
 		and condition_start_date between DATE(2020, 01, 01)
+			and DATE(2020, 03, 31)
+
+	union distinct select distinct person_id
+	from @cdmDatabaseSchema.observation
+	where observation_concept_id in (
+			select concept_id
+			from @cdmDatabaseSchema.concept
+			-- The list of ICD-10 codes in the Phenotype Wiki
+			-- This is the list of standard concepts that represent those terms
+			where concept_id in (37311060)
+			)
+		-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
+		and observation_date between DATE(2020, 01, 01)
 			and DATE(2020, 03, 31)
 
 	union distinct select distinct person_id
@@ -197,7 +213,6 @@ as (
 			-- This is the list of standard concepts that represent those terms
 			where concept_id in (
 					37311061
-					,37311060
 					,756023
 					,756031
 					,756039
@@ -224,13 +239,31 @@ as (
 					,37311061
 					,37310284
 					,756039
-					,37311060
 					,37310254
 					)
 				and c.invalid_reason is null
 			)
 
 		and condition_start_date >= DATE(2020, 04, 01)
+	
+	union distinct select distinct person_id
+	from @cdmDatabaseSchema.observation
+	where observation_concept_id in (
+			select concept_id
+			from @cdmDatabaseSchema.concept
+			-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+			-- This is the list of standard concepts that represent those terms
+			where concept_id in (37311060)
+
+			union distinct select c.concept_id
+			from @cdmDatabaseSchema.concept c
+			join @cdmDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
+				-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
+				and ca.ancestor_concept_id in (37311060)
+				and c.invalid_reason is null
+			)
+
+		and observation_date >= DATE(2020, 04, 01)
 	)
 	,
 	-- UNION
@@ -325,8 +358,9 @@ as (
 			and condition_start_date between DATE(2020, 01, 01)
 				and DATE(2020, 03, 31)
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
+
 		  group by  1, visit_occurrence_id
-		 having count(*) >= 2
+		 having count(distinct condition_concept_id) >= 2
 		 ) dx_same_encounter
 
 	union distinct select distinct person_id
@@ -415,7 +449,7 @@ as (
 			and condition_start_date between DATE(2020, 01, 01)
 				and DATE(2020, 03, 31)
 		  group by  1, condition_start_date
-		 having count(*) >= 2
+		 having count(distinct condition_concept_id) >= 2
 		 ) dx_same_date
 
 	union distinct select distinct person_id
@@ -506,7 +540,7 @@ as (
 				and DATE(2020, 05, 30)
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		  group by  1, visit_occurrence_id
-		 having count(*) >= 2
+		 having count(distinct condition_concept_id) >= 2
 		 ) dx_same_encounter
 
 	union distinct select distinct person_id
@@ -569,7 +603,7 @@ as (
 				and DATE(2020, 05, 30)
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		  group by  1, condition_start_date
-		 having count(*) >= 2
+		 having count(distinct condition_concept_id) >= 2
 		 ) dx_same_date
 	)
 	,
@@ -584,7 +618,7 @@ as (
 			select concept_id
 			from @cdmDatabaseSchema.concept
 			-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
-			where concept_id IN (
+			where concept_id in (
 					586515
 					,586522
 					,706179
@@ -690,7 +724,7 @@ as (
 	,inc_dx_weak
 	,inc_lab_any
 	,inc_lab_pos
-	,'3.0' as phenotype_version
+	,'3.1' as phenotype_version
 	,case
 		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 0
 				and 4
@@ -759,7 +793,7 @@ as (
 from cohort c
 join @cdmDatabaseSchema.person d on c.person_id = d.person_id;
 
---Populate the case table
+--populate the case table
 insert into @resultsDatabaseSchema.n3c_case_cohort (person_id
 									,pt_age
 									,sex
@@ -797,6 +831,7 @@ where inc_dx_strong = 0
 	and inc_lab_pos = 0
 	and inc_dx_weak = 0
 	and inc_lab_any = 1;
+
 
 -- Now that the pre-cohort and case tables are populated, we start matching cases and controls, and updating the case and control tables as needed.
 -- all cases need two control buddies. We select on progressively looser demographic criteria until every case has two control matches, or we run out of patients in the control pool.

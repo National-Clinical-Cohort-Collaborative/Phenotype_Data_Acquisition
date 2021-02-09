@@ -154,6 +154,7 @@ CREATE TABLE @resultsDatabaseSchema.N3C_TMP_COVID_LAB_POS_CODES AS SELECT *
 FROM
 (
 -- CODES NOT IN ACT ONTOLOGY
+SELECT 'LOINC:95209-3 POSITIVE' AS LOINC FROM DUAL UNION
 SELECT 'LOINC:94720-0 POSITIVE' AS LOINC FROM DUAL UNION
 SELECT 'LOINC:94745-7 POSITIVE' AS LOINC FROM DUAL UNION
 SELECT 'LOINC:94746-5 POSITIVE' AS LOINC FROM DUAL UNION
@@ -190,6 +191,7 @@ CREATE TABLE @resultsDatabaseSchema.N3C_TMP_COVID_LAB_CODES AS SELECT *
 FROM
 (
 -- CODES NOT IN ACT ONTOLOGY
+SELECT 'LOINC:95209-3' AS LOINC FROM DUAL UNION
 SELECT 'LOINC:94720-0' AS LOINC FROM DUAL UNION
 SELECT 'LOINC:94745-7' AS LOINC FROM DUAL UNION
 SELECT 'LOINC:94746-5' AS LOINC FROM DUAL UNION
@@ -221,6 +223,8 @@ SELECT DISTINCT concept_cd LOINC FROM CONCEPT_DIMENSION CD
 CREATE TABLE @resultsDatabaseSchema.N3C_TMP_COVID_DX_CODES AS SELECT *
 FROM 
 (
+	SELECT 'ICD10CM:J12.82' AS DX_CODE,	'DX_STRONG_POSITIVE' AS DX_CATEGORY FROM DUAL   UNION
+	SELECT 'ICD10CM:M35.81' AS DX_CODE,	'DX_STRONG_POSITIVE' AS DX_CATEGORY FROM DUAL   UNION
 	SELECT 'ICD10CM:B97.21' AS DX_CODE,	'DX_STRONG_POSITIVE' AS DX_CATEGORY FROM DUAL   UNION
 	SELECT 'ICD10CM:B97.29' AS DX_CODE,	'DX_STRONG_POSITIVE' AS DX_CATEGORY FROM DUAL   UNION
 	SELECT 'ICD10CM:U07.1' AS DX_CODE,	'DX_STRONG_POSITIVE' AS DX_CATEGORY FROM DUAL   UNION
@@ -386,7 +390,7 @@ SELECT DISTINCT
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
-    '3.0' AS phenotype_version,
+    '3.1' AS phenotype_version,
     case when d.current_age between 0 and 4 then '0-4'
         when d.current_age between 5 and 9 then '5-9'
         when d.current_age between 10 and 14 then '10-14'
@@ -466,7 +470,9 @@ FROM (
 			@resultsDatabaseSchema.N3C_PRE_COHORT
 		where 
     			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
-
+			 --BUDDY-SAVER
+			 and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=1 and case_patid is not null and control_patid is not null)				     
+	
 
 		UNION
 
@@ -482,6 +488,9 @@ FROM (
 			@resultsDatabaseSchema.N3C_PRE_COHORT
 		where 
     			(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
+			 --BUDDY-SAVER
+			 and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=2 and case_patid is not null and control_patid is not null)				     
+		
 	) subq
 )C1;
 

@@ -1,4 +1,4 @@
---Phenotype 3.0
+--Phenotype 3.1
 --PCORnet
 
 --Create table to hold all cases and controls before matching
@@ -132,7 +132,8 @@ TRUNCATE TABLE @resultsDatabaseSchema.N3C_FINAL_MAP;
 WITH 
 covid_loinc  AS 
 (
-	SELECT '94307-6' as loinc    UNION	
+	SELECT '95209-3' as loinc    UNION
+	SELECT '94307-6' as loinc    UNION
 	SELECT '94308-4' as loinc     UNION 
 	SELECT '94309-2' as loinc     UNION 
 	SELECT '94311-8' as loinc     UNION 
@@ -214,6 +215,8 @@ covid_pos_list as
 -- Note that Z11.59 has been removed
 covid_dx_codes as
 (
+	SELECT 'J12.82' as dx_code,	'dx_strong_positive' as dx_category    UNION
+	SELECT 'M35.81' as dx_code,	'dx_strong_positive' as dx_category    UNION
 	SELECT 'B97.21' as dx_code,	'dx_strong_positive' as dx_category    UNION 
 	SELECT 'B97.29'  dx_code,	'dx_strong_positive' as dx_category     UNION 
 	SELECT 'U07.1'  dx_code,	'dx_strong_positive' as dx_category     UNION 
@@ -450,7 +453,7 @@ SELECT distinct
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
-    '3.0' as phenotype_version,
+    '3.1' as phenotype_version,
     case when floor(datediff(month, d.birth_date, getdate())/12) between 0 and 4 then '0-4'
         when floor(datediff(month, d.birth_date, getdate())/12) between 5 and 9 then '5-9'
         when floor(datediff(month, d.birth_date, getdate())/12) between 10 and 14 then '10-14'
@@ -541,6 +544,7 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_MAP (patid, pt_age, sex, race, hispan
 		@resultsDatabaseSchema.n3c_pre_cohort
 	where 
     		(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
+		and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=1 and case_patid is not null and control_patid is not null)
 
 	UNION
 
@@ -556,6 +560,7 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_MAP (patid, pt_age, sex, race, hispan
 		@resultsDatabaseSchema.n3c_pre_cohort
 	where 
     		(inc_dx_strong = 1 or inc_lab_pos = 1 or inc_dx_weak = 1)
+		and patid NOT in (select case_patid from @resultsDatabaseSchema.n3c_control_map where buddy_num=2 and case_patid is not null and control_patid is not null)
 ;
 
 --start progressively matching cases to controls. we will do a diff between the results here and what's already in the control_map table later.

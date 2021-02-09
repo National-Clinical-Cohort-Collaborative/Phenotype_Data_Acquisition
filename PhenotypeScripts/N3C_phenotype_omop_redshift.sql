@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.0 - OMOP Redshift
+N3C Phenotype 3.1 - OMOP Redshift
 Author: Robert Miller (Tufts), Emily Pfaff (UNC)
 
 HOW TO RUN:
@@ -14,7 +14,7 @@ If you have read/write to your cdmDatabaseSchema, you would use the same schema 
 
 To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
-SCRIPT RELEASE DATE: 12-01-2020
+SCRIPT RELEASE DATE: By 14 February 2020
 
 **/
 
@@ -74,7 +74,7 @@ TRUNCATE TABLE @resultsDatabaseSchema.N3C_COHORT;
 
 -- Phenotype Entry Criteria: A lab confirmed positive test
 INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT
--- Populate the pre-cohort table
+-- populate the pre-cohort table
  WITH covid_lab_pos
 AS (
 	SELECT DISTINCT person_id
@@ -130,6 +130,10 @@ AS (
 					,36661374
 					,36661370
 					,36661371
+					,723479
+					,723474
+					,757685
+					,723476
 					)
 
 			UNION
@@ -167,7 +171,7 @@ AS (
 	)
 	,
 	-- UNION
-	-- Phenotype Entry Criteria: ONE or more of the â€œStrong Positiveâ€? diagnosis codes from the ICD-10 or SNOMED tables
+	-- Phenotype Entry Criteria: ONE or more of the Strong Positive diagnosis codes from the ICD-10 or SNOMED tables
 	-- This section constructs entry logic prior to the CDC guidance issued on April 1, 2020
 dx_strong
 AS (
@@ -188,11 +192,25 @@ AS (
 					,37310285
 					,756039
 					,320651
-					,37311060
 					)
 			)
 		-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
 		AND condition_start_date BETWEEN TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
+			AND TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(03,'00FM')||'-'||TO_CHAR(31,'00FM'), 'YYYY-MM-DD')
+
+	UNION
+	-- the one condition code that maps to an observation (3731160)
+		SELECT DISTINCT person_id
+	FROM @cdmDatabaseSchema.OBSERVATION
+	WHERE observation_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+			-- The list of ICD-10 codes in the Phenotype Wiki
+			-- This is the list of standard concepts that represent those terms
+			WHERE concept_id IN (37311060)
+			)
+		-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
+		AND observation_date BETWEEN TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
 			AND TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(03,'00FM')||'-'||TO_CHAR(31,'00FM'), 'YYYY-MM-DD')
 
 	UNION
@@ -207,7 +225,6 @@ AS (
 			-- This is the list of standard concepts that represent those terms
 			WHERE concept_id IN (
 					37311061
-					,37311060
 					,756023
 					,756031
 					,756039
@@ -236,13 +253,36 @@ AS (
 					,37311061
 					,37310284
 					,756039
-					,37311060
 					,37310254
 					)
 				AND c.invalid_reason IS NULL
 			)
 
 		AND condition_start_date >= TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(04,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
+	
+	UNION
+
+	-- the one condition code that maps to an observation (3731160)
+	SELECT DISTINCT person_id
+	FROM @cdmDatabaseSchema.OBSERVATION
+	WHERE observation_concept_id IN (
+			SELECT concept_id
+			FROM @cdmDatabaseSchema.CONCEPT
+			-- The list of ICD-10 codes in the Phenotype Wiki were translated into OMOP standard concepts
+			-- This is the list of standard concepts that represent those terms
+			WHERE concept_id IN (37311060)
+
+			UNION
+
+			SELECT c.concept_id
+			FROM @cdmDatabaseSchema.CONCEPT c
+			JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
+				-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
+				AND ca.ancestor_concept_id IN (37311060)
+				AND c.invalid_reason IS NULL
+			)
+
+		AND observation_date >= TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(04,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
 	)
 	,
 	-- UNION
@@ -340,7 +380,7 @@ AS (
 
 		GROUP BY person_id
 			,visit_occurrence_id
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_encounter
 
 	UNION
@@ -433,7 +473,7 @@ AS (
 				AND TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(03,'00FM')||'-'||TO_CHAR(31,'00FM'), 'YYYY-MM-DD')
 		GROUP BY person_id
 			,condition_start_date
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_date
 
 	UNION
@@ -529,7 +569,7 @@ AS (
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,visit_occurrence_id
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_encounter
 
 	UNION
@@ -596,12 +636,11 @@ AS (
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,condition_start_date
-		HAVING count(*) >= 2
+		HAVING count(distinct condition_concept_id) >= 2
 		) dx_same_date
 	)
 	,
 	-- UNION
-	-- ERP: Changed this comment to reflect new logic
 	-- 4) ONE or more of the lab tests in the Labs table, regardless of result
 	-- We begin by looking for ANY COVID measurement
 covid_lab
@@ -724,7 +763,7 @@ AS (
 	,inc_dx_weak
 	,inc_lab_any
 	,inc_lab_pos
-	,'3.0' AS phenotype_version
+	,'3.1' AS phenotype_version
 	,CASE
 		WHEN datediff(year, d.birth_datetime, CURRENT_DATE) BETWEEN 0
 				AND 4
@@ -794,7 +833,7 @@ AS (
 FROM cohort c
 JOIN @cdmDatabaseSchema.person d ON c.person_id = d.person_id;
 
---Populate the case table
+--populate the case table
 INSERT INTO @resultsDatabaseSchema.N3C_CASE_COHORT (person_id
 									,pt_age
 									,sex
@@ -825,7 +864,6 @@ JOIN (
 		SELECT person_id
 		FROM @cdmDatabaseSchema.visit_occurrence
 		WHERE visit_start_date > TO_DATE(TO_CHAR(2018,'0000FM')||'-'||TO_CHAR(01,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
-
 		GROUP BY person_id
 		HAVING DATEDIFF(day, min(visit_start_date), max(visit_start_date)) >= 10
 ) e
