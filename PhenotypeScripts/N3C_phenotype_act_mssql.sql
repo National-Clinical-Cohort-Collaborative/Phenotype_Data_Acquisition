@@ -351,7 +351,7 @@ SELECT DISTINCT
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
-    '3.0' AS phenotype_version,
+    '3.1' AS phenotype_version,
     case when floor(datediff(month, d.birth_date, getdate())/12) between 0 and 4 then '0-4'
         when floor(datediff(month, d.birth_date, getdate())/12) between 5 and 9 then '5-9'
         when floor(datediff(month, d.birth_date, getdate())/12) between 10 and 14 then '10-14'
