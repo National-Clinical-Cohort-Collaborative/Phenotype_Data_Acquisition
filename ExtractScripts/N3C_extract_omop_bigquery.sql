@@ -6,7 +6,7 @@ HOW TO RUN:
 If you are not using the R or Python exporters, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
 
 
-USER NOTES: 
+USER NOTES:
 This extract pulls the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH, DRUG_ERA, CONDITION_ERA
 As an OMOP site, you are expected to be populating derived tables (OBSERVATION_PERIOD, DRUG_ERA, CONDITION_ERA)
 Please refer to the OMOP site instructions for assistance on how to generate these tables.
@@ -16,8 +16,8 @@ SCRIPT ASSUMPTIONS:
 1. You have already built the N3C_COHORT table (with that name) prior to running this extract
 2. You are extracting data with a lookback period to 1-1-2018
 3. You have existing tables for each of these extracted tables. If you do not, at a minimum, you MUST create a shell table so it can extract an empty table. Failure to create shells for missing table will result in ingestion problems.
- 
-RELEASE DATE: 12-01-2020
+
+RELEASE DATE: 2-10-2020
 **/
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
@@ -35,8 +35,8 @@ select
    '@shiftDateYN' as shift_date_yn,
    '@maxNumShiftDays' as max_num_shift_days,
    cast(CURRENT_DATE() as datetime) as run_date,
-   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval -@dataLatencyNumDays DAY) as datetime) as update_date,	--change integer based on your site's data latency
-   cast( DATE_ADD(cast(CURRENT_DATE() as date), interval @daysBetweenSubmissions DAY) as datetime) as next_submission_date;
+   cast( DATE_ADD(IF(SAFE_CAST(CURRENT_DATE()  AS DATE) IS NULL,PARSE_DATE('%Y%m%d', cast(CURRENT_DATE()  AS STRING)),SAFE_CAST(CURRENT_DATE()  AS DATE)), interval -@dataLatencyNumDays DAY) as datetime) as update_date,	--change integer based on your site's data latency
+   cast( DATE_ADD(IF(SAFE_CAST(CURRENT_DATE()  AS DATE) IS NULL,PARSE_DATE('%Y%m%d', cast(CURRENT_DATE()  AS STRING)),SAFE_CAST(CURRENT_DATE()  AS DATE)), interval @daysBetweenSubmissions DAY) as datetime) as next_submission_date;
 
 --VALIDATION_SCRIPT
 --OUTPUT_FILE: EXTRACT_VALIDATION.csv
@@ -152,8 +152,8 @@ and x.condition_era_start_date > DATE(2018, 01, 01)
 select
    p.person_id,
    gender_concept_id,
-   year_of_birth,
-   month_of_birth,
+   IFNULL(year_of_birth,datepart(year, birth_datetime )) as year_of_birth,
+   IFNULL(month_of_birth,datepart(month, birth_datetime)) as month_of_birth,
    race_concept_id,
    ethnicity_concept_id,
    location_id,

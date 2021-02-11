@@ -17,7 +17,7 @@ SCRIPT ASSUMPTIONS:
 2. You are extracting data with a lookback period to 1-1-2018
 3. You have existing tables for each of these extracted tables. If you do not, at a minimum, you MUST create a shell table so it can extract an empty table. Failure to create shells for missing table will result in ingestion problems.
 
-RELEASE DATE: 12-01-2020
+RELEASE DATE: 2-10-2020
 **/
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS

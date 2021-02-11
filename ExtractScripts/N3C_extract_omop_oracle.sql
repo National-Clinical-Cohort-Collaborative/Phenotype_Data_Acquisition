@@ -6,7 +6,7 @@ HOW TO RUN:
 If you are not using the R or Python exporters, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema with your local OMOP schema details
 
 
-USER NOTES: 
+USER NOTES:
 This extract pulls the following OMOP tables: PERSON, OBSERVATION_PERIOD, VISIT_OCCURRENCE, CONDITION_OCCURRENCE, DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, MEASUREMENT, OBSERVATION, LOCATION, CARE_SITE, PROVIDER, DEATH, DRUG_ERA, CONDITION_ERA
 As an OMOP site, you are expected to be populating derived tables (OBSERVATION_PERIOD, DRUG_ERA, CONDITION_ERA)
 Please refer to the OMOP site instructions for assistance on how to generate these tables.
@@ -16,8 +16,8 @@ SCRIPT ASSUMPTIONS:
 1. You have already built the N3C_COHORT table (with that name) prior to running this extract
 2. You are extracting data with a lookback period to 1-1-2018
 3. You have existing tables for each of these extracted tables. If you do not, at a minimum, you MUST create a shell table so it can extract an empty table. Failure to create shells for missing table will result in ingestion problems.
- 
-RELEASE DATE: 12-01-2020
+
+RELEASE DATE: 2-10-2020
 **/
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
@@ -162,8 +162,8 @@ HAVING COUNT(*) > 1                         ;
 --OUTPUT_FILE: PERSON.csv
 SELECT p.PERSON_ID,
    GENDER_CONCEPT_ID,
-   YEAR_OF_BIRTH,
-   MONTH_OF_BIRTH,
+   NVL(YEAR_OF_BIRTH,DATEPART(year, birth_datetime )) as YEAR_OF_BIRTH,
+   NVL(MONTH_OF_BIRTH,DATEPART(month, birth_datetime)) as MONTH_OF_BIRTH,
    RACE_CONCEPT_ID,
    ETHNICITY_CONCEPT_ID,
    LOCATION_ID,
