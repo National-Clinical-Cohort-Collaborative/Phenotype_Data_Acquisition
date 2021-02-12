@@ -152,8 +152,8 @@ and x.condition_era_start_date > DATE(2018, 01, 01)
 select
    p.person_id,
    gender_concept_id,
-   IFNULL(year_of_birth,datepart(year, birth_datetime )) as year_of_birth,
-   IFNULL(month_of_birth,datepart(month, birth_datetime)) as month_of_birth,
+   IFNULL(year_of_birth,extract(year from birth_datetime)) as year_of_birth,
+   IFNULL(month_of_birth,extract(month from birth_datetime)) as month_of_birth,
    race_concept_id,
    ethnicity_concept_id,
    location_id,
