@@ -941,9 +941,8 @@ SELECT person_id, 1 as buddy_num, NULL
    ;
 
 -- Match #1 - age, sex, race, ethnicity
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
+MERGE INTO @resultsDatabaseSchema.N3C_CONTROL_MAP ncm
+USING 
 (SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
 	FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
@@ -992,19 +991,23 @@ FROM
 		AND cases.join_row_1 = controls.join_row_1
 
  ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
-;
+ON ( 
+	ncm.case_person_id = y.case_pid
+	AND 
+	ncm.buddy_num = y.bud_num
+	)
+
+WHEN MATCHED THEN UPDATE
+SET ncm.control_person_id = y.control_pid
+WHERE (ncm.control_person_id IS NULL)
 
 
 
 
 
 -- Match #2 - age, sex, race
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
+MERGE INTO @resultsDatabaseSchema.N3C_CONTROL_MAP ncm
+USING 
 (SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
 	FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
@@ -1050,18 +1053,24 @@ FROM
 		AND cases.join_row_1 = controls.join_row_1
 
  ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
+ON ( 
+	ncm.case_person_id = y.case_pid
+	AND 
+	ncm.buddy_num = y.bud_num
+	)
+
+WHEN MATCHED THEN UPDATE
+SET ncm.control_person_id = y.control_pid
+WHERE (ncm.control_person_id IS NULL)
+
 ;
 
 
 
 
 -- Match #3 -- age, sex
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
+MERGE INTO @resultsDatabaseSchema.N3C_CONTROL_MAP ncm
+USING 
 (SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
 	FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
@@ -1102,17 +1111,23 @@ FROM
 		AND cases.join_row_1 = controls.join_row_1
 
  ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
+ON ( 
+	ncm.case_person_id = y.case_pid
+	AND 
+	ncm.buddy_num = y.bud_num
+	)
+
+WHEN MATCHED THEN UPDATE
+SET ncm.control_person_id = y.control_pid
+WHERE (ncm.control_person_id IS NULL)
+
 ;
 
 
 
 -- Match #4 - sex
-UPDATE @resultsDatabaseSchema.N3C_CONTROL_MAP
-SET control_person_id = y.control_pid
-FROM
+MERGE INTO @resultsDatabaseSchema.N3C_CONTROL_MAP ncm
+USING 
 (SELECT cases.person_id as case_pid, cases.buddy_num bud_num, controls.person_id control_pid
 	FROM (SELECT subq.*
 			,ROW_NUMBER() OVER (
@@ -1150,9 +1165,14 @@ FROM
 		AND cases.join_row_1 = controls.join_row_1
 
  ) y
-WHERE control_person_id IS NULL
-AND case_person_id = y.case_pid
-AND buddy_num = y.bud_num
+ON ( 
+	ncm.case_person_id = y.case_pid
+	AND 
+	ncm.buddy_num = y.bud_num
+	)
+WHEN MATCHED THEN UPDATE
+SET ncm.control_person_id = y.control_pid
+WHERE (ncm.control_person_id IS NULL)
 ;
 
 
