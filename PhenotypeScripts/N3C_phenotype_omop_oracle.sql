@@ -989,18 +989,16 @@ USING
 		AND cases.race = controls.race
 		AND cases.hispanic = controls.hispanic
 		AND cases.join_row_1 = controls.join_row_1
-
  ) y
 ON ( 
 	ncm.case_person_id = y.case_pid
 	AND 
 	ncm.buddy_num = y.bud_num
 	)
-
 WHEN MATCHED THEN UPDATE
 SET ncm.control_person_id = y.control_pid
 WHERE (ncm.control_person_id IS NULL)
-
+;
 
 
 
@@ -1051,18 +1049,15 @@ USING
 		AND cases.sex = controls.sex
 		AND cases.race = controls.race
 		AND cases.join_row_1 = controls.join_row_1
-
  ) y
 ON ( 
 	ncm.case_person_id = y.case_pid
 	AND 
 	ncm.buddy_num = y.bud_num
 	)
-
 WHEN MATCHED THEN UPDATE
 SET ncm.control_person_id = y.control_pid
 WHERE (ncm.control_person_id IS NULL)
-
 ;
 
 
@@ -1109,18 +1104,15 @@ USING
 	ON cases.pt_age = controls.pt_age
 		AND cases.sex = controls.sex
 		AND cases.join_row_1 = controls.join_row_1
-
  ) y
 ON ( 
 	ncm.case_person_id = y.case_pid
 	AND 
 	ncm.buddy_num = y.bud_num
 	)
-
 WHEN MATCHED THEN UPDATE
 SET ncm.control_person_id = y.control_pid
 WHERE (ncm.control_person_id IS NULL)
-
 ;
 
 
