@@ -162,8 +162,8 @@ HAVING COUNT(*) > 1                         ;
 --OUTPUT_FILE: PERSON.csv
 SELECT p.PERSON_ID,
    GENDER_CONCEPT_ID,
-   NVL(YEAR_OF_BIRTH,DATEPART(year, birth_datetime )) as YEAR_OF_BIRTH,
-   NVL(MONTH_OF_BIRTH,DATEPART(month, birth_datetime)) as MONTH_OF_BIRTH,
+   NVL(YEAR_OF_BIRTH,EXTRACT(year from birth_datetime )) as YEAR_OF_BIRTH,
+   NVL(MONTH_OF_BIRTH,EXTRACT(month from birth_datetime)) as MONTH_OF_BIRTH,
    RACE_CONCEPT_ID,
    ETHNICITY_CONCEPT_ID,
    LOCATION_ID,
