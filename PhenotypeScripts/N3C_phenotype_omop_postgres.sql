@@ -906,7 +906,7 @@ WHERE CASE_person_id NOT IN (
 
 INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
 SELECT
-		person_id, 1 as buddy_num, NULL
+		person_id, 1 as buddy_num, cast(null as int)
 		FROM @resultsDatabaseSchema.n3c_case_cohort
 		WHERE person_id NOT IN (
 			SELECT case_person_id
@@ -916,7 +916,7 @@ SELECT
 
 		UNION
 
-		SELECT person_id, 2 as buddy_num, NULL
+		SELECT person_id, 2 as buddy_num, cast(null as int)
 		FROM @resultsDatabaseSchema.n3c_case_cohort
 		WHERE person_id NOT IN (
 			SELECT case_person_id
