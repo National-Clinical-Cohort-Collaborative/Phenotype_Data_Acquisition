@@ -565,7 +565,7 @@ AS (
 				)
 			-- This code list is only valid for CDC guidance before 04-01-2020
 			AND condition_start_date BETWEEN TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(04,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
-				AND TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(05,'00FM')||'-'||TO_CHAR(30,'00FM'), 'YYYY-MM-DD')
+				AND TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(05,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,visit_occurrence_id
@@ -632,7 +632,7 @@ AS (
 				)
 			-- This code list is based on CDC Guidance for code use AFTER 04-01-2020
 			AND condition_start_date BETWEEN TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(04,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
-				AND TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(05,'00FM')||'-'||TO_CHAR(30,'00FM'), 'YYYY-MM-DD')
+				AND TO_DATE(TO_CHAR(2020,'0000FM')||'-'||TO_CHAR(05,'00FM')||'-'||TO_CHAR(01,'00FM'), 'YYYY-MM-DD')
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,condition_start_date

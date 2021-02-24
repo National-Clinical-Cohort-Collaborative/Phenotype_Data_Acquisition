@@ -568,7 +568,7 @@ AS (
 				)
 			-- This code list is only valid for CDC guidance before 04-01-2020
 			AND condition_start_date BETWEEN DATEFROMPARTS(2020, 04, 01)
-				AND DATEFROMPARTS(2020, 05, 30)
+				AND DATEFROMPARTS(2020, 05, 01)
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,visit_occurrence_id
@@ -635,7 +635,7 @@ AS (
 				)
 			-- This code list is based on CDC Guidance for code use AFTER 04-01-2020
 			AND condition_start_date BETWEEN DATEFROMPARTS(2020, 04, 01)
-				AND DATEFROMPARTS(2020, 05, 30)
+				AND DATEFROMPARTS(2020, 05, 01)
 		-- Now we group by person_id and visit_occurrence_id to find people who have 2 or more
 		GROUP BY person_id
 			,condition_start_date
