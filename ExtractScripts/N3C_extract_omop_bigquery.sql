@@ -159,7 +159,7 @@ select
    location_id,
    provider_id,
    care_site_id,
-   person_source_value,
+   null as person_source_value,
    gender_source_value,
    race_source_value,
    race_source_concept_id,
