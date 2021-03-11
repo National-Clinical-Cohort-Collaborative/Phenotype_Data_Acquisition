@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.1 - OMOP MSSQL
+N3C Phenotype 3.2 - OMOP MSSQL
 Author: Robert Miller (Tufts), Emily Pfaff (UNC)
 
 HOW TO RUN:
@@ -768,7 +768,7 @@ SELECT DISTINCT c.person_id
 	,inc_dx_weak
 	,inc_lab_any
 	,inc_lab_pos
-	,'3.1' AS phenotype_version
+	,'3.2' AS phenotype_version
 	,CASE
 		WHEN datediff(year, d.birth_datetime, getdate()) BETWEEN 0
 				AND 4
