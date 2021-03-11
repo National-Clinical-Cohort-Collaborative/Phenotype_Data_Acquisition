@@ -508,6 +508,9 @@ DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_PATID NOT IN (S
 --remove cases who no longer meet the phenotype definition
 DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM @resultsDatabaseSchema.N3C_CASE_COHORT);
 
+--remove rows with no control_patid match from the last phenotype run
+DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_PATID IS NULL;
+
 -- all available controls, joined to encounter table to eliminate patients with almost no data
 -- right now we're looking for patients with at least 10 days between their min and max visit dates.
 INSERT INTO @resultsDatabaseSchema.N3C_PRE_CONTROLS (patid, maxenc, minenc, daysonhand, randnum)
