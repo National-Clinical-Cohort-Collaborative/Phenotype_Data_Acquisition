@@ -410,6 +410,9 @@ DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_patid NOT IN (S
 --remove cases who no longer meet the phenotype definition
 DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CASE_patid NOT IN (SELECT patid FROM @resultsDatabaseSchema.N3C_CASE_COHORT);
 
+--remove rows with no control_patid match from the last phenotype run
+DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_PATID IS NULL;
+
 --start progressively matching cases to controls. we will do a diff between the results here and 
 --what's already in the control_map table later.
 IF OBJECT_ID(N'tempdb..#CASES_1') IS NOT NULL DROP TABLE #CASES_1
