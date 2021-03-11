@@ -1,4 +1,4 @@
---Phenotype 3.1
+--Phenotype 3.2
 --PCORnet
 
 --Create table to hold all cases and controls before matching
@@ -443,7 +443,7 @@ SELECT distinct
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
-    '3.1' as phenotype_version,
+    '3.2' as phenotype_version,
    CASE
 		WHEN DATE_PART('year', CURRENT_DATE) - DATE_PART('year', d.birth_date) BETWEEN 0
 				AND 4
