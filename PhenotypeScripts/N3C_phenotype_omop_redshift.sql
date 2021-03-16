@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.1 - OMOP Redshift
+N3C Phenotype 3.2 - OMOP Redshift
 Author: Robert Miller (Tufts), Emily Pfaff (UNC)
 
 HOW TO RUN:
@@ -763,7 +763,7 @@ AS (
 	,inc_dx_weak
 	,inc_lab_any
 	,inc_lab_pos
-	,'3.1' AS phenotype_version
+	,'3.2' AS phenotype_version
 	,CASE
 		WHEN datediff(year, d.birth_datetime, CURRENT_DATE) BETWEEN 0
 				AND 4

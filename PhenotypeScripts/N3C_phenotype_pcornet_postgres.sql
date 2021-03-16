@@ -1,4 +1,4 @@
---Phenotype 3.1
+--Phenotype 3.2
 --PCORnet
 
 --Create table to hold all cases and controls before matching
@@ -443,7 +443,7 @@ SELECT distinct
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
-    '3.1' as phenotype_version,
+    '3.2' as phenotype_version,
    CASE
 		WHEN DATE_PART('year', CURRENT_DATE) - DATE_PART('year', d.birth_date) BETWEEN 0
 				AND 4
@@ -536,6 +536,9 @@ DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_PATID NOT IN (S
 
 --remove cases who no longer meet the phenotype definition
 DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CASE_PATID NOT IN (SELECT PATID FROM @resultsDatabaseSchema.N3C_CASE_COHORT);	
+
+--remove rows with no control_patid match from the last phenotype run
+DELETE FROM @resultsDatabaseSchema.N3C_CONTROL_MAP WHERE CONTROL_PATID IS NULL;
 
 -- all available controls, joined to encounter table to eliminate patients with almost no data
 -- right now we're looking for patients with at least 10 days between their min and max visit dates.
