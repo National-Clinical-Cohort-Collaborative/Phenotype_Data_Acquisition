@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS data_a.n3c_control_map (
 SELECT CURRENT_TIMESTAMP as date_time, 'UPDATING PHENO VERSION TABLE' as log_entry;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
 INSERT INTO :TNX_SCHEMA.n3c_pheno_version
-SELECT '3.1';
+SELECT '3.2';
 
 ---------------------------------------------------------------------------------------------------------
 -- 3. Clear out existing tables
@@ -420,6 +420,9 @@ DELETE FROM data_a.n3c_control_map WHERE control_patient_id NOT IN (SELECT patie
 
 -- Remove if case no longer meets phenotype criteria
 DELETE FROM data_a.n3c_control_map WHERE case_patient_id NOT IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_case_cohort);
+
+-- Remove if control patient ID is null
+DELETE FROM data_a.n3c_control_map WHERE control_patient_id IS NULL;
 
 ---------------------------------------------------------------------------------------------------------
 -- 8. Create Additional Control Tables
