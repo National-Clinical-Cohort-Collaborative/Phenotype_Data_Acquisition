@@ -5,6 +5,17 @@ import argparse
 import datetime
 import shutil
 
+    
+def postgres_connect(config):
+    host = config['postgres']['host']
+    port = config['postgres']['port']
+    database = config['postgres']['database']
+    user = config['postgres']['user']
+    pwd = config['postgres']['pwd']
+    constr = 'user='+user+' host='+host+' dbname='+database+' port='+port+' password='+ pwd
+    conn = psycopg2.connect(constr)
+    return(conn)
+
 def mssql_connect(config):
     host = config['mssql']['host']
     port = config['mssql']['port']
@@ -108,6 +119,7 @@ def create_phenotype(conn, phenotype_fname, sql_params, debug):
         cursor.execute(sql['sql'])
         conn.commit()
 
+
 def db_export(conn, sql, csvwriter, arraysize, debug):
     cursor=conn.cursor()
     cursor.arraysize = arraysize
@@ -153,14 +165,14 @@ def db_export_validate(conn, sql, csvwriter, arraysize, debug):
 def test_env(database=None, sftp=None):
     import subprocess
     import sys
-    db_req_packages = {'oracle': 'cx-Oracle', 'mssql': 'pyodbc'} # DB Specific Packages
+    db_req_packages = {'oracle': 'cx-Oracle', 'mssql': 'pyodbc', 'postgres': 'psycopg2'} # DB Specific Packages
     reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
     installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
 
     err_mess = ''
     if database != None: #test db packages
         if database not in db_req_packages:
-            err_mess = err_mess + "Invalid database type, use mssql or oracle\n"
+            err_mess = err_mess + "Invalid database type, use mssql, oracle, or postgres\n"
         else:
             if db_req_packages[database] not in installed_packages:
                 err_mess = err_mess + "Package not installed for database connection: {}\n".format(db_req_packages[database])
@@ -170,6 +182,8 @@ def test_env(database=None, sftp=None):
                 err_mess = err_mess + "Package not installed for sftp: {}\n".format('paramiko')
 
     return(err_mess)
+
+
 
 # get command line args
 clparse = argparse.ArgumentParser(description='Export from DB using formatted SQL file, optionally create n3c_cohort table')
@@ -229,22 +243,25 @@ sql_params = [
     {'tag': '@maxNumShiftDays', 'value': config['site']['max_num_shift_days']}
 ]
 
-db_conn = None
+
 if database == 'oracle':
     import cx_Oracle
     db_conn = oracle_connect(config)
 elif database == 'mssql':
     import pyodbc
     db_conn = mssql_connect(config)
+elif database == 'postgres':
+    import psycopg2
+    db_conn = postgres_connect(config)
 elif database != None:
-    print("Invalid database type, use mssql or oracle")
+    print("Invalid database type, use mssql, oracle, or postgres")
     exit()
 
 # PHENOTYPE #
 # create phenotype table, n3c_cohort, if option set
 if phenotype_fname != None:
     if db_conn == None:
-        print("Invalid database type, use mssql or oracle")
+        print("Invalid database type, use mssql, oracle, or postgres")
         exit()
     print("Creating phenotype")
     create_phenotype(db_conn, phenotype_fname, sql_params, debug)
@@ -253,7 +270,7 @@ if phenotype_fname != None:
 if sql_fname != None:
     print("Exporting data")
     if db_conn == None:
-        print("Invalid database type, use mssql or oracle")
+        print("Invalid database type, use mssql, oracle, or postgres")
         exit()
     # put domain data in DATAFILES subdir of output directory
     datafiles_dir = output_dir + os.path.sep + 'DATAFILES'
@@ -315,4 +332,3 @@ if sftp_zip == True:
     sftp = paramiko.SFTPClient.from_transport(transport)
     sftp.chdir(config['sftp']['remote_dir'])
     sftp.put(zip_fname,zip_fname)
-
