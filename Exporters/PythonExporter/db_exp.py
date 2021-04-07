@@ -51,7 +51,7 @@ def oracle_connect(config):
         dsn_tns = cx_Oracle.makedsn(host, port, service_name=service_name)
     else:
         print("ERROR:  oracle sid and service_name not found in config file")
-        exit()
+        exit(-1)
     conn = cx_Oracle.connect(user, pwd, dsn_tns)
 
     return(conn)
@@ -215,14 +215,14 @@ env_err = test_env(database, sftp_zip)
 if env_err != '':
     print('Failed Initialization Tests')
     print(env_err)
-    exit()
+    exit(-1)
 
 valid_cdm_name = ['pcornet', 'omop', 'act']
 if config['site']['cdm_name'] not in valid_cdm_name:
     print("Invalid cdm_name from config file")
     print("must be one of the values below:")
     print(valid_cdm_name)
-    exit()
+    exit(-1)
 
 # sql params
 sql_params = [
@@ -255,14 +255,14 @@ elif database == 'postgres':
     db_conn = postgres_connect(config)
 elif database != None:
     print("Invalid database type, use mssql, oracle, or postgres")
-    exit()
+    exit(-1)
 
 # PHENOTYPE #
 # create phenotype table, n3c_cohort, if option set
 if phenotype_fname != None:
     if db_conn == None:
         print("Invalid database type, use mssql, oracle, or postgres")
-        exit()
+        exit(-1)
     print("Creating phenotype")
     create_phenotype(db_conn, phenotype_fname, sql_params, debug)
 
@@ -271,7 +271,7 @@ if sql_fname != None:
     print("Exporting data")
     if db_conn == None:
         print("Invalid database type, use mssql, oracle, or postgres")
-        exit()
+        exit(-1)
     # put domain data in DATAFILES subdir of output directory
     datafiles_dir = output_dir + os.path.sep + 'DATAFILES'
     # put files below in root output directory
@@ -279,14 +279,14 @@ if sql_fname != None:
     # test for DATAFILES subdir exists
     if not os.path.exists(datafiles_dir):
         print("ERROR: export path not found {}.  You may need to create a 'DATAFILES' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
-        exit()
+        exit(-1)
     exports = parse_sql(sql_fname,sql_params)
     for exp in exports:
         if 'output_file' in exp:
             output_file = exp['output_file']
         else:
             print("ERROR: output_file not found in sql block")
-            exit()
+            exit(-1)
         print( "processing output file: {}\n".format(output_file) )
         if output_file in root_files:
             outfname = output_dir + os.path.sep + exp['output_file']
@@ -302,7 +302,7 @@ if sql_fname != None:
                 print("Validation ERROR")
                 print("Stopping export")
                 print("See file {}".format(outfname))
-                exit()
+                exit(-1)
         else:
             db_export(db_conn, exp['sql'], csvwriter, arraysize, debug)
         outf.close()
