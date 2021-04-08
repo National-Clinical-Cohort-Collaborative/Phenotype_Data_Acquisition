@@ -292,7 +292,7 @@ if sql_fname != None:
             outfname = output_dir + os.path.sep + exp['output_file']
         else:
             outfname = datafiles_dir + os.path.sep + exp['output_file']
-        outf = open(outfname, 'w', newline='')
+        outf = open(outfname, 'w', newline='', encoding='utf-8')
         csvwriter = csv.writer(outf, delimiter='|', quotechar='"', quoting=csv.QUOTE_ALL)
         if exp['validation'] == True:
             val = db_export_validate(db_conn, exp['sql'], csvwriter, arraysize, debug)
