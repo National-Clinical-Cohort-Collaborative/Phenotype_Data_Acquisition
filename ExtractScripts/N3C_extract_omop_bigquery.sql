@@ -84,6 +84,15 @@ and x.drug_exposure_start_date > DATE(2018, 01, 01)
   group by  x.drug_exposure_id
  having count(*) > 1
 
+ union distinct select 'DEVICE_EXPOSURE' table_name
+	, count(*) dup_count
+  from @cdmDatabaseSchema.device_exposure x
+inner join @resultsDatabaseSchema.n3c_cohort n3c
+on x.person_id = n3c.person_id
+and x.device_exposure_start_date > DATE(2018, 01, 01)
+  group by  x.device_exposure_id
+ having count(*) > 1
+
 union distinct select 'PROCEDURE_OCCURRENCE' table_name
 	, count(*) dup_count
   from @cdmDatabaseSchema.procedure_occurrence x
@@ -258,6 +267,29 @@ from @cdmDatabaseSchema.drug_exposure de
 join @resultsDatabaseSchema.n3c_cohort n
   on de.person_id = n.person_id
 where de.drug_exposure_start_date >= DATE(2018, 01, 01);
+
+--DEVICE_EXPOSURE
+--OUTPUT_FILE: DEVICE_EXPOSURE.csv
+SELECT
+   DEVICE_EXPOSURE_ID,
+   n.PERSON_ID,
+   DEVICE_CONCEPT_ID,
+   CAST(DEVICE_EXPOSURE_START_DATE as datetime) as DEVICE_EXPOSURE_START_DATE,
+   CAST(DEVICE_EXPOSURE_START_DATETIME as datetime) as DEVICE_EXPOSURE_START_DATETIME,
+   CAST(DEVICE_EXPOSURE_END_DATE as datetime) as DEVICE_EXPOSURE_END_DATE,
+   CAST(DEVICE_EXPOSURE_END_DATETIME as datetime) as DEVICE_EXPOSURE_END_DATETIME,
+   DEVICE_TYPE_CONCEPT_ID,
+   NULL as UNIQUE_DEVICE_ID,
+   QUANTITY,
+   PROVIDER_ID,
+   VISIT_OCCURRENCE_ID,
+   NULL as VISIT_DETAIL_ID,
+   NULL as DEVICE_SOURCE_VALUE,
+   DEVICE_SOURCE_CONCEPT_ID
+FROM @cdmDatabaseSchema.DEVICE_EXPOSURE de
+JOIN @resultsDatabaseSchema.N3C_COHORT n
+  ON de.PERSON_ID = n.PERSON_ID
+WHERE de.DEVICE_EXPOSURE_START_DATE >= DATE(2018, 01, 01);
 
 --PROCEDURE_OCCURRENCE
 --OUTPUT_FILE: PROCEDURE_OCCURRENCE.csv
@@ -481,6 +513,10 @@ union distinct select
 union distinct select
    'DRUG_EXPOSURE' as table_name,
    (select count(*) from @cdmDatabaseSchema.drug_exposure de join @resultsDatabaseSchema.n3c_cohort n on de.person_id = n.person_id and drug_exposure_start_date >= DATE(2018, 01, 01)) as row_count
+
+union distinct select
+   'DEVICE_EXPOSURE' as TABLE_NAME,
+   (select count(*) from @cdmDatabaseSchema.DEVICE_EXPOSURE de JOIN @resultsDatabaseSchema.N3C_COHORT n ON de.PERSON_ID = n.PERSON_ID AND DEVICE_EXPOSURE_START_DATE >= DATE(2018, 01, 01)) as ROW_COUNT
 
 union distinct select
    'PROCEDURE_OCCURRENCE' as table_name,
