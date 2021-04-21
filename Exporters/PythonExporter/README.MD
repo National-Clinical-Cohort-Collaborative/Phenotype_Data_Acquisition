@@ -62,7 +62,7 @@ Example:
 ```
 python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --phenotype N3C_phenotype_V1_0_act_oracle.sql
 python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --extract N3C_extract_V1_0_act_oracle.sql
-python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --extract N3C_extract_NLP_oracle.sql
+python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --extract N3C_extract_nlp_oracle.sql
 python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --zip 
 python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --sftp
 ```
