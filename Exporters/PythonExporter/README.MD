@@ -49,6 +49,23 @@ You can (optionally) use our Python Data Exporter to run the N3C data extract sc
 ```
 python db_exp.py --config config.ini --database oracle --phenotype N3C_phenotype_V1_0_act_oracle.sql --extract N3C_extract_V1_0_act_oracle.sql --output_dir E:\N3C --zip --sftp
 ```
+**NLP Sites - Running the Exporter**
+
+For NLP sites you will need to use two extract scripts, one for the core tables and one for the NLP tables.  To run two extract scripts you will need to break up the process into multiple steps:
+1. Run the phenotype
+2. Extract the core tables
+3. Extract the NLP tables
+4. ZIP the files
+5. SFTP the payload
+
+Example:
+```
+python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --phenotype N3C_phenotype_V1_0_act_oracle.sql
+python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --extract N3C_extract_V1_0_act_oracle.sql
+python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --extract N3C_extract_NLP_oracle.sql
+python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --zip 
+python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --sftp
+```
 
 **Script Command Line Options**
 
