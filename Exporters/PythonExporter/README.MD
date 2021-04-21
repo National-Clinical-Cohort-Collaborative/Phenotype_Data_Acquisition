@@ -23,7 +23,7 @@ Conversion notes:
 
 **Python Data Exporter**
 
-You can (optionally) use our Python Data Exporter to run the N3C data extract scripts in sequence, basically hands-free. You can schedule this to run as a cron job if you’d like to use it to dump your data on a recurring basis.
+You can (optionally) use our Python Data Exporter to run the N3C data extract SQL scripts in sequence, basically hands-free. You can schedule this to run as a cron job if you’d like to use it to dump your data on a recurring basis.
 
 **System Prerequisites**
 
