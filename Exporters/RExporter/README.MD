@@ -86,6 +86,9 @@ outputFolder <-  paste0(getwd(), "/output/")  # directory where output will be s
 phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acquisition/PhenotypeScripts/your_file.sql)
 extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/your_file.sql)
 
+# FOR NLP SITES ONLY:
+nlpSqlPath <- "" # full path of nlp extract sql file (.../Phenotype_Data_Acquisition/NLPExtracts/N3C_extract_nlp_mssql.sql)
+
 # -- manifest config
 siteAbbrev <- "TuftsMC" #-- unique site identifier
 siteName   <- ""
@@ -133,7 +136,16 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         maxNumShiftDays = maxNumShiftDays,
                         useAndromeda = FALSE # See troubleshooting note below
                         )
-
+                        
+# FOR NLP SITES ONLY
+# Assumes OHNLP has already been run, extracts NLP data to pipe delimited files
+# references path var 'nlpSqlPath'
+N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
+                        sqlFilePath = nlpSqlPath,
+                        cdmDatabaseSchema = cdmDatabaseSchema,
+                        resultsDatabaseSchema = resultsDatabaseSchema,
+                        outputFolder = outputFolder
+)
 
 # Compress output
 zip::zipr(zipfile = paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%m%d"),".zip"),
