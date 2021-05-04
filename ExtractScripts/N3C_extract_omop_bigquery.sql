@@ -286,8 +286,8 @@ SELECT
    NULL as VISIT_DETAIL_ID,
    NULL as DEVICE_SOURCE_VALUE,
    DEVICE_SOURCE_CONCEPT_ID
-FROM @cdmDatabaseSchema.DEVICE_EXPOSURE de
-JOIN @resultsDatabaseSchema.N3C_COHORT n
+FROM @cdmDatabaseSchema.device_exposure de
+JOIN @resultsDatabaseSchema.n3c_cohort n
   ON de.PERSON_ID = n.PERSON_ID
 WHERE de.DEVICE_EXPOSURE_START_DATE >= DATE(2018, 01, 01);
 
