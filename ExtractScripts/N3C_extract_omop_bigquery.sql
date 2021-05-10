@@ -516,7 +516,7 @@ union distinct select
 
 union distinct select
    'DEVICE_EXPOSURE' as TABLE_NAME,
-   (select count(*) from @cdmDatabaseSchema.DEVICE_EXPOSURE de JOIN @resultsDatabaseSchema.N3C_COHORT n ON de.PERSON_ID = n.PERSON_ID AND DEVICE_EXPOSURE_START_DATE >= DATE(2018, 01, 01)) as ROW_COUNT
+   (select count(*) from @cdmDatabaseSchema.device_exposure de JOIN @resultsDatabaseSchema.n3c_cohort n ON de.PERSON_ID = n.PERSON_ID AND DEVICE_EXPOSURE_START_DATE >= DATE(2018, 01, 01)) as ROW_COUNT
 
 union distinct select
    'PROCEDURE_OCCURRENCE' as table_name,
