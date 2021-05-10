@@ -879,49 +879,45 @@ WHERE CONTROL_PERSON_ID IN (
 		FROM @resultsDatabaseSchema.N3C_CASE_COHORT
 		);
 
--- Remove cases and controls from the mapping table if those people are no longer in the person table (due to merges or other reasons)
+-- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
 DELETE
-FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
-WHERE CASE_person_id NOT IN (
-		SELECT person_id
-		FROM @cdmDatabaseSchema.person
+FROM @resultsDatabaseSchema.N3C_CONTROL_MAP n
+WHERE NOT EXISTS (
+		SELECT 1 FROM @cdmDatabaseSchema.person p where p.person_id = n.case_person_id 
 		);
 
+-- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
 DELETE
-FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
-WHERE CONTROL_person_id NOT IN (
-		SELECT person_id
-		FROM @cdmDatabaseSchema.person
+FROM @resultsDatabaseSchema.N3C_CONTROL_MAP n
+WHERE NOT EXISTS (
+		SELECT 1 FROM @cdmDatabaseSchema.person p where p.person_id = n.control_person_id 
 		);
 
--- Remove cases who no longer meet the phenotype definition
+-- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
 DELETE
-FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
-WHERE CASE_person_id NOT IN (
-		SELECT person_id
-		FROM @resultsDatabaseSchema.N3C_CASE_COHORT
-		WHERE person_id IS NOT NULL
+FROM @resultsDatabaseSchema.N3C_CONTROL_MAP NCM
+WHERE NOT EXISTS (
+		SELECT 1 FROM @resultsDatabaseSchema.N3C_CASE_COHORT NCC WHERE NCC.person_id = NCM.case_person_id and NCC.person_id IS NOT NULL
 		);
 
-
+-- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
+-- Bigint cast for Regenstrief 
 INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
 SELECT
-		person_id, 1 as buddy_num, cast(null as int)
-		FROM @resultsDatabaseSchema.n3c_case_cohort
-		WHERE person_id NOT IN (
-			SELECT case_person_id
-			FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
-			WHERE buddy_num = 1
+		person_id, 1 as buddy_num, cast(NULL as BIGint)
+		FROM @resultsDatabaseSchema.n3c_case_cohort ncc1
+		WHERE NOT EXISTS( 
+			SELECT 1 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP ncm1 
+			WHERE ncm1.case_person_id = ncc1.person_id and ncm1.buddy_num = 1
 			)
-
+		
 		UNION
-
-		SELECT person_id, 2 as buddy_num, cast(null as int)
-		FROM @resultsDatabaseSchema.n3c_case_cohort
-		WHERE person_id NOT IN (
-			SELECT case_person_id
-			FROM @resultsDatabaseSchema.N3C_CONTROL_MAP
-			WHERE buddy_num = 2
+		
+		SELECT person_id, 2 as buddy_num, cast( NULL as BIGint)
+		FROM @resultsDatabaseSchema.n3c_case_cohort ncc2
+		WHERE NOT EXISTS( 
+			SELECT 1 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP ncm2 
+			WHERE ncm2.case_person_id = ncc2.person_id and ncm2.buddy_num = 2
 			)
 ;
 
