@@ -879,33 +879,32 @@ WHERE CONTROL_PERSON_ID IN (
 		FROM @resultsDatabaseSchema.N3C_CASE_COHORT
 		);
 
--- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
+-- Postgres NOT IN () is extremely show. Change to NOT EXISTS and use where A = B 
 DELETE
 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP n
 WHERE NOT EXISTS (
 		SELECT 1 FROM @cdmDatabaseSchema.person p where p.person_id = n.case_person_id 
 		);
 
--- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
+-- Postgres NOT IN () is extremely show. Change to NOT EXISTS and use where A = B 
 DELETE
 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP n
 WHERE NOT EXISTS (
 		SELECT 1 FROM @cdmDatabaseSchema.person p where p.person_id = n.control_person_id 
 		);
 
--- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
+-- Postgres NOT IN () is extremely show. Change to NOT EXISTS and use where A = B 
 DELETE
 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP NCM
 WHERE NOT EXISTS (
 		SELECT 1 FROM @resultsDatabaseSchema.N3C_CASE_COHORT NCC WHERE NCC.person_id = NCM.case_person_id and NCC.person_id IS NOT NULL
 		);
 
--- JSW-FIX - Postgres NOT IN () is extremely show. Change to NOT EXISTS and the where A = B 
--- Bigint cast for Regenstrief 
 INSERT INTO @resultsDatabaseSchema.N3C_CONTROL_MAP
 SELECT
-		person_id, 1 as buddy_num, cast(NULL as BIGint)
+		person_id, 1 as buddy_num, cast(NULL as int)
 		FROM @resultsDatabaseSchema.n3c_case_cohort ncc1
+		-- Postgres NOT IN () is extremely show. Change to NOT EXISTS and use where A = B 
 		WHERE NOT EXISTS( 
 			SELECT 1 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP ncm1 
 			WHERE ncm1.case_person_id = ncc1.person_id and ncm1.buddy_num = 1
@@ -913,8 +912,9 @@ SELECT
 		
 		UNION
 		
-		SELECT person_id, 2 as buddy_num, cast( NULL as BIGint)
+		SELECT person_id, 2 as buddy_num, cast( NULL as int)
 		FROM @resultsDatabaseSchema.n3c_case_cohort ncc2
+		-- Postgres NOT IN () is extremely show. Change to NOT EXISTS and use where A = B 
 		WHERE NOT EXISTS( 
 			SELECT 1 FROM @resultsDatabaseSchema.N3C_CONTROL_MAP ncm2 
 			WHERE ncm2.case_person_id = ncc2.person_id and ncm2.buddy_num = 2
