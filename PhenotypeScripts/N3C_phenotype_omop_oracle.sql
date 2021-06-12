@@ -191,6 +191,22 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT
 					,723477
 					,723478
 					,723480
+					,36661369
+					,36031238
+					,36031213
+					,36031506
+					,36031197
+					,36032061
+					,36031944
+					,36031969
+					,36031956
+					,36032309
+					,36032174
+					,36032419
+					,36031652
+					,36031453
+					,36032258
+					,36031734
 					)
 
 			   UNION
@@ -692,7 +708,7 @@ AS (SELECT DISTINCT person_id
 	  WHERE measurement_concept_id IN (SELECT concept_id
 			FROM @cdmDatabaseSchema.CONCEPT
 			-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
-			    WHERE concept_id IN ((
+			    WHERE concept_id IN (
 					586515
 					,586522
 					,706179
@@ -763,6 +779,22 @@ AS (SELECT DISTINCT person_id
 					,723477
 					,723478
 					,723480
+					,36661369
+					,36031238
+					,36031213
+					,36031506
+					,36031197
+					,36032061
+					,36031944
+					,36031969
+					,36031956
+					,36032309
+					,36032174
+					,36032419
+					,36031652
+					,36031453
+					,36032258
+					,36031734
 					)
 
 			   UNION
