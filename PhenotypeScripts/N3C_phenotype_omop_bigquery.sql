@@ -1,6 +1,6 @@
 /**
-N3C Phenotype 3.2 - OMOP GBQ
-Author: Robert Miller (Tufts), Emily Pfaff (UNC)
+N3C Phenotype 3.3 - OMOP GBQ
+Author: Robert Miller (Tufts), Emily Pfaff (UNC), Kristin Kostka (OHDSI)
 
 HOW TO RUN:
 If you are not using the R or Python exporters, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
@@ -14,9 +14,10 @@ If you have read/write to your cdmDatabaseSchema, you would use the same schema 
 
 To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
-SCRIPT RELEASE DATE: By 14 February 2020
+SCRIPT RELEASE DATE: By June 2021
 
 **/
+
 
 
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_pre_cohort  (person_id INT64 not null
