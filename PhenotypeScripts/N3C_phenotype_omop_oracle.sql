@@ -170,6 +170,26 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT
 					,723474
 					,757685
 					,723476
+					,586524
+					,586525
+					,586527
+					,586528
+					,586529
+					,715272
+					,723463
+					,723464
+					,723465
+					,723466
+					,723467
+					,723468
+					,723469
+					,723470
+					,723471
+					,723473
+					,723475
+					,723477
+					,723478
+					,723480
 					)
 
 			   UNION
@@ -217,13 +237,13 @@ AS (SELECT DISTINCT person_id
 			-- The list of ICD-10 codes in the Phenotype Wiki
 			-- This is the list of standard concepts that represent those terms
 			  WHERE concept_id IN (
-					756023
-					,756044
-					,756061
+					3661405
+					,3661406
+					,3662381
 					,756031
 					,37311061
-					,756081
-					,37310285
+					,3663281
+					,3661408
 					,756039
 					,320651
 					)
@@ -257,13 +277,13 @@ AS (SELECT DISTINCT person_id
 			-- This is the list of standard concepts that represent those terms
 			    WHERE concept_id IN (
 					37311061
-					,756023
+					,3661405
 					,756031
 					,756039
-					,756044
-					,756061
-					,756081
-					,37310285
+					,3661406
+					,3662381
+					,3663281
+					,3661408
 					)
 
 			   UNION
@@ -273,13 +293,13 @@ AS (SELECT DISTINCT person_id
 			JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
 				-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
 				AND ca.ancestor_concept_id IN (
-					756044
-					,37310285
+					3661406
+					,3661408
 					,37310283
-					,756061
-					,756081
+					,3662381
+					,3663281
 					,37310287
-					,756023
+					,3661405
 					,756031
 					,37310286
 					,37311061
@@ -671,7 +691,7 @@ AS (SELECT DISTINCT person_id
 	  WHERE measurement_concept_id IN (SELECT concept_id
 			FROM @cdmDatabaseSchema.CONCEPT
 			-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
-			    WHERE concept_id IN (
+			    WHERE concept_id IN ((
 					586515
 					,586522
 					,706179
@@ -718,6 +738,30 @@ AS (SELECT DISTINCT person_id
 					,36661374
 					,36661370
 					,36661371
+					,723479
+					,723474
+					,757685
+					,723476
+					,586524
+					,586525
+					,586527
+					,586528
+					,586529
+					,715272
+					,723463
+					,723464
+					,723465
+					,723466
+					,723467
+					,723468
+					,723469
+					,723470
+					,723471
+					,723473
+					,723475
+					,723477
+					,723478
+					,723480
 					)
 
 			   UNION
