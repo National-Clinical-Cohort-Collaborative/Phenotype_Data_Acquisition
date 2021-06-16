@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS data_a.n3c_control_map (
 SELECT CURRENT_TIMESTAMP as date_time, 'UPDATING PHENO VERSION TABLE' as log_entry;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
 INSERT INTO :TNX_SCHEMA.n3c_pheno_version
-SELECT '3.2';
+SELECT '3.3';
 
 ---------------------------------------------------------------------------------------------------------
 -- 3. Clear out existing tables
@@ -145,6 +145,7 @@ FROM :TNX_SCHEMA.patient pt
 --		09/17/20 - Update to v2.2 - Remove some LOINC codes
 --		11/18/20 - Update to v3.0
 --		02/09/21 - Update to v3.1
+--		06/16/21 - Update to v3.3 - Add LOINC codes
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_pre_cohort' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_pre_cohort
@@ -305,7 +306,7 @@ FROM (
 			WHERE lr.test_date >=  '2020-01-01'
 			AND 
 			(	-- LOINC List
-				mpLab.mt_code IN ('UMLS:LNC:94306-8'	--new in 1.4
+				mpLab.mt_code IN ('UMLS:LNC:94306-8'
 					,'UMLS:LNC:94307-6'
 					,'UMLS:LNC:94308-4'
 					,'UMLS:LNC:94309-2'
@@ -373,7 +374,23 @@ FROM (
 					,'UMLS:LNC:95428-9'
 					,'UMLS:LNC:95429-7'
 					,'UMLS:LNC:95521-1'
-					,'UMLS:LNC:95522-9')
+					,'UMLS:LNC:95522-9'
+					,'UMLS:LNC:95542-7'  -- new for v3.3
+					,'UMLS:LNC:95608-6'  -- new for v3.3
+					,'UMLS:LNC:95609-4'  -- new for v3.3
+					,'UMLS:LNC:95824-9'  -- new for v3.3
+					,'UMLS:LNC:95825-6'  -- new for v3.3
+					,'UMLS:LNC:95826-4'  -- new for v3.3
+					,'UMLS:LNC:95970-0'  -- new for v3.3
+					,'UMLS:LNC:95971-8'  -- new for v3.3
+					,'UMLS:LNC:95972-6'  -- new for v3.3
+					,'UMLS:LNC:95973-4'  -- new for v3.3
+					,'UMLS:LNC:96091-4'  -- new for v3.3
+					,'UMLS:LNC:96119-3'  -- new for v3.3
+					,'UMLS:LNC:96120-1'  -- new for v3.3
+					,'UMLS:LNC:96123-5'  -- new for v3.3
+					,'UMLS:LNC:96448-6'  -- new for v3.3
+					,'UMLS:LNC:96603-6') -- new for v3.3
 				--OTHER LAB
 				OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
 				OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
