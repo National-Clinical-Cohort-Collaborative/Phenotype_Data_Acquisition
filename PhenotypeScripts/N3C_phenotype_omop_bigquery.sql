@@ -801,7 +801,7 @@ as (
 	,inc_dx_weak
 	,inc_lab_any
 	,inc_lab_pos
-	,'3.2' as phenotype_version
+	,'3.3' as phenotype_version
 	,case
 		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 0
 				and 4
