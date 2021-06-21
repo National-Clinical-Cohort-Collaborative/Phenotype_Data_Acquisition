@@ -835,7 +835,7 @@ SELECT DISTINCT c.person_id
 	,inc_dx_weak
 	,inc_lab_any
 	,inc_lab_pos
-	,'3.2' AS phenotype_version
+	,'3.3' AS phenotype_version
 	,CASE
 		WHEN DATE_PART('year', CURRENT_DATE) - DATE_PART('year', d.birth_datetime) BETWEEN 0
 				AND 4
