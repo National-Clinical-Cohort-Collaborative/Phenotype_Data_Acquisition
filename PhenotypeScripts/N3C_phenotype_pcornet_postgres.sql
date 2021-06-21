@@ -459,7 +459,7 @@ SELECT distinct
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
-    '3.2' as phenotype_version,
+    '3.3' as phenotype_version,
    CASE
 		WHEN DATE_PART('year', CURRENT_DATE) - DATE_PART('year', d.birth_date) BETWEEN 0
 				AND 4
