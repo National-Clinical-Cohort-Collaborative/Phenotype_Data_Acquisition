@@ -1,4 +1,4 @@
---Phenotype 3.2
+--Phenotype 3.3
 --PCORnet
 
 --Create table to hold all cases and controls before matching
@@ -200,7 +200,23 @@ covid_loinc  AS
 	select '95428-9' as loinc  UNION  
 	select '95429-7' as loinc  UNION  
 	select '95521-1' as loinc  UNION  
-	select '95522-9' as loinc 
+	select '95522-9' as loinc UNION
+	SELECT '95542-7' as loinc UNION 
+	SELECT '95608-6' as loinc UNION 
+	SELECT '95609-4' as loinc UNION 
+	SELECT '95824-9' as loinc UNION 
+	SELECT '95825-6' as loinc UNION 
+	SELECT '95826-4' as loinc UNION 
+	SELECT '95970-0' as loinc UNION 
+	SELECT '95971-8' as loinc UNION 
+	SELECT '95972-6' as loinc UNION 
+	SELECT '95973-4' as loinc UNION 
+	SELECT '96091-4' as loinc UNION 
+	SELECT '96119-3' as loinc UNION 
+	SELECT '96120-1' as loinc UNION 
+	SELECT '96123-5' as loinc UNION 
+	SELECT '96448-6' as loinc UNION 
+	SELECT '96603-6' as loinc
 ),
 
  --The ways that your site describes a positive COVID test

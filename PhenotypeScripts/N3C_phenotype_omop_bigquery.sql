@@ -1,6 +1,6 @@
 /**
-N3C Phenotype 3.2 - OMOP GBQ
-Author: Robert Miller (Tufts), Emily Pfaff (UNC)
+N3C Phenotype 3.3 - OMOP GBQ
+Author: Robert Miller (Tufts), Emily Pfaff (UNC), Kristin Kostka (OHDSI)
 
 HOW TO RUN:
 If you are not using the R or Python exporters, you will need to find and replace @cdmDatabaseSchema and @resultsDatabaseSchema, @cdmDatabaseSchema with your local OMOP schema details. This is the only modification you should make to this script.
@@ -14,9 +14,10 @@ If you have read/write to your cdmDatabaseSchema, you would use the same schema 
 
 To follow the logic used in this code, visit: https://github.com/National-COVID-Cohort-Collaborative/Phenotype_Data_Acquisition/wiki/Latest-Phenotype
 
-SCRIPT RELEASE DATE: By 14 February 2020
+SCRIPT RELEASE DATE: By June 2021
 
 **/
+
 
 
 CREATE TABLE IF NOT EXISTS @resultsDatabaseSchema.n3c_pre_cohort  (person_id INT64 not null
@@ -129,6 +130,42 @@ as (
 					,723474
 					,757685
 					,723476
+					,586524
+					,586525
+					,586527
+					,586528
+					,586529
+					,715272
+					,723463
+					,723464
+					,723465
+					,723466
+					,723467
+					,723468
+					,723469
+					,723470
+					,723471
+					,723473
+					,723475
+					,723477
+					,723478
+					,723480
+					,36661369
+					,36031238
+					,36031213
+					,36031506
+					,36031197
+					,36032061
+					,36031944
+					,36031969
+					,36031956
+					,36032309
+					,36032174
+					,36032419
+					,36031652
+					,36031453
+					,36032258
+					,36031734
 					)
 
 			union distinct select c.concept_id
@@ -176,13 +213,13 @@ as (
 			-- The list of ICD-10 codes in the Phenotype Wiki
 			-- This is the list of standard concepts that represent those terms
 			where concept_id in (
-					756023
-					,756044
-					,756061
+					3661405
+					,3661406
+					,3662381
 					,756031
 					,37311061
-					,756081
-					,37310285
+					,3663281
+					,3661408
 					,756039
 					,320651
 					)
@@ -213,13 +250,13 @@ as (
 			-- This is the list of standard concepts that represent those terms
 			where concept_id in (
 					37311061
-					,756023
+					,3661405
 					,756031
 					,756039
-					,756044
-					,756061
-					,756081
-					,37310285
+					,3661406
+					,3662381
+					,3663281
+					,3661408
 					)
 
 			union distinct select c.concept_id
@@ -227,13 +264,13 @@ as (
 			join @cdmDatabaseSchema.concept_ancestor ca on c.concept_id = ca.descendant_concept_id
 				-- Here we pull the descendants (aka terms that are more specific than the concepts selected above)
 				and ca.ancestor_concept_id in (
-					756044
-					,37310285
+					3661406
+					,3661408
 					,37310283
-					,756061
-					,756081
+					,3662381
+					,3663281
 					,37310287
-					,756023
+					,3661405
 					,756031
 					,37310286
 					,37311061
@@ -665,6 +702,46 @@ as (
 					,36661374
 					,36661370
 					,36661371
+					,723479
+					,723474
+					,757685
+					,723476
+					,586524
+					,586525
+					,586527
+					,586528
+					,586529
+					,715272
+					,723463
+					,723464
+					,723465
+					,723466
+					,723467
+					,723468
+					,723469
+					,723470
+					,723471
+					,723473
+					,723475
+					,723477
+					,723478
+					,723480
+					,36661369
+					,36031238
+					,36031213
+					,36031506
+					,36031197
+					,36032061
+					,36031944
+					,36031969
+					,36031956
+					,36032309
+					,36032174
+					,36032419
+					,36031652
+					,36031453
+					,36032258
+					,36031734
 					)
 
 			union distinct select c.concept_id
