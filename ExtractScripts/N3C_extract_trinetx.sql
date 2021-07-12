@@ -182,6 +182,7 @@ WHERE rx.source_id NOT IN ('Diamond','Datavant')
 ---------------------------------------------------------------------------------------------------------
 -- NOTES:
 --	 	-Orphan = record with no associated patient/encounter
+--	 	-Stripping characters from observation desc due to NLP
 ---------------------------------------------------------------------------------------------------------
 CREATE TABLE :TNX_SCHEMA.n3c_lab_result AS
 SELECT
@@ -189,7 +190,8 @@ SELECT
 	, HASH(lab.source_id) || lab.encounter_id	AS ENCOUNTER_ID
 	, REPLACE(lab.observation_code_system,'|',' ')	AS LAB_CODE_SYSTEM
 	, REPLACE(lab.observation_code,'|',' ')		AS LAB_CODE
-	, REPLACE(lab.observation_desc,'|',' ')		AS LAB_DESCRIPTION
+	, REPLACE(REPLACE(lab.observation_code,'|',' '),E'\n',' ')		AS LAB_DESCRIPTION
+	--, REPLACE(lab.observation_desc,'|',' ')		AS LAB_DESCRIPTION
 	, REPLACE(lab.battery_code_system,'|',' ')	AS BATTERY_CODE_SYSTEM
 	, lab.battery_code							AS BATTERY_CODE
 	, REPLACE(lab.battery_desc,'|',' ')			AS BATTERY_DESC
