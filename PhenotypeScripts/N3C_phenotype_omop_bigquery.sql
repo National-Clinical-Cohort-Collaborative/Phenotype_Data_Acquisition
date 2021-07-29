@@ -803,61 +803,61 @@ as (
 	,inc_lab_pos
 	,'3.3' as phenotype_version
 	,case
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 0
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 0
 				and 4
 			then '0-4'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 5
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 5
 				and 9
 			then '5-9'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 10
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 10
 				and 14
 			then '10-14'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 15
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 15
 				and 19
 			then '15-19'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 20
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 20
 				and 24
 			then '20-24'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 25
+		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 25
 				and 29
 			then '25-29'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 30
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 30
 				and 34
 			then '30-34'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 35
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 35
 				and 39
 			then '35-39'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 40
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 40
 				and 44
 			then '40-44'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 45
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 45
 				and 49
 			then '45-49'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 50
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 50
 				and 54
 			then '50-54'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 55
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 55
 				and 59
 			then '55-59'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 60
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 60
 				and 64
 			then '60-64'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 65
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 65
 				and 69
 			then '65-69'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 70
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 70
 				and 74
 			then '70-74'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 75
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 75
 				and 79
 			then '75-79'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 80
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 80
 				and 84
 			then '80-84'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) between 85
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 85
 				and 89
 			then '85-89'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year) >= 90
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) >= 90
 			then '90+'
 		end as pt_age
 	,d.gender_concept_id as sex
