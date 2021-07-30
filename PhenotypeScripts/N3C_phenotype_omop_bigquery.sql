@@ -818,7 +818,7 @@ as (
 		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 20
 				and 24
 			then '20-24'
-		when date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 25
+		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 25
 				and 29
 			then '25-29'
 		when abs(date_diff(cast(d.birth_datetime as DATE), CURRENT_DATE(), year)) between 30
