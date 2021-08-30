@@ -5,6 +5,7 @@ import os
 import argparse
 import datetime
 import shutil
+import random, string
 
 def mssql_connect(config):
     host = config['mssql']['host']
@@ -53,8 +54,7 @@ def bigquery_connect(config):
     driver = config.get('bigquery','driver')
 
     pyodbc.autocommit = True
-    constr = 'DRIVER='+driver+';OAuthMechanism=0;Email='+oauthserviceacctemail+';KeyFilePath='+oauthpvtkeypath+';Catalog='+projectid+';'
-    conn = pyodbc.connect(constr, autocommit=True)
+    conn = pyodbc.connect('DSN=Google BigQuery', autocommit=True)
     return(conn)
 
 def parse_sql(sql_fname,sql_params):
@@ -132,7 +132,7 @@ def db_store(conn, sql, debug):
 	cursor.close()
 
 		
-def db_export(conn, sql, csvwriter, arraysize, debug):
+def db_export(conn, sql, csvwriter, arraysize, debug, persist_schema):
     cursor=conn.cursor()
     cursor.arraysize = arraysize
 
@@ -140,6 +140,13 @@ def db_export(conn, sql, csvwriter, arraysize, debug):
         print("Execute SQL -----------------------------")
         print(sql)
         print("-----------------------------------------")
+    temp_table_name =  ''.join(random.choices(string.ascii_uppercase, k=5))
+    sql = f"""CREATE OR REPLACE TABLE {persist_schema}.{temp_table_name} AS 
+          {sql} 
+          ;"""
+    cursor.execute(sql)
+    sql = f"SELECT * FROM {persist_schema}.{temp_table_name};"
+    print(sql)
     cursor.execute(sql)
     header = [column[0] for column in cursor.description]
     csvwriter.writerow(header)
@@ -321,7 +328,8 @@ if sql_fname != None and no_csv != True:
                 print("See file {}".format(outfname))
                 exit()
         else:
-            db_export(db_conn, exp['sql'], csvwriter, arraysize, debug)
+            persist_schema =  config['site']['persist_database_schema']
+            db_export(db_conn, exp['sql'], csvwriter, arraysize, debug, persist_schema)
         outf.close()
 
 # STORE DATA TABLES#
