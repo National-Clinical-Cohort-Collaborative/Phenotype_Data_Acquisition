@@ -76,7 +76,7 @@ runExtraction  <- function(connectionDetails,
 
     # TODO: replace this hacky approach to writing these two tables to the root output folder
     output_path <- outputFolder
-    if(fileNm != "MANIFEST.csv" && fileNm != "DATA_COUNTS.csv" && fileNm != "EXTRACT_VALIDATION.csv"){
+    if(fileNm != "MANIFEST.csv" && fileNm != "DATA_COUNTS.csv" && fileNm != "EXTRACT_VALIDATION.csv" && fileNm != "DATA_COUNTS_APPEND.csv"){
       output_path <- paste0(outputFolder, "DATAFILES/")
     }
 
@@ -125,9 +125,19 @@ executeChunk <- function(conn,
 
   result <- DatabaseConnector::querySql(conn, sql)
 
-  write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE, na="")
+  # workaround to append row counts from optional tables (VISIT_DETAIL, NOTE, NOTE_NLP) to DATA_COUNTS.csv on separate executions
+  if(fileName == "DATA_COUNTS_APPEND.csv"){
+    write.table(result, file = paste0(outputFolder, "DATA_COUNTS.csv" ), sep = "|", row.names = FALSE, na="", append = TRUE, col.names = FALSE)
+    return(nrow(result))
+  }
 
-  return(nrow(result))
+  # everything but appends to DATA_COUNTS table
+  else{
+    write.table(result, file = paste0(outputFolder, fileName ), sep = "|", row.names = FALSE, na="")
+    return(nrow(result))
+  }
+
+
 
 }
 

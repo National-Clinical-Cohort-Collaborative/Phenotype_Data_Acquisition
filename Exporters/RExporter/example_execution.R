@@ -38,7 +38,10 @@ phenotypeSqlPath <- "" # full path of phenotype sql file (.../Phenotype_Data_Acq
 extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquisition/ExtractScripts/your_file.sql)
 
 # FOR NLP SITES ONLY:
-nlpSqlPath <- "" # full path of nlp extract sql file (.../Phenotype_Data_Acquisition/NLPExtracts/N3C_extract_nlp_mssql.sql)
+nlpSqlPath <- "" # full path of NLP extract sql file (.../Phenotype_Data_Acquisition/NLPExtracts/N3C_extract_nlp_mssql.sql)
+
+# FOR ADT/VISIT_DETAIL SITES ONLY:
+adtSqlPath <- "" # full path of ADT extract sql file (.../Phenotype_Data_Acquisition/ADTExtracts/N3C_extract_adt_mssql.sql)
 
 # -- manifest config
 siteAbbrev <- "TuftsMC" #-- unique site identifier
@@ -86,8 +89,13 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         maxNumShiftDays = maxNumShiftDays
                         )
 
+# OPTIONAL EXTENSIONS
+#------------------
+# For those sites that have opted in for adding in NLP and/or ADT data, you must first run the main extraction code above before executing below as these functions append to tables generated during that process
+
+#(1/2) NLP
 # FOR NLP SITES ONLY
-# Assumes OHNLP has already been run, extracts NLP data to pipe delimited files
+# Assumes OHNLP has already been run, reads from NOTE and NOTE_NLP tables, extracts NLP data to pipe delimited files
 # references path var 'nlpSqlPath'
 N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         sqlFilePath = nlpSqlPath,
@@ -96,7 +104,17 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
                         outputFolder = outputFolder
 )
 
-
+# (2/2) ADT
+# FOR ADT/VISIT_DETAIL SITES ONLY
+# Assumes main extraction has already been run and the DATA_COUNTS.csv file generated, extracts visit_detail table and appends row counts to DATA_COUNTS.csv
+# references path var 'adtSqlPath'
+N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
+                        sqlFilePath = adtSqlPath,
+                        cdmDatabaseSchema = cdmDatabaseSchema,
+                        resultsDatabaseSchema = resultsDatabaseSchema,
+                        outputFolder = outputFolder
+)
+#------------------------
 
 # Compress output
 zip::zipr(zipfile = paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%m%d"),".zip"),

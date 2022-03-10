@@ -1,14 +1,12 @@
---N3C NLP extract script - OMOP BigQuery
---NLP extract script
+--N3C NLP extract script - OMOP Oracle
 --Use this extra extract file if your site is participating in the NLP portion of N3C.
 
 --NOTE
 --OUTPUT_FILE: NOTE.csv
-SELECT
-   nt.NOTE_ID,
+SELECT nt.NOTE_ID,
    nt.PERSON_ID,
-   CAST(NOTE_DATE as datetime) as NOTE_DATE,
-   CAST(NOTE_DATETIME as datetime) as NOTE_DATETIME,
+   CAST(NOTE_DATE as TIMESTAMP) as NOTE_DATE,
+   CAST(NOTE_DATETIME as TIMESTAMP) as NOTE_DATETIME,
    NOTE_TYPE_CONCEPT_ID,
    NOTE_CLASS_CONCEPT_ID,
    NULL as NOTE_TITLE,
@@ -22,12 +20,11 @@ SELECT
 FROM @cdmDatabaseSchema.NOTE nt
 JOIN @resultsDatabaseSchema.N3C_COHORT n
   ON nt.person_id = n.person_id
-WHERE nt.NOTE_DATE >= DATEFROMPARTS(2018,01,01);
+  WHERE nt.NOTE_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ;
 
 --NOTE_NLP
 --OUTPUT_FILE: NOTE_NLP.csv
-SELECT
-   NOTE_NLP_ID,
+SELECT NOTE_NLP_ID,
    ntnlp.NOTE_ID,
    SECTION_CONCEPT_ID,
    NULL as SNIPPET,
@@ -36,15 +33,15 @@ SELECT
    NOTE_NLP_CONCEPT_ID,
    NOTE_NLP_SOURCE_CONCEPT_ID,
    NLP_SYSTEM,
-   CAST(NLP_DATE as datetime) as NLP_DATE,
-   CAST(NLP_DATETIME as datetime) as NLP_DATETIME,
+   CAST(NLP_DATE as TIMESTAMP) as NLP_DATE,
+   CAST(NLP_DATETIME as TIMESTAMP) as NLP_DATETIME,
    TERM_EXISTS,
    TERM_TEMPORAL,
    TERM_MODIFIERS
 FROM @cdmDatabaseSchema.NOTE_NLP ntnlp
 	JOIN @cdmDatabaseSchema.NOTE nt ON ntnlp.NOTE_ID = nt.NOTE_ID
 	JOIN @resultsDatabaseSchema.N3C_COHORT n ON nt.person_id = n.person_id
-WHERE nt.NOTE_DATE >= DATEFROMPARTS(2018,01,01);
+  WHERE nt.NOTE_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ;
 
 --NOTE ROW COUNT
 --OUTPUT_FILE: DATA_COUNTS_APPEND.csv
@@ -52,7 +49,7 @@ SELECT 'NOTE' as TABLE_NAME
     ,count(*) as ROW_COUNT
  FROM @cdmDatabaseSchema.NOTE nt
  JOIN @resultsDatabaseSchema.N3C_COHORT n ON nt.person_id = n.person_id
-WHERE nt.NOTE_DATE >= DATEFROMPARTS(2018,01,01);
+  WHERE nt.NOTE_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ;
 
 --NOTE_NLP ROW COUNT
 --OUTPUT_FILE: DATA_COUNTS_APPEND.csv
@@ -61,5 +58,4 @@ SELECT 'NOTE_NLP' as TABLE_NAME
 FROM @cdmDatabaseSchema.NOTE_NLP ntnlp
   JOIN @cdmDatabaseSchema.NOTE nt ON ntnlp.NOTE_ID = nt.NOTE_ID
   JOIN @resultsDatabaseSchema.N3C_COHORT n ON nt.person_id = n.person_id
-WHERE nt.NOTE_DATE >= DATEFROMPARTS(2018,01,01);
-
+  WHERE nt.NOTE_DATE >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') ;
