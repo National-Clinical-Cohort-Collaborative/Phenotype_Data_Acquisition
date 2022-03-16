@@ -120,7 +120,7 @@ def create_phenotype(conn, phenotype_fname, sql_params, debug):
         conn.commit()
 
 
-def db_export(conn, sql, csvwriter, arraysize, debug):
+def db_export(conn, sql, csvwriter, arraysize, write_mode, debug):
     cursor=conn.cursor()
     cursor.arraysize = arraysize
 
@@ -130,7 +130,8 @@ def db_export(conn, sql, csvwriter, arraysize, debug):
         print("-----------------------------------------")
     cursor.execute(sql);
     header = [column[0] for column in cursor.description]
-    csvwriter.writerow(header)
+    if write_mode == 'w':
+        csvwriter.writerow(header)
 
     while True:
         rows = cursor.fetchmany()
@@ -141,7 +142,7 @@ def db_export(conn, sql, csvwriter, arraysize, debug):
 
     cursor.close()
 
-def db_export_validate(conn, sql, csvwriter, arraysize, debug):
+def db_export_validate(conn, sql, csvwriter, arraysize, write_mode, debug):
     cursor=conn.cursor()
     cursor.arraysize = 100
 
@@ -151,7 +152,8 @@ def db_export_validate(conn, sql, csvwriter, arraysize, debug):
         print("-----------------------------------------")
     cursor.execute(sql);
     header = [column[0] for column in cursor.description]
-    csvwriter.writerow(header)
+    if write_mode == 'w':
+        csvwriter.writerow(header)
 
     rows = cursor.fetchmany()
     if not rows:
@@ -276,6 +278,7 @@ if sql_fname != None:
     datafiles_dir = output_dir + os.path.sep + 'DATAFILES'
     # put files below in root output directory
     root_files = ('MANIFEST.csv','DATA_COUNTS.csv','DATA_COUNTS_APPEND.csv')
+    append_files = [ {'DATA_COUNTS_APPEND.csv':'DATA_COUNTS.csv'} ]
     # test for DATAFILES subdir exists
     if not os.path.exists(datafiles_dir):
         print("ERROR: export path not found {}.  You may need to create a 'DATAFILES' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
@@ -287,15 +290,26 @@ if sql_fname != None:
         else:
             print("ERROR: output_file not found in sql block")
             exit(-1)
+
         print( "processing output file: {}\n".format(output_file) )
+
+        # special case for append files (data_counts_append.csv)
+        write_mode = 'w'
+        for append in append_files:
+            if output_file in append:
+                write_mode = 'a' #append to file
+                output_file = append[output_file]
+                break
+
         if output_file in root_files:
-            outfname = output_dir + os.path.sep + exp['output_file']
+            outfname = output_dir + os.path.sep + output_file
         else:
-            outfname = datafiles_dir + os.path.sep + exp['output_file']
-        outf = open(outfname, 'w', newline='', encoding='utf-8')
+            outfname = datafiles_dir + os.path.sep + output_file
+
+        outf = open(outfname, write_mode, newline='', encoding='utf-8')
         csvwriter = csv.writer(outf, delimiter='|', quotechar='"', quoting=csv.QUOTE_ALL)
         if exp['validation'] == True:
-            val = db_export_validate(db_conn, exp['sql'], csvwriter, arraysize, debug)
+            val = db_export_validate(db_conn, exp['sql'], csvwriter, arraysize, write_mode, debug)
             if val == True:
                 print("Validation OK")
             else:
@@ -304,7 +318,7 @@ if sql_fname != None:
                 print("See file {}".format(outfname))
                 exit(-1)
         else:
-            db_export(db_conn, exp['sql'], csvwriter, arraysize, debug)
+            db_export(db_conn, exp['sql'], csvwriter, arraysize, write_mode, debug)
         outf.close()
 
 # ZIP #
