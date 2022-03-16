@@ -275,7 +275,7 @@ if sql_fname != None:
     # put domain data in DATAFILES subdir of output directory
     datafiles_dir = output_dir + os.path.sep + 'DATAFILES'
     # put files below in root output directory
-    root_files = ('MANIFEST.csv','DATA_COUNTS.csv')
+    root_files = ('MANIFEST.csv','DATA_COUNTS.csv','DATA_COUNTS_APPEND.csv')
     # test for DATAFILES subdir exists
     if not os.path.exists(datafiles_dir):
         print("ERROR: export path not found {}.  You may need to create a 'DATAFILES' subdirectory under your output directory, also may need to specify --output on command line\n".format(datafiles_dir) )
