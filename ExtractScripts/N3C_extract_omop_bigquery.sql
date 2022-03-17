@@ -284,7 +284,7 @@ SELECT
    PROVIDER_ID,
    VISIT_OCCURRENCE_ID,
    NULL as VISIT_DETAIL_ID,
-   NULL as DEVICE_SOURCE_VALUE,
+   DEVICE_SOURCE_VALUE,
    DEVICE_SOURCE_CONCEPT_ID
 FROM @cdmDatabaseSchema.device_exposure de
 JOIN @resultsDatabaseSchema.n3c_cohort n
