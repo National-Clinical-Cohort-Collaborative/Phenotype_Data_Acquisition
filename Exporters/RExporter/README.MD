@@ -89,7 +89,8 @@ extractSqlPath <- ""  # full path of extract sql file (.../Phenotype_Data_Acquis
 # FOR NLP SITES ONLY:
 nlpSqlPath <- "" # full path of nlp extract sql file (.../Phenotype_Data_Acquisition/NLPExtracts/N3C_extract_nlp_mssql.sql)
 
-
+# FOR ADT/VISIT_DETAIL SITES ONLY:
+adtSqlPath <- "" # full path of ADT extract sql file (.../Phenotype_Data_Acquisition/ADTExtracts/N3C_extract_adt_mssql.sql)
 
 # -- manifest config
 siteAbbrev <- "TuftsMC" #-- unique site identifier
