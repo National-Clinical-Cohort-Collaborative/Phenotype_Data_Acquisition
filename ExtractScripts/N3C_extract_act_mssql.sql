@@ -426,7 +426,7 @@ select
     --***** FOR DATA ENHANCEMENTS ONLY *****
     --case 
     --    when
-    --		modifier_cd = 'RAW' then utl_raw.cast_to_varchar2(dbms_lob.substr(observation_blob)) 
+    --		modifier_cd = 'RAW' then observation_blob 
     --		else NULL 
     --end observation_blob
 from @cdmDatabaseSchema.observation_fact
