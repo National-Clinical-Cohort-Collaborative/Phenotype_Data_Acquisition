@@ -409,8 +409,13 @@ select
     CAST(DOWNLOAD_DATE as timestamp) as download_date,
     CAST(IMPORT_DATE as timestamp) as import_date,
     sourcesystem_cd,
-    upload_id
-from @cdmDatabaseSchema.observation_fact
+    upload_id,
+    case 
+        when
+		modifier_cd = 'RAW' then utl_raw.cast_to_varchar2(dbms_lob.substr(observation_blob)) 
+		else NULL 
+   end observation_blob
+   from @cdmDatabaseSchema.observation_fact
     join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
     join n3c_concepts on n3c_concepts.concept_cd = observation_fact.concept_cd 
   WHERE start_date >= '01-JAN-2018';
