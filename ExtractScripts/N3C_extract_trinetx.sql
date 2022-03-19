@@ -1,6 +1,7 @@
 ---------------------------------------------------------------------------------------------------------
 -- Drop existing output tables
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Starting extract...' as log_entry;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_patient;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_encounter;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_diagnosis;
@@ -15,6 +16,7 @@ DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_manifest;
 -- PATIENTS
 -- OUTPUT_FILE: PATIENT.csv
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Extracting patient' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_patient AS
 SELECT
 	n3c.patient_id	AS PATIENT_ID
@@ -41,12 +43,14 @@ FROM :TNX_SCHEMA.n3c_cohort n3c
 	LEFT JOIN :TNX_SCHEMA.mapping map_rc ON map_rc.provider_code = ('DEM|RACE:' || pt.race)
 	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('DEM|ETHNICITY:' || pt.ethnicity)
 	LEFT JOIN :TNX_SCHEMA.mapping map_ms ON map_ms.provider_code = ('DEM|MARITAL:' || pt.marital_status)
+WHERE pt.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'patient' AND code_system = 'source_id')
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- ENCOUNTERS
 -- OUTPUT FILE: ENCOUNTER.csv
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Extracting encounter' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_encounter AS
 SELECT
 	n3c.patient_id				AS PATIENT_ID
@@ -57,10 +61,15 @@ SELECT
 	, enc.length_of_stay		AS LENGTH_OF_STAY
 	, enc.orphan				AS ORPHAN_FLAG
 	, map_et.mt_code			AS MAPPED_ENCOUNTER_TYPE
+	, CASE 
+		WHEN long_loc.code IS NOT NULL THEN TRUE
+	  	ELSE FALSE
+	  END 						AS IS_LONG_COVID
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.encounter enc ON enc.patient_id = n3c.patient_id AND enc.start_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('TNX:ENCOUNTER_TYPE:' || enc.type)
-WHERE enc.source_id NOT IN ('Diamond','Datavant')
+	LEFT JOIN data_a.n3c_initiative long_loc ON long_loc.code = enc.location_id AND upper(long_loc.initiative) = 'LONG COVID' AND long_loc.table_name = 'encounter' AND long_loc.code_system = 'location_id'
+WHERE enc.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'encounter' AND code_system = 'source_id')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -70,6 +79,7 @@ WHERE enc.source_id NOT IN ('Diamond','Datavant')
 -- NOTES:
 --		-Orphan = record with no associated patient/encounter
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Extracting diagnosis' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_diagnosis AS
 SELECT
 	n3c.patient_id						AS PATIENT_ID
@@ -87,7 +97,9 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.diagnosis dx ON dx.patient_id = n3c.patient_id AND dx.date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_dx ON map_dx.provider_code = (dx.code_system || ':' || dx.code)
-WHERE dx.source_id NOT IN ('Diamond','Datavant')
+	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'diagnosis' AND flt.code_system = dx.code_system AND flt.code = dx.code
+WHERE dx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'diagnosis' AND code_system = 'source_id')
+	AND flt.reason IS NULL
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -97,6 +109,7 @@ WHERE dx.source_id NOT IN ('Diamond','Datavant')
 -- NOTES:
 --	 	-Orphan = record with no associated patient/encounter
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Extracting procedure' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_procedure AS
 SELECT
 	n3c.patient_id						AS PATIENT_ID
@@ -120,7 +133,9 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.procedure px ON px.patient_id = n3c.patient_id AND px.date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_px ON map_px.provider_code = (px.code_system || ':' || px.code)
-WHERE px.source_id NOT IN ('Diamond','Datavant')
+	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'procedure' AND flt.code_system = px.code_system AND flt.code = px.code
+WHERE px.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'procedure' AND code_system = 'source_id')
+	AND flt.reason IS NULL
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -130,6 +145,7 @@ WHERE px.source_id NOT IN ('Diamond','Datavant')
 -- NOTES:
 --	 	-Orphan = record with no associated patient/encounter
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Extracting medication' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_medication AS
 SELECT
 	n3c.patient_id									AS PATIENT_ID
@@ -173,7 +189,9 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.medication rx ON rx.patient_id = n3c.patient_id AND rx.start_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_rx ON map_rx.provider_code = (rx.code_system || ':' || rx.code)
-WHERE rx.source_id NOT IN ('Diamond','Datavant')
+	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'medication' AND flt.code_system = rx.code_system AND flt.code = rx.code
+WHERE rx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'medication' AND code_system = 'source_id')
+	AND flt.reason IS NULL
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -184,6 +202,7 @@ WHERE rx.source_id NOT IN ('Diamond','Datavant')
 --	 	-Orphan = record with no associated patient/encounter
 --	 	-Stripping characters from observation desc due to NLP
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Extracting lab results' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_lab_result AS
 SELECT
 	n3c.patient_id								AS PATIENT_ID
@@ -211,7 +230,9 @@ FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_lab ON map_lab.provider_code = (lab.observation_code_system || ':' || lab.observation_code)
 	LEFT JOIN :TNX_SCHEMA.mapping map_res on map_res.provider_code = ('TNX:LAB_RESULT:' || lab.lab_result_text_val)
-WHERE lab.source_id NOT IN ('Diamond','Datavant')
+	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'lab_result' AND flt.code_system = lab.observation_code_system AND flt.code = lab.observation_code
+WHERE lab.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'lab_result' AND code_system = 'source_id')
+	AND flt.reason IS NULL
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -221,6 +242,7 @@ WHERE lab.source_id NOT IN ('Diamond','Datavant')
 -- NOTES:
 --	 	-Orphan = record with no associated patient/encounter
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Extracting vital signs' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_vital_signs AS
 SELECT
 	n3c.patient_id						AS PATIENT_ID
@@ -242,13 +264,16 @@ FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_vit ON map_vit.provider_code = (vit.code_system || ':' || vit.code)
 	LEFT JOIN :TNX_SCHEMA.mapping map_res on map_res.provider_code = ('TNX:LAB_RESULT:' || vit.text_value)
-WHERE vit.source_id NOT IN ('Diamond','Datavant')
+	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'vital_signs' AND flt.code_system = vit.code_system AND flt.code = vit.code
+WHERE vit.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'vital_signs' AND code_system = 'source_id')
+	AND flt.reason IS NULL
 ;
 
 ---------------------------------------------------------------------------------------------------------
 -- DATA COUNTS
 -- OUTPUT_FILE: DATA_COUNTS.csv
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Creating n3c_data_counts' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_data_counts (
 	TABLE_NAME	varchar(200)
 	, ROW_COUNT	int
@@ -267,6 +292,7 @@ COMMIT;
 -- MANIFEST TABLE (updated per site)
 -- OUTPUT_FILE: MANIFEST.csv
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Creating n3c_manifest' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_manifest AS
 SELECT
 	:MNFST_SITE_ABBREV					AS SITE_ABBREV
