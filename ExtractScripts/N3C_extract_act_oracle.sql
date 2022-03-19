@@ -17,6 +17,7 @@
 -- Sites that use adapter mapping will need to create a concept_dimension table that links your adapter_mapping 'table'
 -- to concept_dimension where the shrine path becomes the concept_path 
 
+-- **** If you are doing data enhancements uncomment the block marked **FOR DATA ENHANCEMENT ONLY*** and comment the block ***NO CHANGE***
 
 --MANIFEST TABLE: CHANGE PER YOUR SITE'S SPECS
 --OUTPUT_FILE: MANIFEST.csv
@@ -409,8 +410,16 @@ select
     CAST(DOWNLOAD_DATE as timestamp) as download_date,
     CAST(IMPORT_DATE as timestamp) as import_date,
     sourcesystem_cd,
-    upload_id
-from @cdmDatabaseSchema.observation_fact
+    upload_id,
+    --***** NO CHANGE *****
+    '' observation_blob
+    --***** FOR DATA ENHANCEMENTS ONLY *****
+    --case 
+    --    when
+    --		modifier_cd = 'RAW' then utl_raw.cast_to_varchar2(dbms_lob.substr(observation_blob)) 
+    --		else NULL 
+    --end observation_blob
+   from @cdmDatabaseSchema.observation_fact
     join @resultsDatabaseSchema.n3c_cohort on observation_fact.patient_num = n3c_cohort.patient_num 
     join n3c_concepts on n3c_concepts.concept_cd = observation_fact.concept_cd 
   WHERE start_date >= '01-JAN-2018';

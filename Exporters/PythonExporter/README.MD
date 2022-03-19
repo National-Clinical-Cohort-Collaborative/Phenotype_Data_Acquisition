@@ -66,6 +66,9 @@ python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --ext
 python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --zip 
 python db_exp.py --config config.ini --database oracle --output_dir E:\N3C --sftp
 ```
+**OMOP Sites -  Exporting visit_detail for ADT data**
+
+For sites that need to export the OMOP visit_detail table for ADT data, you will need to use two extract scripts.  One extract script for the core tables and another for the visit_detail table.  See "NLP Sites - Running the Exporter" example above for running multiple extract scripts.
 
 **Script Command Line Options**
 
