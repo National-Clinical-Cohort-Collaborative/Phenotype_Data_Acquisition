@@ -123,91 +123,81 @@ TRUNCATE TABLE @resultsDatabaseSchema.N3C_FINAL_MAP;
 WITH 
 covid_loinc  AS 
 (
-	SELECT '95209-3' as loinc    UNION
-	SELECT '94307-6' as loinc    UNION
-	SELECT '94308-4' as loinc     UNION 
-	SELECT '94309-2' as loinc     UNION 
-	SELECT '94311-8' as loinc     UNION 
-	SELECT '94312-6' as loinc     UNION 
-	SELECT '94314-2' as loinc     UNION 
-	SELECT '94316-7' as loinc     UNION 
-	SELECT '94500-6' as loinc     UNION 
-	SELECT '94505-5' as loinc     UNION 
-	SELECT '94506-3' as loinc     UNION 
-	SELECT '94507-1' as loinc     UNION 
-	SELECT '94508-9' as loinc     UNION 
-	SELECT '94510-5' as loinc     UNION 
-	SELECT '94511-3' as loinc     UNION 
-	SELECT '94533-7' as loinc     UNION 
-	SELECT '94534-5' as loinc     UNION 
-	SELECT '94547-7' as loinc     UNION 
-	SELECT '94558-4' as loinc     UNION 
-	SELECT '94559-2' as loinc     UNION 
-	SELECT '94562-6' as loinc     UNION 
-	SELECT '94563-4' as loinc     UNION 
-	SELECT '94564-2' as loinc     UNION 
-	SELECT '94565-9' as loinc     UNION 
-	SELECT '94639-2' as loinc     UNION 
-	SELECT '94640-0' as loinc     UNION 
-	SELECT '94641-8' as loinc     UNION 
-	SELECT '94642-6' as loinc     UNION 
-	SELECT '94643-4' as loinc     UNION 
-	SELECT '94644-2' as loinc     UNION 
-	SELECT '94645-9' as loinc     UNION 
-	SELECT '94646-7' as loinc     UNION 
-	SELECT '94660-8' as loinc     UNION 
-	SELECT '94661-6' as loinc     UNION 
-	SELECT '94306-8' as loinc     UNION 
-	SELECT '94503-0' as loinc     UNION 
-	SELECT '94504-8' as loinc     UNION 
-	SELECT '94531-1' as loinc     UNION 
-	SELECT '94720-0' as loinc     UNION 
-	SELECT '94759-8' as loinc     UNION 
-	SELECT '94760-6' as loinc     UNION 
-	SELECT '94762-2' as loinc     UNION 
-	SELECT '94763-0' as loinc     UNION 
-	SELECT '94764-8' as loinc     UNION 
-	SELECT '94766-3' as loinc     UNION 
-	SELECT '94767-1' as loinc     UNION 
-	SELECT '94768-9' as loinc     UNION 
-	SELECT '94769-7' as loinc     UNION 
-	SELECT '94819-0' as loinc     UNION 
-	SELECT '94745-7' as loinc     UNION 
-	SELECT '94746-5' as loinc     UNION 
-	SELECT '94756-4' as loinc     UNION 
-	SELECT '94757-2' as loinc     UNION 
-	SELECT '94761-4' as loinc     UNION 
-	SELECT '94822-4' as loinc     UNION 
-	SELECT '94845-5' as loinc     UNION 
-	SELECT '95125-1' as loinc     UNION 
-	SELECT '95406-5' as loinc     UNION 
-	SELECT '95409-9' as loinc     UNION 
-	SELECT '95410-7' as loinc     UNION 
-	SELECT '95411-5' as loinc	  UNION 
-	select '95416-4' as loinc  UNION  
-	select '95424-8' as loinc  UNION  
-	select '95425-5' as loinc  UNION  
-	select '95427-1' as loinc  UNION  
-	select '95428-9' as loinc  UNION  
-	select '95429-7' as loinc  UNION  
-	select '95521-1' as loinc  UNION  
-	select '95522-9' as loinc UNION
-	SELECT '95542-7' as loinc UNION 
-	SELECT '95608-6' as loinc UNION 
-	SELECT '95609-4' as loinc UNION 
-	SELECT '95824-9' as loinc UNION 
-	SELECT '95825-6' as loinc UNION 
-	SELECT '95826-4' as loinc UNION 
-	SELECT '95970-0' as loinc UNION 
-	SELECT '95971-8' as loinc UNION 
-	SELECT '95972-6' as loinc UNION 
-	SELECT '95973-4' as loinc UNION 
-	SELECT '96091-4' as loinc UNION 
-	SELECT '96119-3' as loinc UNION 
-	SELECT '96120-1' as loinc UNION 
-	SELECT '96123-5' as loinc UNION 
-	SELECT '96448-6' as loinc UNION 
-	SELECT '96603-6' as loinc
+SELECT '95209-3' as loinc 
+ UNION SELECT '94763-0' as loinc 
+ UNION SELECT '94762-2' as loinc 
+ UNION SELECT '94558-4' as loinc 
+ UNION SELECT '94562-6' as loinc 
+ UNION SELECT '94768-9' as loinc 
+ UNION SELECT '95125-1' as loinc 
+ UNION SELECT '94761-4' as loinc 
+ UNION SELECT '94563-4' as loinc 
+ UNION SELECT '94507-1' as loinc 
+ UNION SELECT '94547-7' as loinc 
+ UNION SELECT '95416-4' as loinc 
+ UNION SELECT '94564-2' as loinc 
+ UNION SELECT '94508-9' as loinc 
+ UNION SELECT '94760-6' as loinc 
+ UNION SELECT '95409-9' as loinc 
+ UNION SELECT '94533-7' as loinc 
+ UNION SELECT '94756-4' as loinc 
+ UNION SELECT '94757-2' as loinc 
+ UNION SELECT '94766-3' as loinc 
+ UNION SELECT '94316-7' as loinc 
+ UNION SELECT '94307-6' as loinc 
+ UNION SELECT '94308-4' as loinc 
+ UNION SELECT '95411-5' as loinc 
+ UNION SELECT '94559-2' as loinc 
+ UNION SELECT '94639-2' as loinc 
+ UNION SELECT '94534-5' as loinc 
+ UNION SELECT '94314-2' as loinc 
+ UNION SELECT '94565-9' as loinc 
+ UNION SELECT '94759-8' as loinc 
+ UNION SELECT '95406-5' as loinc 
+ UNION SELECT '94500-6' as loinc 
+ UNION SELECT '94845-5' as loinc 
+ UNION SELECT '94822-4' as loinc 
+ UNION SELECT '94660-8' as loinc 
+ UNION SELECT '94309-2' as loinc 
+ UNION SELECT '94640-0' as loinc 
+ UNION SELECT '94767-1' as loinc 
+ UNION SELECT '94641-8' as loinc 
+ UNION SELECT '95825-6' as loinc 
+ UNION SELECT '95542-7' as loinc 
+ UNION SELECT '96119-3' as loinc 
+ UNION SELECT '95425-5' as loinc 
+ UNION SELECT '96448-6' as loinc 
+ UNION SELECT '95824-9' as loinc 
+ UNION SELECT '96120-1' as loinc 
+ UNION SELECT '96091-4' as loinc 
+ UNION SELECT '96123-5' as loinc 
+ UNION SELECT '95608-6' as loinc 
+ UNION SELECT '95424-8' as loinc 
+ UNION SELECT '95609-4' as loinc 
+ UNION SELECT '96603-6' as loinc 
+ UNION SELECT '95970-0' as loinc 
+ UNION SELECT '95971-8' as loinc 
+ UNION SELECT '96121-9' as loinc 
+ UNION SELECT '95823-1' as loinc 
+ UNION SELECT '96122-7' as loinc 
+ UNION SELECT '97097-0' as loinc 
+ UNION SELECT '96763-8' as loinc 
+ UNION SELECT '96957-6' as loinc 
+ UNION SELECT '96986-5' as loinc 
+ UNION SELECT '96958-4' as loinc 
+ UNION SELECT '97098-8' as loinc 
+ UNION SELECT '96797-6' as loinc 
+ UNION SELECT '96829-7' as loinc 
+ UNION SELECT '96765-3' as loinc 
+ UNION SELECT '96752-1' as loinc 
+ UNION SELECT '98069-8' as loinc 
+ UNION SELECT '98132-4' as loinc 
+ UNION SELECT '98494-8' as loinc 
+ UNION SELECT '98131-6' as loinc 
+ UNION SELECT '98493-0' as loinc 
+ UNION SELECT '99596-9' as loinc 
+ UNION SELECT '99597-7' as loinc 
+ UNION SELECT '99772-6' as loinc 
 ),
 
  --The ways that your site describes a positive COVID test
@@ -222,6 +212,7 @@ covid_pos_list as
 -- Note that Z11.59 has been removed
 covid_dx_codes as
 (
+	SELECT 'U09.9' as dx_code,	'dx_strong_positive' as dx_category    UNION
 	SELECT 'J12.82' as dx_code,	'dx_strong_positive' as dx_category    UNION
 	SELECT 'M35.81' as dx_code,	'dx_strong_positive' as dx_category    UNION
 	SELECT 'B97.21' as dx_code,	'dx_strong_positive' as dx_category    UNION 
@@ -459,7 +450,7 @@ SELECT distinct
     inc_dx_weak, 
     inc_lab_any, 
     inc_lab_pos, 
-    '3.3' as phenotype_version,
+    '4.0' as phenotype_version,
    CASE
 		WHEN DATE_PART('year', CURRENT_DATE) - DATE_PART('year', d.birth_date) BETWEEN 0
 				AND 4

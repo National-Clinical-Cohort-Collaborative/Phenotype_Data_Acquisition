@@ -563,9 +563,9 @@ SELECT
    OBSGEN_ID_MODIFIED,
    OBSGEN_SOURCE,
    OBSGEN_ABN_IND,
-   null as RAW_OBSGEN_NAME,
-   null as RAW_OBSGEN_CODE,
-   null as RAW_OBSGEN_TYPE,
+   case when obsgen_type in ('UD_ADTEVENT','UD_N3C_O2_DEVICE') then RAW_OBSGEN_NAME else NULL end as RAW_OBSGEN_NAME,
+   case when obsgen_type in ('UD_ADTEVENT','UD_N3C_O2_DEVICE') then RAW_OBSGEN_CODE else NULL end as RAW_OBSGEN_CODE,
+   case when obsgen_type in ('UD_ADTEVENT','UD_N3C_O2_DEVICE') then RAW_OBSGEN_TYPE else NULL end as RAW_OBSGEN_TYPE,
    null as RAW_OBSGEN_RESULT,
    null as RAW_OBSGEN_UNIT
 FROM @cdmDatabaseSchema.OBS_GEN JOIN @resultsDatabaseSchema.N3C_COHORT ON OBS_GEN.PATID = N3C_COHORT.PATID

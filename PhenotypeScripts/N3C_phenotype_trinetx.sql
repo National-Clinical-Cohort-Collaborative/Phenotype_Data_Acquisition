@@ -100,13 +100,33 @@ CREATE TABLE IF NOT EXISTS data_a.n3c_control_map (
 	, control_ethnicity		VARCHAR(40)
 );
 
+--Adding a filter table to remove certain codes and/or sources
+----- DO NOT DROP OR TRUNCATE
+CREATE TABLE IF NOT EXISTS data_a.n3c_filter (
+	table_name				VARCHAR(40)
+	, code_system			VARCHAR(40)
+	, code					VARCHAR(40)
+	, reason				VARCHAR(200)
+);
+
+--Adding a table for customization in extract for N3C enhancements (e.g. - long covid)
+----- DO NOT DROP OR TRUNCATE
+CREATE TABLE IF NOT EXISTS data_a.n3c_initiative (
+	initiative				VARCHAR(40)
+	, table_name			VARCHAR(40)
+	, code_system			VARCHAR(40)
+	, code					VARCHAR(40)
+	, reason				VARCHAR(200)
+);
+
+
 ---------------------------------------------------------------------------------------------------------
 -- 2. Update pheno version table
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'UPDATING PHENO VERSION TABLE' as log_entry;
 TRUNCATE TABLE :TNX_SCHEMA.n3c_pheno_version;
 INSERT INTO :TNX_SCHEMA.n3c_pheno_version
-SELECT '3.3';
+SELECT '4.0';
 
 ---------------------------------------------------------------------------------------------------------
 -- 3. Clear out existing tables
@@ -129,7 +149,7 @@ CREATE TABLE :TNX_SCHEMA.n3c_dedup_patients AS
 SELECT pt.*
 FROM :TNX_SCHEMA.patient pt
 	JOIN (
-		SELECT source_id, patient_id, RANK() OVER(PARTITION BY patient_id ORDER BY batch_id DESC) AS rnk FROM :TNX_SCHEMA.patient
+		SELECT source_id, patient_id, RANK() OVER(PARTITION BY patient_id ORDER BY batch_id DESC) AS rnk FROM :TNX_SCHEMA.patient WHERE source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'patient' AND code_system = 'source_id')
 	) ptDedupFilter ON ptDedupFilter.patient_id = pt.patient_id AND ptDedupFilter.source_id = pt.source_id AND ptDedupFilter.rnk = 1
 ;
 
@@ -146,6 +166,7 @@ FROM :TNX_SCHEMA.patient pt
 --		11/18/20 - Update to v3.0
 --		02/09/21 - Update to v3.1
 --		06/16/21 - Update to v3.3 - Add LOINC codes
+--      03/17/22 - Update to v4.0 - Add long covid dx and revise loinc list
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'STARTING INSERT INTO n3c_pre_cohort' as log_entry;
 INSERT INTO :TNX_SCHEMA.n3c_pre_cohort
@@ -191,14 +212,16 @@ FROM (
 			, '01000'		AS key			--second digit indicates strong dx
 		FROM :TNX_SCHEMA.diagnosis dx
 		JOIN :TNX_SCHEMA.mapping mp on mp.provider_code = (dx.code_system || ':' || dx.code)
-		WHERE dx.date >= '2020-01-01'
+		LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'diagnosis' AND flt.code_system = dx.code_system AND flt.code = dx.code
+		WHERE flt.reason IS NULL
+		AND dx.date >= '2020-01-01'
 		AND 
 		(	-- Strong DX List
-			mp.mt_code IN ('UMLS:ICD10CM:U07.1', 'UMLS:ICD10CM:J12.82', 'UMLS:ICD10CM:M35.81')
+			mp.mt_code IN ('UMLS:ICD10CM:U07.1', 'UMLS:ICD10CM:J12.82', 'UMLS:ICD10CM:M35.81', 'UMLS:ICD10CM:U09.9')
 			-- special handling for B97.21 & B97.29
 			OR (mp.mt_code IN ('UMLS:ICD10CM:B97.21', 'UMLS:ICD10CM:B97.29') AND dx.date < '2020-04-01')
 		)
-		AND dx.source_id NOT IN ('Diamond','Datavant')
+		AND dx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'diagnosis' AND code_system = 'source_id')
 		---------------------------------------------------------------------------------------------------------
 		-- DX Weak - Patient has 2 or more of the codes on same encounter/date 
 		---------------------------------------------------------------------------------------------------------
@@ -215,7 +238,9 @@ FROM (
 					, count(distinct mp.mt_code) as dx_cnt
 				FROM :TNX_SCHEMA.diagnosis dx
 				JOIN :TNX_SCHEMA.mapping mp on mp.provider_code = (dx.code_system || ':' || dx.code)
-				WHERE dx.date >= '2020-01-01' and dx.date <= '2020-05-01'
+				LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'diagnosis' AND flt.code_system = dx.code_system AND flt.code = dx.code
+				WHERE flt.reason IS NULL
+				AND dx.date >= '2020-01-01' AND dx.date <= '2020-05-01'
 				AND 
 				(	-- Weak DX List - Individual Codes
 					mp.mt_code IN ('UMLS:ICD10CM:Z20.828'
@@ -241,7 +266,7 @@ FROM (
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J22%'
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J80%'
 				)
-				AND dx.source_id NOT IN ('Diamond','Datavant')
+				AND dx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'diagnosis' AND code_system = 'source_id')
 				GROUP BY dx.patient_id, dx.encounter_id
 				HAVING count(distinct mp.mt_code) >= 2
 			) dx_weak_enc
@@ -254,7 +279,9 @@ FROM (
 					, count(distinct mp.mt_code) as dx_cnt
 				FROM :TNX_SCHEMA.diagnosis dx
 				JOIN :TNX_SCHEMA.mapping mp on mp.provider_code = (dx.code_system || ':' || dx.code)
-				WHERE dx.date >= '2020-01-01' and dx.date <= '2020-05-01'
+				LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'diagnosis' AND flt.code_system = dx.code_system AND flt.code = dx.code
+				WHERE flt.reason IS NULL
+				AND dx.date >= '2020-01-01' AND dx.date <= '2020-05-01'
 				AND 
 				(	-- Weak DX List - Individual Codes
 					mp.mt_code IN ('UMLS:ICD10CM:Z20.828'
@@ -280,7 +307,7 @@ FROM (
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J22%'
 					OR mp.mt_code LIKE 'UMLS:ICD10CM:J80%'
 				)
-				AND dx.source_id NOT IN ('Diamond','Datavant')
+				AND dx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'diagnosis' AND code_system = 'source_id')
 				GROUP BY dx.patient_id, dx.date
 				HAVING count(distinct mp.mt_code) >= 2
 			) dx_weak_date
@@ -303,27 +330,19 @@ FROM (
 			FROM :TNX_SCHEMA.lab_result lr
 			LEFT JOIN :TNX_SCHEMA.mapping mpLab on mpLab.provider_code = (lr.observation_code_system || ':' || lr.observation_code)
 			LEFT JOIN :TNX_SCHEMA.mapping mpRes on mpRes.provider_code = ('TNX:LAB_RESULT:' || lr.lab_result_text_val)
-			WHERE lr.test_date >=  '2020-01-01'
+			LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'lab_result' AND flt.code_system = lr.observation_code_system AND flt.code = lr.observation_code
+			WHERE flt.reason IS NULL
+			AND lr.test_date >=  '2020-01-01'
 			AND 
 			(	-- LOINC List
-				mpLab.mt_code IN ('UMLS:LNC:94306-8'
-					,'UMLS:LNC:94307-6'
+				mpLab.mt_code IN ('UMLS:LNC:94307-6'
 					,'UMLS:LNC:94308-4'
 					,'UMLS:LNC:94309-2'
-					,'UMLS:LNC:94311-8'
-					,'UMLS:LNC:94312-6'
 					,'UMLS:LNC:94314-2'
 					,'UMLS:LNC:94316-7'
 					,'UMLS:LNC:94500-6'
-					,'UMLS:LNC:94503-0'
-					,'UMLS:LNC:94504-8'
-					,'UMLS:LNC:94505-5'
-					,'UMLS:LNC:94506-3'
 					,'UMLS:LNC:94507-1'
 					,'UMLS:LNC:94508-9'
-					,'UMLS:LNC:94510-5'
-					,'UMLS:LNC:94511-3'
-					,'UMLS:LNC:94531-1'
 					,'UMLS:LNC:94533-7'
 					,'UMLS:LNC:94534-5'
 					,'UMLS:LNC:94547-7'
@@ -336,16 +355,7 @@ FROM (
 					,'UMLS:LNC:94639-2'
 					,'UMLS:LNC:94640-0'
 					,'UMLS:LNC:94641-8'
-					,'UMLS:LNC:94642-6'
-					,'UMLS:LNC:94643-4'
-					,'UMLS:LNC:94644-2'
-					,'UMLS:LNC:94645-9'
-					,'UMLS:LNC:94646-7'
 					,'UMLS:LNC:94660-8'
-					,'UMLS:LNC:94661-6'
-					,'UMLS:LNC:94720-0'
-					,'UMLS:LNC:94745-7'
-					,'UMLS:LNC:94746-5'
 					,'UMLS:LNC:94756-4'
 					,'UMLS:LNC:94757-2'
 					,'UMLS:LNC:94759-8'
@@ -353,49 +363,61 @@ FROM (
 					,'UMLS:LNC:94761-4'
 					,'UMLS:LNC:94762-2'
 					,'UMLS:LNC:94763-0'
-					,'UMLS:LNC:94764-8'
 					,'UMLS:LNC:94766-3'
 					,'UMLS:LNC:94767-1'
 					,'UMLS:LNC:94768-9'
-					,'UMLS:LNC:94769-7'
-					,'UMLS:LNC:94819-0'
 					,'UMLS:LNC:94822-4'
 					,'UMLS:LNC:94845-5'
 					,'UMLS:LNC:95125-1'
 					,'UMLS:LNC:95209-3'
 					,'UMLS:LNC:95406-5'
 					,'UMLS:LNC:95409-9'
-					,'UMLS:LNC:95410-7'
 					,'UMLS:LNC:95411-5'
 					,'UMLS:LNC:95416-4'
 					,'UMLS:LNC:95424-8'
 					,'UMLS:LNC:95425-5'
-					,'UMLS:LNC:95427-1'
-					,'UMLS:LNC:95428-9'
-					,'UMLS:LNC:95429-7'
-					,'UMLS:LNC:95521-1'
-					,'UMLS:LNC:95522-9'
-					,'UMLS:LNC:95542-7'  -- new for v3.3
-					,'UMLS:LNC:95608-6'  -- new for v3.3
-					,'UMLS:LNC:95609-4'  -- new for v3.3
-					,'UMLS:LNC:95824-9'  -- new for v3.3
-					,'UMLS:LNC:95825-6'  -- new for v3.3
-					,'UMLS:LNC:95826-4'  -- new for v3.3
-					,'UMLS:LNC:95970-0'  -- new for v3.3
-					,'UMLS:LNC:95971-8'  -- new for v3.3
-					,'UMLS:LNC:95972-6'  -- new for v3.3
-					,'UMLS:LNC:95973-4'  -- new for v3.3
-					,'UMLS:LNC:96091-4'  -- new for v3.3
-					,'UMLS:LNC:96119-3'  -- new for v3.3
-					,'UMLS:LNC:96120-1'  -- new for v3.3
-					,'UMLS:LNC:96123-5'  -- new for v3.3
-					,'UMLS:LNC:96448-6'  -- new for v3.3
-					,'UMLS:LNC:96603-6') -- new for v3.3
+					,'UMLS:LNC:95542-7'
+					,'UMLS:LNC:95608-6'
+					,'UMLS:LNC:95609-4'
+					,'UMLS:LNC:95823-1'
+					,'UMLS:LNC:95824-9'
+					,'UMLS:LNC:95825-6'
+					,'UMLS:LNC:95970-0'
+					,'UMLS:LNC:95971-8'
+					,'UMLS:LNC:96091-4'
+					,'UMLS:LNC:96119-3'
+					,'UMLS:LNC:96120-1'
+					,'UMLS:LNC:96121-9'
+					,'UMLS:LNC:96122-7'
+					,'UMLS:LNC:96123-5'
+					,'UMLS:LNC:96448-6'
+					,'UMLS:LNC:96603-6'
+					,'UMLS:LNC:96752-1'
+					,'UMLS:LNC:96763-8'
+					,'UMLS:LNC:96765-3'
+					,'UMLS:LNC:96797-6'
+					,'UMLS:LNC:96829-7'
+					,'UMLS:LNC:96957-6'
+					,'UMLS:LNC:96958-4'
+					,'UMLS:LNC:96986-5'
+					,'UMLS:LNC:97097-0'
+					,'UMLS:LNC:97098-8'
+					,'UMLS:LNC:98069-8'
+					,'UMLS:LNC:98131-6'
+					,'UMLS:LNC:98132-4'
+					,'UMLS:LNC:98493-0'
+					,'UMLS:LNC:98494-8'
+					,'UMLS:LNC:99596-9'
+					,'UMLS:LNC:99597-7'
+					,'UMLS:LNC:99772-6')
 				--OTHER LAB
-				OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
-				OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
+				-- xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+				-- Name match removed in v4.0
+				-- xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+				--OR UPPER(lr.observation_desc) LIKE '%COVID-19%'
+				--OR UPPER(lr.observation_desc) LIKE '%SARS-COV-2%'
 			)
-			AND lr.source_id NOT IN ('Diamond','Datavant')
+			AND lr.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'lab_result' AND code_system = 'source_id')
 			GROUP BY lr.patient_id
 		) labs
 	) pt_list
@@ -459,6 +481,7 @@ WHERE c.inc_lab_any = 1
 	AND c.inc_lab_pos = 0
 	AND c.inc_dx_weak = 0
 	AND c.patient_id NOT IN (SELECT control_patient_id FROM data_a.n3c_control_map)
+	AND e.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'encounter' AND code_system = 'source_id')
 GROUP BY c.patient_id
 HAVING DATEDIFF(day, min(e.start_date), max(e.start_date)) >= 10
 ;

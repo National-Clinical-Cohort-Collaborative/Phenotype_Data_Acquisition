@@ -1,5 +1,5 @@
 /**
-N3C Phenotype 3.3 - OMOP Oracle
+N3C Phenotype 4.0 - OMOP Oracle
 Author: Robert Miller (Tufts), Emily Pfaff (UNC), Kristin Kostka (OHDSI)
 
 HOW TO RUN:
@@ -120,105 +120,85 @@ INSERT INTO @resultsDatabaseSchema.N3C_PRE_COHORT
 	  WHERE measurement_concept_id IN (SELECT concept_id
 			FROM @cdmDatabaseSchema.CONCEPT
 			-- here we look for the concepts that are the LOINC codes we're looking for in the phenotype
-			    WHERE concept_id IN (
-					586515
-					,586522
-					,706179
-					,586521
-					,723459
-					,706181
-					,706177
-					,706176
-					,706180
-					,706178
-					,706167
-					,706157
-					,706155
-					,757678
-					,706161
-					,586520
-					,706175
-					,706156
-					,706154
-					,706168
-					,715262
-					,586526
-					,757677
-					,706163
-					,715260
-					,715261
-					,706170
-					,706158
-					,706169
-					,706160
-					,706173
-					,586519
-					,586516
-					,757680
-					,757679
-					,586517
-					,757686
-					,756055
-					,36659631
-					,36661377
-					,36661378
-					,36661372
-					,36661373
-					,36661374
-					,36661370
-					,36661371
-					,723479
-					,723474
-					,757685
-					,723476
-					,586524
-					,586525
-					,586527
-					,586528
-					,586529
-					,715272
-					,723463
-					,723464
-					,723465
-					,723466
-					,723467
-					,723468
-					,723469
-					,723470
-					,723471
-					,723473
-					,723475
-					,723477
-					,723478
-					,723480
-					,36661369
-					,36031238
-					,36031213
-					,36031506
-					,36031197
-					,36032061
-					,36031944
-					,36031969
-					,36031956
-					,36032309
-					,36032174
-					,36032419
-					,36031652
-					,36031453
-					,36032258
-					,36031734
-					)
-
-			   UNION
-
-			SELECT c.concept_id
-			FROM @cdmDatabaseSchema.CONCEPT c
-			JOIN @cdmDatabaseSchema.CONCEPT_ANCESTOR ca ON c.concept_id = ca.descendant_concept_id
-				-- Most of the LOINC codes do not have descendants but there is one OMOP Extension code (765055) in use that has descendants which we want to pull
-				-- This statement pulls the descendants of that specific code
-				AND ca.ancestor_concept_id IN (756055)
-				AND c.invalid_reason IS NULL
-			 )
+			WHERE vocabulary_id = 'LOINC'
+			AND concept_code IN (
+				 '95209-3'  
+				 , '94763-0'  
+				 , '94762-2'  
+				 , '94558-4'  
+				 , '94562-6'  
+				 , '94768-9'  
+				 , '95125-1'  
+				 , '94761-4'  
+				 , '94563-4'  
+				 , '94507-1'  
+				 , '94547-7'  
+				 , '95416-4'  
+				 , '94564-2'  
+				 , '94508-9'  
+				 , '94760-6'  
+				 , '95409-9'  
+				 , '94533-7'  
+				 , '94756-4'  
+				 , '94757-2'  
+				 , '94766-3'  
+				 , '94316-7'  
+				 , '94307-6'  
+				 , '94308-4'  
+				 , '95411-5'  
+				 , '94559-2'  
+				 , '94639-2'  
+				 , '94534-5'  
+				 , '94314-2'  
+				 , '94565-9'  
+				 , '94759-8'  
+				 , '95406-5'  
+				 , '94500-6'  
+				 , '94845-5'  
+				 , '94822-4'  
+				 , '94660-8'  
+				 , '94309-2'  
+				 , '94640-0'  
+				 , '94767-1'  
+				 , '94641-8'  
+				 , '95825-6'  
+				 , '95542-7'  
+				 , '96119-3'  
+				 , '95425-5'  
+				 , '96448-6'  
+				 , '95824-9'  
+				 , '96120-1'  
+				 , '96091-4'  
+				 , '96123-5'  
+				 , '95608-6'  
+				 , '95424-8'  
+				 , '95609-4'  
+				 , '96603-6'  
+				 , '95970-0'  
+				 , '95971-8'  
+				 , '96121-9'  
+				 , '95823-1'  
+				 , '96122-7'  
+				 , '97097-0'  
+				 , '96763-8'  
+				 , '96957-6'  
+				 , '96986-5'  
+				 , '96958-4'  
+				 , '97098-8'  
+				 , '96797-6'  
+				 , '96829-7'  
+				 , '96765-3'  
+				 , '96752-1'  
+				 , '98069-8'  
+				 , '98132-4'  
+				 , '98494-8'  
+				 , '98131-6'  
+				 , '98493-0'  
+				 , '99596-9'  
+				 , '99597-7'  
+				 , '99772-6'  
+				 )
+		)
 		-- Here we add a date restriction: after January 1, 2020
 		AND measurement_date >= TO_DATE(TO_CHAR(2020,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD')
 		AND (
@@ -263,6 +243,7 @@ AS (SELECT DISTINCT person_id
 					,3661408
 					,756039
 					,320651
+					,705076 -- Post-acute COVID-19 (standard map of U09.9)
 					)
 			 )
 		-- This logic imposes the restriction: these codes were only valid as Strong Positive codes between January 1, 2020 and March 31, 2020
@@ -858,7 +839,7 @@ AS (SELECT covid_cohort.person_id
 	,inc_dx_weak
 	,inc_lab_any
 	,inc_lab_pos
-	,'3.3' AS phenotype_version
+	,'4.0' AS phenotype_version
 	,CASE
 		WHEN floor(months_between(SYSDATE, d.birth_datetime)/12) BETWEEN 0
 				AND 4
