@@ -443,7 +443,7 @@ FROM (
  SELECT p.patient_num, p.race_cd AS race_cd, p.birth_date AS birth_date, p.sex_cd AS sex_cd, 
   floor(datediff(month, p.birth_date, getdate())/12) AS current_age,
   --p.ethnicity_cd AS ethnicity_cd from patient_dimension p; use this if all demographics are in patient_dimension
-  obs.concept_cd AS ethnicity_cd from patient_dimension p
+  obs.concept_cd AS ethnicity_cd from @cdmDatabaseSchema.patient_dimension p
  left outer join @cdmDatabaseSchema.OBSERVATION_FACT obs on obs.patient_num = p.patient_num and concept_cd like 'DEM|HISP:%'
  )DEM;
  
