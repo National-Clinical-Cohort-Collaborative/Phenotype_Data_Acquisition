@@ -97,9 +97,8 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.diagnosis dx ON dx.patient_id = n3c.patient_id AND dx.date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_dx ON map_dx.provider_code = (dx.code_system || ':' || dx.code)
-	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'diagnosis' AND flt.code_system = dx.code_system AND flt.code = dx.code
 WHERE dx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'diagnosis' AND code_system = 'source_id')
-	AND flt.reason IS NULL
+	AND (dx.code_system || ':' || dx.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'diagnosis')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -133,9 +132,8 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.procedure px ON px.patient_id = n3c.patient_id AND px.date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_px ON map_px.provider_code = (px.code_system || ':' || px.code)
-	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'procedure' AND flt.code_system = px.code_system AND flt.code = px.code
 WHERE px.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'procedure' AND code_system = 'source_id')
-	AND flt.reason IS NULL
+	AND (px.code_system || ':' || px.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'procedure')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -189,9 +187,8 @@ SELECT
 FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.medication rx ON rx.patient_id = n3c.patient_id AND rx.start_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_rx ON map_rx.provider_code = (rx.code_system || ':' || rx.code)
-	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'medication' AND flt.code_system = rx.code_system AND flt.code = rx.code
 WHERE rx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'medication' AND code_system = 'source_id')
-	AND flt.reason IS NULL
+	AND (rx.code_system || ':' || rx.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'medication')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -230,9 +227,8 @@ FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.lab_result lab ON lab.patient_id = n3c.patient_id AND lab.test_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_lab ON map_lab.provider_code = (lab.observation_code_system || ':' || lab.observation_code)
 	LEFT JOIN :TNX_SCHEMA.mapping map_res on map_res.provider_code = ('TNX:LAB_RESULT:' || lab.lab_result_text_val)
-	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'lab_result' AND flt.code_system = lab.observation_code_system AND flt.code = lab.observation_code
 WHERE lab.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'lab_result' AND code_system = 'source_id')
-	AND flt.reason IS NULL
+	AND (lab.observation_code_system || ':' || lab.observation_code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'lab_result')
 ;
 
 ---------------------------------------------------------------------------------------------------------
@@ -264,9 +260,8 @@ FROM :TNX_SCHEMA.n3c_cohort n3c
 	JOIN :TNX_SCHEMA.vital_signs vit ON vit.patient_id = n3c.patient_id AND vit.measure_date >= '2018-01-01'
 	LEFT JOIN :TNX_SCHEMA.mapping map_vit ON map_vit.provider_code = (vit.code_system || ':' || vit.code)
 	LEFT JOIN :TNX_SCHEMA.mapping map_res on map_res.provider_code = ('TNX:LAB_RESULT:' || vit.text_value)
-	LEFT JOIN data_a.n3c_filter flt ON flt.table_name = 'vital_signs' AND flt.code_system = vit.code_system AND flt.code = vit.code
 WHERE vit.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'vital_signs' AND code_system = 'source_id')
-	AND flt.reason IS NULL
+	AND (vit.code_system || ':' || vit.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'vital_signs')
 ;
 
 ---------------------------------------------------------------------------------------------------------
