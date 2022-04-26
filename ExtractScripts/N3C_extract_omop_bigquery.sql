@@ -189,7 +189,7 @@ select
  from @cdmDatabaseSchema.observation_period p
  join @resultsDatabaseSchema.n3c_cohort n
    on p.person_id = n.person_id
-   and (p.observation_period_start_date >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') OR p.observation_period_end_date >= TO_DATE(TO_CHAR(2018,'0000')||'-'||TO_CHAR(01,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD'));
+   and (p.observation_period_start_date >= DATE(2018,01,01) OR p.observation_period_end_date >= DATE(2018,01,01));
 
 --VISIT_OCCURRENCE
 --OUTPUT_FILE: VISIT_OCCURRENCE.csv
