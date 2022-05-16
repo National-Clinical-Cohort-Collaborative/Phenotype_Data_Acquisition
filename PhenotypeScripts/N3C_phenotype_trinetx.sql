@@ -100,6 +100,9 @@ CREATE TABLE IF NOT EXISTS data_a.n3c_control_map (
 	, control_ethnicity		VARCHAR(40)
 );
 
+---------------------------------------------------------------------------------------------------------
+-- 1-b. Supporting tables for various N3C things
+---------------------------------------------------------------------------------------------------------
 --Adding a filter table to remove certain codes and/or sources
 ----- DO NOT DROP OR TRUNCATE
 CREATE TABLE IF NOT EXISTS data_a.n3c_filter (
@@ -108,17 +111,15 @@ CREATE TABLE IF NOT EXISTS data_a.n3c_filter (
 	, code					VARCHAR(40)
 	, reason				VARCHAR(200)
 );
-
 --Adding a table for customization in extract for N3C enhancements (e.g. - long covid)
 ----- DO NOT DROP OR TRUNCATE
 CREATE TABLE IF NOT EXISTS data_a.n3c_initiative (
 	initiative				VARCHAR(40)
 	, table_name			VARCHAR(40)
 	, code_system			VARCHAR(40)
-	, code					VARCHAR(40)
+	, code					VARCHAR(200)
 	, reason				VARCHAR(200)
 );
-
 
 ---------------------------------------------------------------------------------------------------------
 -- 2. Update pheno version table
