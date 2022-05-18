@@ -23,7 +23,7 @@ Conversion notes:
 
 **OMOP Data Exporter**
 
-The OMOP Data Exporer is a `R` library designed to build the N3C phenotype and assemble extract files from your OMOP CDM. This R package uses [SQLRender](https://cran.r-project.org/web/packages/SqlRender/index.html) to translate between suppoted RDBMS including: 'Microsoft Sql Server', 'Oracle', 'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', and 'SQLite'.
+The OMOP Data Exporter is a `R` library designed to build the N3C phenotype and assemble extract files from your OMOP CDM. This R package uses [SQLRender](https://cran.r-project.org/web/packages/SqlRender/index.html) to translate between suppoted RDBMS including: 'Microsoft Sql Server', 'Oracle', 'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', and 'SQLite'.
 
 
 **System Prerequisites**
