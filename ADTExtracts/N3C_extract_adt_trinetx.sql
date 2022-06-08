@@ -3,7 +3,7 @@ SELECT CURRENT_TIMESTAMP as date_time, 'Starting ADT extract...' as log_entry;
 ---------------------------------------------------------------------------------------------------------
 -- Supporting table for raw data
 ---------------------------------------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS data_a.n3c_adt (
+CREATE TABLE IF NOT EXISTS data_a.n3c_adt_raw (
 	patient_id				VARCHAR(200)
 	, encounter_id			VARCHAR(200)
 	, start_datetime		DATETIME
