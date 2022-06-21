@@ -700,14 +700,14 @@ SELECT
 	case_patient_id
 	, buddy_num
 	, control_patient_id
-	, case_age
-	, case_sex
-	, case_race
-	, case_ethnicity
-	, control_age
-	, control_sex
-	, control_race
-	, control_ethnicity
+	, REPLACE(case_age,'|',' ')
+	, REPLACE(case_sex,'|',' ')
+	, REPLACE(case_race,'|',' ')
+	, REPLACE(case_ethnicity,'|',' ')
+	, REPLACE(control_age,'|',' ')
+	, REPLACE(control_sex,'|',' ')
+	, REPLACE(control_race,'|',' ')
+	, REPLACE(control_ethnicity,'|',' ')
 FROM :TNX_SCHEMA.n3c_final_map fin
 WHERE NOT EXISTS
 (
