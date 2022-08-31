@@ -24,7 +24,7 @@ SELECT CURRENT_TIMESTAMP as date_time, 'Extracting ADT data' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_adt AS
 SELECT
 	n3c.patient_id				AS PATIENT_ID
-	, COALESCE((HASH(enc.source_id) || enc.encounter_id), adt.encounter_id)	AS ENCOUNTER_ID
+	, COALESCE((HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'encounter' and code_system = enc.source_id), enc.source_id)) || enc.encounter_id), adt.encounter_id)	AS ENCOUNTER_ID
 	, adt.start_datetime		AS ADT_EVENT_START_DATETIME
 	, adt.end_datetime			AS ADT_EVENT_END_DATETIME
 	, adt.location				AS ADT_EVENT_LOCATION

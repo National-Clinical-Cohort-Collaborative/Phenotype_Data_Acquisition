@@ -198,8 +198,8 @@ SELECT
 		   WHEN AGE_IN_YEARS(pat.birth_date) >= 90 THEN '90+'
 	  END AS pt_age
 	, COALESCE(map_sx.mt_code, pat.gender)::varchar(40)		AS sex			--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
-	, COALESCE(map_et.mt_code, pat.ethnicity)::varchar(40)	AS ethnicity	--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
 	, COALESCE(map_rc.mt_code, pat.race)::varchar(40)		AS race			--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
+	, COALESCE(map_et.mt_code, pat.ethnicity)::varchar(40)	AS ethnicity	--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
 FROM (
 	SELECT 
 		patient_id
@@ -683,9 +683,9 @@ SELECT
 	, COALESCE(pen.map_1_race, case_pt.race)::varchar(40)			--Use saved value for case patient else patient value -- limit to 40 characters for sites with long unmapped values
 	, COALESCE(pen.map_1_ethnicity, case_pt.ethnicity)::varchar(40)	--Use saved value for case patient else patient value -- limit to 40 characters for sites with long unmapped values
 	, AGE_IN_YEARS(control_pt.birth_date)
-	, COALESCE(map_sx.mt_code, control_pt.gender)::varchar(40)  AS sex   		--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
-	, COALESCE(map_et.mt_code, control_pt.ethnicity)::varchar(40) AS ethnicity 	--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
-	, COALESCE(map_rc.mt_code, control_pt.race)::varchar(40)  AS race   		--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
+	, COALESCE(map_sx.mt_code, control_pt.gender)::varchar(40)			--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
+	, COALESCE(map_rc.mt_code, control_pt.race)::varchar(40)			--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
+	, COALESCE(map_et.mt_code, control_pt.ethnicity)::varchar(40)		--Use mapped value if available -- limit to 40 characters for sites with long unmapped values
 FROM :TNX_SCHEMA.n3c_penultimate_map pen
 	JOIN :TNX_SCHEMA.n3c_dedup_patients case_pt on case_pt.patient_id = pen.patient_id
 	LEFT JOIN :TNX_SCHEMA.n3c_dedup_patients control_pt on control_pt.patient_id = pen.control_patient_id
