@@ -196,8 +196,7 @@ WHERE rx.start_date >= '2018-01-01'
 ;
 
 ---------------------------------------------------------------------------------------------------------
--- LAB RESULTS
--- OUTPUT_FILE: LAB_RESULT.csv
+-- Temp table for lab results performance improvement
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'Creating temp lab mapping table' as log_entry;
 CREATE TEMPORARY TABLE :TNX_SCHEMA.tempLabMapping (provider_code varchar(65000), mt_code varchar(65000), row_num int);
