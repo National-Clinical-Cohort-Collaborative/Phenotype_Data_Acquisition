@@ -199,7 +199,7 @@ WHERE rx.start_date >= '2018-01-01'
 -- Temp table for lab results performance improvement
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'Creating temp lab mapping table' as log_entry;
-CREATE TEMPORARY TABLE :TNX_SCHEMA.tempLabMapping (provider_code varchar(65000), mt_code varchar(65000), row_num int);
+CREATE TABLE :TNX_SCHEMA.tempLabMapping (provider_code varchar(65000), mt_code varchar(65000), row_num int);
 INSERT INTO :TNX_SCHEMA.tempLabMapping SELECT provider_code, mt_code, ROW_NUMBER () OVER (PARTITION BY provider_code) FROM :TNX_SCHEMA.mapping WHERE mt_code LIKE 'UMLS:LNC:%';
 INSERT INTO :TNX_SCHEMA.tempLabMapping SELECT provider_code, mt_code, ROW_NUMBER () OVER (PARTITION BY provider_code) FROM :TNX_SCHEMA.mapping WHERE provider_code LIKE 'TNX:LAB_RESULT:%';
 
@@ -218,7 +218,7 @@ SELECT
 	, HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'lab_result' and code_system = lab.source_id), lab.source_id)) || lab.encounter_id	AS ENCOUNTER_ID
 	, REPLACE(lab.observation_code_system,'|',' ')	AS LAB_CODE_SYSTEM
 	, REPLACE(lab.observation_code,'|',' ')		AS LAB_CODE
-	, REPLACE(REPLACE(lab.observation_code,'|',' '),E'\n',' ')		AS LAB_DESCRIPTION
+	, REPLACE(REPLACE(lab.observation_desc,'|',' '),E'\n',' ')		AS LAB_DESCRIPTION
 	--, REPLACE(lab.observation_desc,'|',' ')		AS LAB_DESCRIPTION
 	, REPLACE(lab.battery_code_system,'|',' ')	AS BATTERY_CODE_SYSTEM
 	, lab.battery_code							AS BATTERY_CODE
@@ -234,7 +234,7 @@ SELECT
 	, lab.orphan_reason							AS ORPHAN_REASON
 	, SPLIT_PART(map_lab.mt_code,':',2)			AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_lab.mt_code,':',3)			AS MAPPED_CODE
-	, ''										AS MAPPED_TEXT_RESULT_VAL
+	, NULL::varchar(100)						AS MAPPED_TEXT_RESULT_VAL
 FROM :TNX_SCHEMA.lab_result lab
 	JOIN :TNX_SCHEMA.n3c_cohort n3c on n3c.patient_id = lab.patient_id
 	LEFT JOIN :TNX_SCHEMA.tempLabMapping map_lab ON map_lab.provider_code = (lab.observation_code_system || ':' || lab.observation_code)
@@ -273,7 +273,7 @@ SELECT
 	, vit.orphan_reason					AS ORPHAN_REASON
 	, SPLIT_PART(map_vit.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_vit.mt_code,':',3)	AS MAPPED_CODE
-	, ''								AS MAPPED_TEXT_RESULT_VAL
+	, NULL::varchar(100)				AS MAPPED_TEXT_RESULT_VAL
 FROM :TNX_SCHEMA.vital_signs vit
 	JOIN :TNX_SCHEMA.n3c_cohort n3c on n3c.patient_id = vit.patient_id
 	LEFT JOIN :TNX_SCHEMA.tempLabMapping map_vit ON map_vit.provider_code = (vit.code_system || ':' || vit.code)
