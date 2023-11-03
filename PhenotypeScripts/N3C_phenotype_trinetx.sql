@@ -143,6 +143,8 @@ TRUNCATE TABLE :TNX_SCHEMA.n3c_final_map;
 
 ---------------------------------------------------------------------------------------------------------
 -- 4. Create deduplicated patient table for reference
+--  Change Log:
+--      11/03/23 - Filter out orphan patients to remove duplicates
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'CREATING n3c_dedup_patients' as log_entry;
 DROP TABLE IF EXISTS :TNX_SCHEMA.n3c_dedup_patients;
@@ -152,6 +154,7 @@ FROM :TNX_SCHEMA.patient pt
 	JOIN (
 		SELECT source_id, patient_id, RANK() OVER(PARTITION BY patient_id ORDER BY batch_id DESC) AS rnk FROM :TNX_SCHEMA.patient WHERE source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'patient' AND code_system = 'source_id')
 	) ptDedupFilter ON ptDedupFilter.patient_id = pt.patient_id AND ptDedupFilter.source_id = pt.source_id AND ptDedupFilter.rnk = 1
+WHERE pt.orphan = 'f'
 ;
 
 ---------------------------------------------------------------------------------------------------------
