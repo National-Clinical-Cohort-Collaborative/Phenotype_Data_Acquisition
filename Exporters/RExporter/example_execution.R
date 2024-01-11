@@ -118,4 +118,4 @@ N3cOhdsi::runExtraction(connectionDetails = connectionDetails,
 
 # Compress output
 zip::zipr(zipfile = paste0(siteAbbrev, "_", cdmName, "_", format(Sys.Date(),"%Y%m%d"),".zip"),
-          files = list.files(outputFolder, full.names = TRUE))
+          files = list.files(path=c(outputFolder,paste0(outputFolder,"DATAFILES/")), pattern="csv$", full.names=TRUE))
