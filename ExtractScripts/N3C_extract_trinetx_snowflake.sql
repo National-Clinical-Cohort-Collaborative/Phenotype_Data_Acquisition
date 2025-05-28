@@ -52,6 +52,15 @@ WHERE pt.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name =
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'Extracting encounter' as log_entry;
 CREATE TABLE n3c_encounter AS
+WITH dedup_encounter AS (
+    SELECT 
+        ROW_NUMBER() OVER (PARTITION BY enc.encounter_id ORDER BY enc.batch_id DESC) as row_num
+        , enc.*
+    FROM encounter enc
+    JOIN n3c_cohort n3c on n3c.patient_id = enc.patient_id
+    WHERE enc.start_date >= '2018-01-01'
+        AND enc.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'encounter' AND code_system = 'source_id')
+)
 SELECT
     enc.patient_id                  AS PATIENT_ID
     , HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'encounter' and code_system = enc.source_id), enc.source_id)) || enc.encounter_id    AS ENCOUNTER_ID
@@ -65,12 +74,10 @@ SELECT
         WHEN long_loc.code IS NOT NULL THEN TRUE
           ELSE FALSE
       END                           AS IS_LONG_COVID
-FROM encounter enc
-    JOIN n3c_cohort n3c on n3c.patient_id = enc.patient_id
+FROM dedup_encounter enc
     LEFT JOIN mapping map_et ON map_et.provider_code = ('TNX:ENCOUNTER_TYPE:' || enc.type)
     LEFT JOIN data_a.n3c_initiative long_loc ON long_loc.code = enc.location_id AND upper(long_loc.initiative) = 'LONG COVID' AND long_loc.table_name = 'encounter' AND long_loc.code_system = 'location_id'
-WHERE enc.start_date >= '2018-01-01'
-    AND enc.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'encounter' AND code_system = 'source_id')
+WHERE enc.row_num = 1
 ;
 
 ---------------------------------------------------------------------------------------------------------
