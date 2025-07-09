@@ -74,7 +74,7 @@ SELECT
 		WHEN long_loc.code IS NOT NULL THEN TRUE
 	  	ELSE FALSE
 	  END 						AS IS_LONG_COVID
-FROM :TNX_SCHEMA.encounter enc
+FROM dedup_encounter enc
 	LEFT JOIN :TNX_SCHEMA.mapping map_et ON map_et.provider_code = ('TNX:ENCOUNTER_TYPE:' || enc.type)
 	LEFT JOIN data_a.n3c_initiative long_loc ON long_loc.code = enc.location_id AND upper(long_loc.initiative) = 'LONG COVID' AND long_loc.table_name = 'encounter' AND long_loc.code_system = 'location_id'
 WHERE enc.row_num = 1
@@ -87,8 +87,24 @@ WHERE enc.row_num = 1
 -- NOTES:
 --		-Orphan = record with no associated patient/encounter
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Creating temp diagnosis mapping table' as log_entry;
+CREATE TABLE :TNX_SCHEMA.tempMapping (provider_code varchar(65000), mt_code varchar(65000), row_num int);
+INSERT INTO :TNX_SCHEMA.tempMapping 
+SELECT provider_code, mt_code, ROW_NUMBER () OVER (PARTITION BY provider_code) 
+FROM :TNX_SCHEMA.mapping 
+WHERE provider_code IN (SELECT DISTINCT code_system || ':' || code FROM :TNX_SCHEMA.diagnosis)
+;
+
 SELECT CURRENT_TIMESTAMP as date_time, 'Extracting diagnosis' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_diagnosis AS
+WITH fact_subset AS (
+    SELECT *
+    FROM :TNX_SCHEMA.diagnosis dx
+    WHERE patient_id IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_cohort)
+        AND dx.date >= '2018-01-01'
+        AND dx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'diagnosis' AND code_system = 'source_id')
+        AND (dx.code_system || ':' || dx.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'diagnosis')
+)
 SELECT
 	dx.patient_id						AS PATIENT_ID
 	, HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'diagnosis' and code_system = dx.source_id), dx.source_id)) || dx.encounter_id		AS ENCOUNTER_ID
@@ -102,13 +118,11 @@ SELECT
 	, dx.orphan_reason					AS ORPHAN_REASON
 	, SPLIT_PART(map_dx.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_dx.mt_code,':',3)	AS MAPPED_CODE
-FROM :TNX_SCHEMA.diagnosis dx
-	JOIN :TNX_SCHEMA.n3c_cohort n3c on n3c.patient_id = dx.patient_id
-	LEFT JOIN :TNX_SCHEMA.mapping map_dx ON map_dx.provider_code = (dx.code_system || ':' || dx.code)
-WHERE dx.date >= '2018-01-01'
-	AND dx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'diagnosis' AND code_system = 'source_id')
-	AND (dx.code_system || ':' || dx.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'diagnosis')
+FROM fact_subset dx
+	LEFT JOIN :TNX_SCHEMA.tempMapping map_dx ON map_dx.provider_code = (dx.code_system || ':' || dx.code)
 ;
+
+DROP TABLE :TNX_SCHEMA.tempMapping;
 
 ---------------------------------------------------------------------------------------------------------
 -- PROCEDURES
@@ -117,8 +131,24 @@ WHERE dx.date >= '2018-01-01'
 -- NOTES:
 --	 	-Orphan = record with no associated patient/encounter
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Creating temp procedure mapping table' as log_entry;
+CREATE TABLE :TNX_SCHEMA.tempMapping (provider_code varchar(65000), mt_code varchar(65000), row_num int);
+INSERT INTO :TNX_SCHEMA.tempMapping 
+SELECT provider_code, mt_code, ROW_NUMBER () OVER (PARTITION BY provider_code) 
+FROM :TNX_SCHEMA.mapping 
+WHERE provider_code IN (SELECT DISTINCT code_system || ':' || code FROM :TNX_SCHEMA.procedure)
+;
+
 SELECT CURRENT_TIMESTAMP as date_time, 'Extracting procedure' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_procedure AS
+WITH fact_subset AS (
+    SELECT *
+    FROM :TNX_SCHEMA.procedure px
+    WHERE patient_id IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_cohort)
+        AND px.date >= '2018-01-01'
+        AND px.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'procedure' AND code_system = 'source_id')
+        AND (px.code_system || ':' || px.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'procedure')
+)
 SELECT
 	px.patient_id						AS PATIENT_ID
 	, HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'procedure' and code_system = px.source_id), px.source_id)) || px.encounter_id	AS ENCOUNTER_ID
@@ -138,13 +168,11 @@ SELECT
 		WHEN REGEXP_COUNT(map_px.mt_code,':') = 1 THEN SPLIT_PART(map_px.mt_code,':',2)
 		ELSE map_px.mt_code
 		END								AS MAPPED_CODE
-FROM :TNX_SCHEMA.procedure px
-	JOIN :TNX_SCHEMA.n3c_cohort n3c on n3c.patient_id = px.patient_id
-	LEFT JOIN :TNX_SCHEMA.mapping map_px ON map_px.provider_code = (px.code_system || ':' || px.code)
-WHERE px.date >= '2018-01-01'
-	AND px.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'procedure' AND code_system = 'source_id')
-	AND (px.code_system || ':' || px.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'procedure')
+FROM fact_subset px
+	LEFT JOIN :TNX_SCHEMA.tempMapping map_px ON map_px.provider_code = (px.code_system || ':' || px.code)
 ;
+
+DROP TABLE :TNX_SCHEMA.tempMapping;
 
 ---------------------------------------------------------------------------------------------------------
 -- MEDICATIONS
@@ -153,8 +181,24 @@ WHERE px.date >= '2018-01-01'
 -- NOTES:
 --	 	-Orphan = record with no associated patient/encounter
 ---------------------------------------------------------------------------------------------------------
+SELECT CURRENT_TIMESTAMP as date_time, 'Creating temp medication mapping table' as log_entry;
+CREATE TABLE :TNX_SCHEMA.tempMapping (provider_code varchar(65000), mt_code varchar(65000), row_num int);
+INSERT INTO :TNX_SCHEMA.tempMapping 
+SELECT provider_code, mt_code, ROW_NUMBER () OVER (PARTITION BY provider_code) 
+FROM :TNX_SCHEMA.mapping 
+WHERE provider_code IN (SELECT DISTINCT code_system || ':' || code FROM :TNX_SCHEMA.medication)
+;
+
 SELECT CURRENT_TIMESTAMP as date_time, 'Extracting medication' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_medication AS
+WITH fact_subset AS (
+    SELECT *
+    FROM :TNX_SCHEMA.medication rx
+    WHERE patient_id IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_cohort)
+        AND rx.start_date >= '2018-01-01'
+        AND rx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'medication' AND code_system = 'source_id')
+        AND (rx.code_system || ':' || rx.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'medication')
+)
 SELECT
 	rx.patient_id									AS PATIENT_ID
 	, HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'medication' and code_system = rx.source_id), rx.source_id)) || rx.encounter_id			AS ENCOUNTER_ID
@@ -194,13 +238,11 @@ SELECT
 		WHEN REGEXP_COUNT(map_rx.mt_code,':') = 1 THEN SPLIT_PART(map_rx.mt_code,':',2)
 		ELSE map_rx.mt_code
 		END											AS MAPPED_CODE
-FROM :TNX_SCHEMA.medication rx
-	JOIN :TNX_SCHEMA.n3c_cohort n3c on n3c.patient_id = rx.patient_id
-	LEFT JOIN :TNX_SCHEMA.mapping map_rx ON map_rx.provider_code = (rx.code_system || ':' || rx.code)
-WHERE rx.start_date >= '2018-01-01'
-	AND rx.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'medication' AND code_system = 'source_id')
-	AND (rx.code_system || ':' || rx.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'medication')
+FROM fact_subset rx
+	LEFT JOIN :TNX_SCHEMA.tempMapping map_rx ON map_rx.provider_code = (rx.code_system || ':' || rx.code)
 ;
+
+DROP TABLE :TNX_SCHEMA.tempMapping;
 
 ---------------------------------------------------------------------------------------------------------
 -- Temp table for lab results performance improvement
@@ -220,6 +262,14 @@ INSERT INTO :TNX_SCHEMA.tempLabMapping SELECT provider_code, mt_code, ROW_NUMBER
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'Extracting lab results' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_lab_result AS
+WITH fact_subset AS (
+    SELECT *
+    FROM :TNX_SCHEMA.lab_result lab
+    WHERE patient_id IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_cohort)
+        AND lab.test_date >= '2018-01-01'
+        AND lab.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'lab_result' AND code_system = 'source_id')
+        AND (lab.observation_code_system || ':' || lab.observation_code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'lab_result')
+)
 SELECT
 	lab.patient_id								AS PATIENT_ID
 	, HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'lab_result' and code_system = lab.source_id), lab.source_id)) || lab.encounter_id	AS ENCOUNTER_ID
@@ -242,12 +292,8 @@ SELECT
 	, SPLIT_PART(map_lab.mt_code,':',2)			AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_lab.mt_code,':',3)			AS MAPPED_CODE
 	, NULL::varchar(100)						AS MAPPED_TEXT_RESULT_VAL
-FROM :TNX_SCHEMA.lab_result lab
-	JOIN :TNX_SCHEMA.n3c_cohort n3c on n3c.patient_id = lab.patient_id
+FROM fact_subset lab
 	LEFT JOIN :TNX_SCHEMA.tempLabMapping map_lab ON map_lab.provider_code = (lab.observation_code_system || ':' || lab.observation_code)
-WHERE lab.test_date >= '2018-01-01'
-	AND lab.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'lab_result' AND code_system = 'source_id')
-	AND (lab.observation_code_system || ':' || lab.observation_code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'lab_result')
 ;
 
 SELECT CURRENT_TIMESTAMP as date_time, 'Populating lab result mapped text result value' as log_entry;
@@ -265,6 +311,14 @@ WHERE RESULT_TYPE = 'T';
 ---------------------------------------------------------------------------------------------------------
 SELECT CURRENT_TIMESTAMP as date_time, 'Extracting vital signs' as log_entry;
 CREATE TABLE :TNX_SCHEMA.n3c_vital_signs AS
+WITH fact_subset AS (
+    SELECT *
+    FROM :TNX_SCHEMA.vital_signs vit
+    WHERE patient_id IN (SELECT patient_id FROM :TNX_SCHEMA.n3c_cohort)
+        AND vit.measure_date >= '2018-01-01'
+        AND vit.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'vital_signs' AND code_system = 'source_id')
+        AND (vit.code_system || ':' || vit.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'vital_signs')
+)
 SELECT
 	vit.patient_id						AS PATIENT_ID
 	, HASH(COALESCE((select code from data_a.n3c_initiative where initiative = 'Source ID Replacement' and table_name = 'vital_signs' and code_system = vit.source_id), vit.source_id)) || vit.encounter_id	AS ENCOUNTER_ID
@@ -281,12 +335,8 @@ SELECT
 	, SPLIT_PART(map_vit.mt_code,':',2)	AS MAPPED_CODE_SYSTEM
 	, SPLIT_PART(map_vit.mt_code,':',3)	AS MAPPED_CODE
 	, NULL::varchar(100)				AS MAPPED_TEXT_RESULT_VAL
-FROM :TNX_SCHEMA.vital_signs vit
-	JOIN :TNX_SCHEMA.n3c_cohort n3c on n3c.patient_id = vit.patient_id
+FROM fact_subset vit
 	LEFT JOIN :TNX_SCHEMA.tempLabMapping map_vit ON map_vit.provider_code = (vit.code_system || ':' || vit.code)
-WHERE vit.measure_date >= '2018-01-01'
-	AND vit.source_id NOT IN (SELECT code FROM data_a.n3c_filter WHERE table_name = 'vital_signs' AND code_system = 'source_id')
-	AND (vit.code_system || ':' || vit.code) NOT IN (SELECT code_system || ':' || code FROM data_a.n3c_filter WHERE table_name = 'vital_signs')
 ;
 
 SELECT CURRENT_TIMESTAMP as date_time, 'Populating vital signs mapped text result value' as log_entry;
