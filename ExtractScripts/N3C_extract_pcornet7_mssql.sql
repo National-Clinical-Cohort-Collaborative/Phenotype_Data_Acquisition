@@ -12,7 +12,7 @@ select distinct
    '@contactName' as CONTACT_NAME,
    '@contactEmail' as CONTACT_EMAIL,
    '@cdmName' as CDM_NAME,
-   '@cdmVersion' as CDM_VERSION,
+   '@cdmVersion' as CDM_VERSION, --don't forget to update to 7.0
    null AS VOCABULARY_VERSION, -- hardwired null for pcornet
    '@n3cPhenotypeYN' as N3C_PHENOTYPE_YN,
    (SELECT TOP 1 phenotype_version FROM @resultsDatabaseSchema.N3C_PRE_COHORT) as N3C_PHENOTYPE_VERSION,
